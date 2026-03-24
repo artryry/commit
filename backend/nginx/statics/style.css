@@ -1,0 +1,63 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+}
+
+#welcome-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+#welcome-header h4 {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+#buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+a.btn {
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn {
+    width: 15em;
+    padding: 15px 30px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    transition: transform 0.2s;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn.auth {
+    background-color: #007BFF;
+}
+
+.btn.profiles {
+    background-color: #28A745;
+}

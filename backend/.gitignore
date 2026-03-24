@@ -1,0 +1,31 @@
+# Файлы окружения
+# .env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+# *.pem
+.pytest_cache
+
+# Конфигурации и логи
+*.log
+.dockerignore
+
+# Файлы IDE/редакторов
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Кеши и временные файлы
+.DS_Store
+*.bak
+*.tmp
+
+# Файлы зависимостей
+pip-log.txt
+poetry.lock
+Pipfile.lock
+
