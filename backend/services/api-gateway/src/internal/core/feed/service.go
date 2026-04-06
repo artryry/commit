@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/Ryryr0/commit/api-gateway/internal/dto"
+	"github.com/artryry/commit/services/api-gateway/src/internal/dto"
 )
 
 type FeedService interface {

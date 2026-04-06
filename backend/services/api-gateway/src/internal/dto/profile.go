@@ -2,16 +2,15 @@ package dto
 
 import "encoding/json"
 
-type FeedResponse struct {
-	Feed       []FeedItem `json:"feed"`
-	NextCursor string     `json:"next_cursor"`
+type ProfileRequest struct {
+	IDs []string `json:"ids"`
 }
 
-func (f *FeedResponse) ToJSON() ([]byte, error) {
-	return json.Marshal(f)
+func (p *ProfileRequest) ToJSON() ([]byte, error) {
+	return json.Marshal(p)
 }
 
-type FeedItem struct {
+type ProfileResponse struct {
 	ID                 string   `json:"id"`
 	Name               string   `json:"name"`
 	Age                int      `json:"age"`
@@ -23,6 +22,6 @@ type FeedItem struct {
 	CompatibilityText  string   `json:"compatibility_text"`
 }
 
-func (f *FeedItem) ToJSON() ([]byte, error) {
-	return json.Marshal(f)
+func (p *ProfileResponse) ToJSON() ([]byte, error) {
+	return json.Marshal(p)
 }

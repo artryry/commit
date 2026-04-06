@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	service "github.com/Ryryr0/commit/api-gateway/internal/core/feed"
+	service "github.com/artryry/commit/services/api-gateway/src/internal/core/feed"
 )
 
 type App struct {
@@ -13,9 +13,7 @@ type App struct {
 }
 
 func NewApp() *App {
-	return &App{
-		feedService: service.NewFeedService()
-	}
+	return &App{}
 }
 
 func (a *App) Run() {

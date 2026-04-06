@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "./proto;proto";
+
+service Auth {
+    rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse) {}
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Refresh(RefreshRequest) returns (RefreshResponse) {}
+    rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+}
+
+message AuthorizeRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthorizeResponse {
+    string jwt = 1;
+    string refresh_token = 2;
+}
+
+message RegisterRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message RegisterResponse {
+    string jwt = 1;
+    string refresh_token = 2;
+}
+
+message RefreshRequest {
+    string refresh_token = 1;
+}
+
+message RefreshResponse {
+    string jwt = 1;
+}
+
+message DeleteRequest {
+    string jwt = 1;
+    string refresh_token = 2;
+}
+
+message DeleteResponse {}

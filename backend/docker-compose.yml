@@ -1,14 +1,68 @@
 services:
+# Nginx
   nginx-gateway:
     container_name: nginx-gateway
     build:
-      context: ./nginx-gateway
+      context: ./nginx
       dockerfile: Dockerfile
     ports:
       - 8000:8000
     depends_on:
       - ms-auth
       - ms-profiles
+    restart: always
+
+# API-gateway
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    depends_on:
+      - ms-auth
+      - ms-profiles
+    restart: always
+
+# Kafka
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    environment:
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_PROCESS_ROLES: controller,broker
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+    ports:
+      - 9092:9092
+      - 9094:9094
+    restart: always
+
+  kafka-init:
+    image: bitnami/kafka:latest
+    depends_on:
+      - kafka
+    volumes:
+      - ./kafka-topics-init.sh:/kafka-topics-init.sh
+    entrypoint: ["/bin/bash", "/kafka-topics-init.sh"]
+
+# Authentications Service
+  ms-auth:
+    container_name: ms-auth
+    build:
+      context: ./services/authentications
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8001
+    env_file:
+      - ./services/authentications/.env
+    depends_on:
+      - db-auth
+      - kafka-init
     restart: always
 
   db-auth:
@@ -22,30 +76,18 @@ services:
       - postgres_data_auth:/var/lib/postgresql/data
     ports:
       - 5432:5432
-
-  ms-auth:
-    container_name: ms-auth
-    build:
-      context: ./auth_service
-      dockerfile: Dockerfile
-    ports:
-      - 8001:8001
-    env_file:
-      - auth_service/.env
-    depends_on:
-      - db-auth
-      - kafka-init
     restart: always
 
+# Profiles Service
   ms-profiles:
     container_name: ms-profiles
     build:
-      context: ./profiles_service
+      context: ./services/profiles
       dockerfile: Dockerfile
     ports:
       - 8002:8002
     env_file:
-      - profiles_service/.env
+      - ./services/profiles/.env
     depends_on:
       - db-profiles
       - ms-auth
@@ -63,40 +105,114 @@ services:
       - postgres_data_profiles:/var/lib/postgresql/data
     ports:
       - 5433:5432
+    restart: always
 
-  redis-profiles:
+# Recommendations Service
+  ms-recommendations:
+    container_name: ms-recommendations
+    build:
+      context: ./services/recommendations
+      dockerfile: Dockerfile
+    ports:
+      - 8004:8004
+    env_file:
+      - ./services/recommendations/.env
+    depends_on:
+      - db-recommendations
+      - ms-auth
+      - ms-profiles
+      - kafka
+      - redis-recommendations
+    restart: always
+
+  db-recommendations:
+    image: postgres:latest
+    container_name: db-recommendations
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: recommendations
+    volumes:
+      - postgres_data_recommendations:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    restart: always
+
+  redis-recommendations:
     image: redis:7.2-alpine
-    container_name: redis-profiles
-    restart: unless-stopped
+    container_name: redis-recommendations
+    restart: always
     ports:
       - 6379:6379
 #    command: ["redis-server", "--requirepass", "my_own_password_123"]
 
-  kafka:
-    image: bitnami/kafka:latest
-    container_name: kafka
-    environment:
-      KAFKA_CFG_NODE_ID: 0
-      KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+# Swipes Service
+  ms-swipes:
+    container_name: ms-swipes
+    build:
+      context: ./services/swipes
+      dockerfile: Dockerfile
     ports:
-      - 9092:9092
-      - 9094:9094
-
-  kafka-init:
-    image: bitnami/kafka:latest
+      - 8003:8003
+    env_file:
+      - ./services/swipes/.env
     depends_on:
+      - db-swipes
+      - ms-auth
+      - ms-profiles
       - kafka
+    restart: always
+  
+  db-swipes:
+    image: postgres:latest
+    container_name: db-swipes
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: swipes
     volumes:
-      - ./kafka-topics-init.sh:/kafka-topics-init.sh
-    entrypoint: ["/bin/bash", "/kafka-topics-init.sh"]
+      - postgres_data_swipes:/var/lib/postgresql/data
+    ports:
+      - 5435:5432
+    restart: always
+
+# Chats Service
+  ms-chats:
+    container_name: ms-chats
+    build:
+      context: ./services/chats
+      dockerfile: Dockerfile
+    ports:
+      - 8005:8005
+    env_file:
+      - ./services/chats/.env
+    depends_on:
+      - ms-auth
+      - ms-profiles
+      - kafka
+    restart: always
+
+# Notifications Service
+  ms-notifications:
+    container_name: ms-notifications
+    build:
+      context: ./services/notifications
+      dockerfile: Dockerfile
+    ports:
+      - 8006:8006
+    env_file:
+      - ./services/notifications/.env
+    depends_on:
+      - ms-auth
+      - kafka
+    restart: always
 
 volumes:
   postgres_data_auth:
-    driver: local
+    driver: locald
   postgres_data_profiles:
+    driver: local
+  postgres_data_recommendations:
+    driver: local
+  postgres_data_swipes:
     driver: local

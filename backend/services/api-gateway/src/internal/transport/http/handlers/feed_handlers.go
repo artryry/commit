@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	service "github.com/Ryryr0/commit/api-gateway/internal/core/feed"
+	service "github.com/artryry/commit/services/api-gateway/src/internal/core/feed"
 )
 
 type FeedHandlers struct {
