@@ -1,0 +1,242 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    /* Colors */
+    --main-color: #BB8DFF;
+    --accent-color: #FFF282;
+    --supper-accent-color: #FF5777;
+    --dark-color: #545F71;
+    --light-color: #F8F4FF;
+
+    /* Typography */
+    --fs-32: clamp(1.25rem, 2.5vw, 2rem);       
+    --lh-140: 1.4;
+    --fs-24: clamp(1rem, 1.875vw, 1.5rem);       
+    --lh-110: 1.1;
+    --fs-20: clamp(0.875rem, 1.5625vw, 1.25rem); 
+    --fs-18: clamp(0.8125rem, 1.40625vw, 1.125rem); 
+    --fs-12: clamp(0.625rem, 0.9375vw, 0.75rem); 
+}
+
+*,
+::before,
+::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat Alternates', sans-serif;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--main-color);
+}
+
+main {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.poster {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 32px;
+    width: 100%;
+    max-width: 656px;
+    backdrop-filter: blur(5px);
+    padding: clamp(24px, 5vw, 64px) clamp(16px, 10vw, 128px);
+    background-color: color-mix(in srgb, var(--light-color) 80%, transparent);
+    border-radius: 12px;
+}
+
+.poster-logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    align-items: center;
+    padding: 8px 40px;
+    width: fit-content;
+    max-width: 400px;
+    background-color: color-mix(in srgb, var(--light-color) 80%, transparent);
+    border-radius: 12px;
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+.poster-logo-img {
+    width: 50%;
+    height: 50%;
+    object-fit: cover;
+}
+
+.poster-logo-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--main-color);
+    width: 100%;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+}
+
+.poster-slogan {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+.poster-slogan-text {
+    width: 100%;
+    text-align: center; 
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    font-weight: 700;
+}
+
+.dark-text {
+    color: var(--dark-color);
+}
+
+.accent-text {
+    color: var(--supper-accent-color);
+}
+
+.poster-buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 8px;
+}
+
+.poster-button {
+    background-color: var(--main-color);
+    border-radius: 12px;
+    padding: 10px 24px;
+    row-gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: var(--fs-32);
+    color: var(--light-color);
+    box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+.poster-button-text {
+    color: var(--dark-color);
+    font-size: var(--fs-24);
+    opacity: 60%;
+}
+
+.img-background {
+    position: absolute;
+}
+
+/* --- Размеры через vw — масштабируются на любом разрешении --- */
+
+#Hi {
+    top: -5vh;
+    left: 5vw;
+    width: clamp(60px, 7.3vw, 160px); /* ~140px на 1920px */
+    height: auto;
+    pointer-events: none;
+}
+
+#black-eclipse {
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#eyes {
+    bottom: 15vh;
+    left: 10vw;
+    width: clamp(60px, 12vw, 280px);
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#ellipse-3 {
+    right: 1.8vw;
+    bottom: 18.5vh;
+    width: clamp(50px, 9vw, 250px);
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#smile-4 {
+    top: 15vh;
+    right: 15vw;
+    width: clamp(50px, 9vw, 240px);
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#ellipse-15 {
+    width: 100%;
+    bottom: 0;
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#ellipse-16 {
+    top: 2vh;
+    right: 20vw;
+    width: clamp(30px, 7vw, 240px);
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+}
+
+#ellipse-19 {
+    bottom: 13.5vh;
+    left: 2vw;
+    width: clamp(30px, 4vw, 90px);
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#ellipse-17 {
+    bottom: 13.5vh;
+    left: 2vw;
+    width: clamp(30px, 4vw, 90px);
+    height: auto;
+    z-index: -1;
+    pointer-events: none;
+}
+
+#ellipse-12 {
+    bottom: 0;
+    width: 100vw;
+    height: auto;
+    z-index: -2;
+    pointer-events: none;
+}
+
+#ellipse-13 {
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    z-index: -2;
+    pointer-events: none;
+}
