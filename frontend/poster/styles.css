@@ -255,3 +255,22 @@ main {
     z-index: -3;
     pointer-events: none;
 }
+
+#ellipse-17 {
+    top: 35vh;
+    left: 7.2vw;
+    width: clamp(30px, 8vw, 180px);
+    height: auto;
+    transform: rotate(5deg);
+    z-index: 1;
+    pointer-events: none;
+}
+
+#ellipse-18 {
+    top: 8vh;
+    left: 0;
+    width: clamp(30px, 8vw, 180px);
+    height: auto;
+    z-index: 1;
+    pointer-events: none;
+}
