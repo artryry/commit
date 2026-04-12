@@ -1,0 +1,563 @@
+:root {
+    /* Colors */
+    --main-color: #BB8DFF;
+    --accent-color: #FFF282;
+    --supper-accent-color: #FF5777;
+    --dark-color: #3C344B;
+    --light-color: #F8F4FF;
+
+    /* Typography */
+    --fs-80: clamp(2.5rem, 6.25vw, 3rem);
+    --fs-32: clamp(1.25rem, 2.5vw, 2rem);
+    --lh-140: 1.4;
+    --fs-24: clamp(1rem, 1.875vw, 1.5rem);
+    --lh-110: 1.1;
+    --fs-20: clamp(0.875rem, 1.5625vw, 1.25rem);
+    --fs-18: clamp(0.8125rem, 1.40625vw, 1.125rem);
+    --fs-12: clamp(0.625rem, 0.9375vw, 0.75rem);
+}
+/* ===========================
+   Site Header
+   =========================== */
+
+.site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(8px, 0.8vh, 14px) clamp(20px, 2.6vw, 50px);
+    background-color: var(--dark-color);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.25vw, 24px);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.header-logo img {
+    width: clamp(32px, 2.6vw, 50px);
+    height: auto;
+}
+
+/* ---- Nav Icon Buttons ---- */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 0.62vw, 12px);
+}
+
+.nav-icon-btn {
+    position: relative;
+    width: clamp(28px, 2.3vw, 44px);
+    height: clamp(28px, 2.3vw, 44px);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-icon-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.nav-icon-btn img {
+    width: clamp(14px, 1.15vw, 22px);
+    height: auto;
+}
+
+.nav-icon-btn--yellow {
+    background-color: var(--accent-color);
+}
+
+.nav-icon-btn--pink {
+    background-color: var(--supper-accent-color);
+}
+
+.nav-notification-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: clamp(6px, 0.52vw, 10px);
+    height: clamp(6px, 0.52vw, 10px);
+    border-radius: 50%;
+    background-color: var(--supper-accent-color);
+    border: 1.5px solid var(--accent-color);
+}
+
+/* ---- Header Right / User ---- */
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 0.62vw, 12px);
+}
+
+.header-user-avatar {
+    width: clamp(28px, 2.3vw, 44px);
+    height: clamp(28px, 2.3vw, 44px);
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.header-user-name {
+    font-size: var(--fs-20);
+    font-weight: 600;
+    color: var(--light-color);
+}
+
+/* ===========================
+   Profile Page Layout
+   =========================== */
+
+.profile-layout {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(16px, 1.25vw, 24px);
+    width: 100%;
+    height: 90%;
+    padding: clamp(10px, 1.5vh, 120px) clamp(40px, 9.7vw, 148px) clamp(20px, 2vh, 40px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1;
+}
+
+/* ===========================
+   Glass Card Base
+   =========================== */
+
+.glass-card {
+    background-color: color-mix(in srgb, var(--light-color) 80%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0px 4px 20px rgba(60, 52, 75, 0.08);
+}
+
+.glass-card-inner {
+    background-color: var(--light-color);
+    border-radius: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0px 2px 10px rgba(60, 52, 75, 0.06);
+}
+
+/* ===========================
+   Left: Photo Gallery Card
+   =========================== */
+
+.photo-gallery-card {
+    flex-shrink: 0;
+    width: clamp(320px, 41.67vw, 800px);
+    height: 95%;
+    
+    overflow-y: hidden;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: clamp(12px, 1.25vw, 24px);
+    gap: clamp(8px, 0.83vw, 16px);
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 800 / 948;
+    overflow-y: scroll;
+}
+
+.photo-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.photo-slot {
+    position: relative;
+    border-radius: 12px;
+}
+
+.photo-slot--add {
+    background-color: color-mix(in srgb, var(--light-color) 80%, transparent);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.photo-slot--add:hover {
+    transform: scale(1.02);
+}
+
+.photo-slot--add svg {
+    width: clamp(40px, 4.17vw, 80px);
+    height: clamp(40px, 4.17vw, 80px);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.photo-slot--add:hover svg {
+    opacity: 1;
+}
+
+.photo-slot img {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 3/4;
+    transition: transform 0.3s ease;
+}
+
+.photo-slot:hover img {
+    transform: scale(1.05);
+}
+
+/* ===========================
+   Right: Profile Info Card
+   =========================== */
+
+.profile-info-card {
+    flex-shrink: 0;
+    width: clamp(320px, 41.67vw, 800px);
+    max-height: 80%;
+    padding: clamp(16px, 1.35vw, 26px);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(6px, 0.52vw, 10px);
+    overflow-y: scroll;
+}
+
+.profile-info-card::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- Header (avatar + name) --- */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 1.25vw, 24px);
+    padding-bottom: clamp(4px, 0.42vw, 8px);
+}
+
+.profile-avatar {
+    position: relative;
+    width: clamp(56px, 5.15vw, 99px);
+    height: clamp(56px, 5.15vw, 99px);
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+}
+
+.avatar-edit {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-name-group {
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 0.62vw, 12px);
+    flex-wrap: wrap;
+}
+
+.profile-name {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    font-weight: 700;
+    color: #3C344B;
+    line-height: 1.2;
+}
+
+.profile-name-decoration {
+    display: flex;
+    align-items: center;
+}
+
+.profile-name-decoration svg {
+    width: clamp(30px, 2.34vw, 45px);
+    height: auto;
+}
+
+/* --- Section labels --- */
+
+.profile-section {
+    padding: clamp(2px, 0.2vw, 4px) 0;
+}
+
+.profile-bio-labels {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bio-label {
+    font-size: var(--fs-18);
+    color: #3C344B;
+    font-weight: 500;
+}
+
+.section-label {
+    font-size: var(--fs-18);
+    color: #3C344B;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* --- Field Cards --- */
+
+.profile-field-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: clamp(10px, 1.04vw, 20px) clamp(16px, 1.56vw, 30px);
+    gap: 12px;
+}
+
+.profile-field-card--small {
+    padding: clamp(8px, 0.62vw, 12px) clamp(16px, 1.56vw, 30px);
+    align-items: center;
+}
+
+.profile-field-card--large {
+    padding: clamp(12px, 1.04vw, 20px) clamp(16px, 1.56vw, 30px);
+}
+
+.field-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(4px, 0.42vw, 8px);
+}
+
+.field-content--multiline {
+    gap: clamp(6px, 0.52vw, 10px);
+}
+
+.field-heading {
+    font-size: var(--fs-20);
+    font-weight: 700;
+    color: #3C344B;
+    line-height: 1.3;
+}
+
+.field-text {
+    font-size: var(--fs-18);
+    color: #3C344B;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.field-text--sub {
+    font-size: var(--fs-12);
+    opacity: 0.7;
+    line-height: 1.4;
+}
+
+.field-subsection {
+    margin-top: clamp(4px, 0.42vw, 8px);
+    padding-top: clamp(4px, 0.42vw, 8px);
+    border-top: 1px solid rgba(60, 52, 75, 0.1);
+}
+
+/* --- Skills List --- */
+
+.skills-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.skills-list li {
+    font-size: var(--fs-12);
+    color: #3C344B;
+    line-height: 1.4;
+    padding-left: 12px;
+    position: relative;
+}
+
+.skills-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--supper-accent-color);
+    font-weight: 700;
+}
+
+/* --- Edit Buttons --- */
+
+.btn-edit {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.btn-edit:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.field-dropdown {
+    opacity: 0.7;
+}
+
+.field-dropdown:hover {
+    opacity: 1;
+}
+
+/* ===========================
+   Interests / Tags
+   =========================== */
+
+.interests-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(6px, 0.52vw, 10px);
+    align-items: center;
+}
+
+.interest-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: clamp(4px, 0.42vw, 8px) clamp(10px, 1.04vw, 20px);
+    background-color: var(--accent-color);
+    border-radius: 20px;
+    font-size: var(--fs-18);
+    font-weight: 500;
+    color: #3C344B;
+    cursor: default;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+}
+
+.interest-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(60, 52, 75, 0.12);
+}
+
+.interest-add-btn {
+    width: clamp(28px, 2.3vw, 44px);
+    height: clamp(28px, 2.3vw, 44px);
+    border-radius: 50%;
+    border: 2px solid var(--supper-accent-color);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.interest-add-btn svg {
+    width: clamp(10px, 0.83vw, 16px);
+    height: clamp(10px, 0.83vw, 16px);
+}
+
+.interest-add-btn:hover {
+    background-color: rgba(255, 87, 119, 0.1);
+    transform: scale(1.1);
+}
+
+/* ===========================
+   Responsive
+   =========================== */
+
+@media (max-width: 1200px) {
+    .profile-layout {
+        flex-direction: column;
+        align-items: center;
+        padding: clamp(70px, 8vh, 100px) clamp(16px, 4vw, 40px) clamp(20px, 2vh, 40px);
+    }
+
+    .photo-gallery-card,
+    .profile-info-card {
+        width: min(100%, 700px);
+    }
+
+    .photo-grid {
+        aspect-ratio: 4 / 3;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-header {
+        padding: 8px 12px;
+    }
+
+    .header-nav {
+        gap: 4px;
+    }
+
+    .profile-layout {
+        padding: 64px 12px 16px;
+        gap: 12px;
+    }
+
+    .photo-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        aspect-ratio: unset;
+    }
+
+    .photo-slot {
+        aspect-ratio: 1 / 1;
+    }
+
+    .profile-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-name-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .interests-container {
+        gap: 6px;
+    }
+
+    .interest-tag {
+        font-size: var(--fs-12);
+        padding: 4px 10px;
+    }
+}
