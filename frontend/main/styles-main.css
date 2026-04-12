@@ -165,16 +165,16 @@
 .photo-gallery-card {
     flex-shrink: 0;
     width: clamp(320px, 41.67vw, 800px);
+    padding: clamp(6px, 0.6vw, 12px);
     height: 95%;
-    
     overflow-y: hidden;
 }
 
 .photo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: clamp(12px, 1.25vw, 24px);
     gap: clamp(8px, 0.83vw, 16px);
+    padding: clamp(6px, 0.6vw, 12px);
     width: 100%;
     height: 100%;
     aspect-ratio: 800 / 948;
