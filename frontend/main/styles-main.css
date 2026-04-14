@@ -861,8 +861,8 @@
 .voice-btn {
     display: flex;
     justify-content: center;
-    align-items: center; 
-     
+    align-items: center;
+
 }
 
 .voice-btn img {
@@ -871,7 +871,178 @@
     height: 100%;
     object-fit: cover;
     aspect-ratio: 1 / 1;
-}   
+}
+
+/* ===========================
+   Another User Page
+   =========================== */
+.another-user-page-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    height: 95%;
+    gap: clamp(16px, 1.25vw, 24px);
+    z-index: 1;
+}
+
+.another-profile-info-card {
+    flex-shrink: 0;
+    width: clamp(320px, 41.67vw, 800px);
+    height: 100%;
+    padding: clamp(16px, 1.35vw, 26px);
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    row-gap: clamp(16px, 1.25vw, 32px);
+    overflow-y: scroll;
+}
+
+.profile-main-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(4px, 0.42vw, 8px);
+}
+
+.sec-line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    column-gap: clamp(4px, 5vw, 32px);
+}
+
+.zodiak {
+    width: clamp(24px, 2.34vw, 36px);
+    height: clamp(24px, 2.34vw, 36px);
+}
+
+.zodiak img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+}
+
+.city {
+    font-size: var(--fs-32);
+    font-family: var(--font-family);
+    color: var(--dark-color);
+    font-weight: 500;
+}
+
+.description {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+}
+
+.match-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.funny-phrase {
+    display: flex;
+    font-size: var(--fs-24);
+    font-family: var(--font-family);
+    color: var(--dark-color);
+    font-weight: 500;
+    line-height: var(--lh-110);
+}
+
+.chart {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: clamp(4px, 0.62vw, 16px);
+    width: 100%;
+    color: var(--dark-color);
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: clamp(16px, 1.67vw, 32px);
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--accent-color) 40%, transparent);
+    box-shadow: var(--shadow);
+}
+
+.line-fill {
+    display: flex;
+    width: 75%;
+    height: 100%;
+    background-color: var(--accent-color);
+    border-radius: 12px;
+}
+
+.astrology-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    row-gap: clamp(4px, 0.42vw, 8px);
+}
+
+.text-field-astrology {
+    width: 100%;
+    height: auto;
+    font-size: var(--fs-32);
+    line-height: var(--lh-110);
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.general-match {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    height: auto;
+}
+
+.general-match h3 {
+    width: 100%;
+    height: auto;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.astrology-description {
+    width: 100%;
+    height: auto;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    font-weight: 400;
+    color: var(--dark-color);
+}
+
 
 
 /* ===========================
