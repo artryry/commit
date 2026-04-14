@@ -217,7 +217,7 @@
     -webkit-backdrop-filter: blur(10px);
     border-radius: 12px;
     border: 2px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0px 4px 20px rgba(60, 52, 75, 0.08);
+    box-shadow: var(--shadow);
 }
 
 .glass-card-inner {
