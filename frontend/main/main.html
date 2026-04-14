@@ -70,172 +70,364 @@
     <!-- Main Profile Content -->
     <main class="profile-layout">
 
-        <section class="commit-page">
+        <section class="commit-page hidden">
 
             <!-- Left: Photo Gallery Card -->
-        <section class="photo-gallery-card glass-card">
-            <div class="photo-grid">
-                <!-- Slot 1: Add photo placeholder -->
-                <div class="photo-slot photo-slot--add">
-                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-                        <path d="M40 0V40M40 40V80M40 40H80M40 40H0" stroke="#FF5777" stroke-width="4"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </div>
-                <!-- Slot 2 -->
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (1).png" alt="Фото 2">
-                </div>
-                <!-- Slot 3 -->
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (2).png" alt="Фото 3">
-                </div>
-                <!-- Slot 4 -->
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (3).png" alt="Фото 4">
-                </div>
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (3).png" alt="Фото 4">
-                </div>
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (3).png" alt="Фото 4">
-                </div>
-                <div class="photo-slot">
-                    <img src="photos/man_middle_body (3).png" alt="Фото 4">
-                </div>
-            </div>
-        </section>
-
-        <!-- Right: Profile Info Card -->
-        <section class="profile-info-card glass-card">
-
-            <!-- Header row: avatar + name -->
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <img src="photos/man_portret (4).png" alt="Аватар" class="avatar-img">
-                    <button class="btn-edit avatar-edit" aria-label="Редактировать аватар">
-                        <img src="icons/edit.png" alt="">
-                    </button>
-                </div>
-
-                <div class="profile-name-group">
-                    <h1 class="profile-name">Иван, 28</h1>
-                    <span class="profile-name-decoration">
-                        <img src="icons/zodiac-aquarius.png" alt="">
-                    </span>
-                </div>
-            </div>
-
-            <!-- Ваше описание -->
-            <div class="profile-item-frame">
-                <div class="profile-bio-labels">
-                    <span class="bio-label">Ваше описание</span>
-                </div>
-
-                <!-- Description card -->
-                <div class="profile-field-card glass-card-inner">
-                    <div class="field-content">
-                        <p class="field-text">Я люблю все, начиная с настольных игр, комиксов, книг, фильмов, заканчивая
-                            технологиями, наукой и различными франшизами.</p>
-                    </div>
-                    <button class="btn-edit field-edit" aria-label="Редактировать">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path
-                                d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
-                                stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Локация -->
-            <div class="profile-item-frame">
-                <div class="profile-bio-labels">
-                    <span class="bio-label">Локация</span>
-                </div>
-
-                <div class="profile-field-card glass-card-inner">
-                    <div class="field-content">
-                        <p class="field-text">Москва</p>
-                    </div>
-                    <button class="btn-edit field-edit" aria-label="Редактировать">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path
-                                d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
-                                stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Вы ищите -->
-            <div class="profile-item-frame">
-                <div class="profile-bio-labels">
-                    <span class="bio-label">Вы ищите</span>
-                </div>
-
-                <div class="profile-field-card glass-card-inner">
-                    <div class="field-content">
-                        <p class="field-text">Партнера</p>
-                    </div>
-                    <button class="btn-edit field-edit field-dropdown" aria-label="Раскрыть">
-                        <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
-                            <path
-                                d="M7 5.314L11.95 0.364C12.14 0.177 12.4 0.071 12.67 0.071C12.93 0.071 13.19 0.177 13.38 0.364C13.57 0.551 13.67 0.814 13.67 1.084C13.67 1.355 13.57 1.617 13.38 1.804L7.71 7.435C7.52 7.622 7.27 7.728 7 7.728C6.73 7.728 6.48 7.622 6.29 7.435L0.64 1.804C0.45 1.617 0.34 1.355 0.34 1.084C0.34 0.814 0.45 0.551 0.64 0.364C0.83 0.177 1.09 0.071 1.36 0.071C1.63 0.071 1.89 0.177 2.08 0.364L7 5.314Z"
-                                fill="#3C344B" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Какого человека вы ищите? -->
-            <div class="profile-item-frame">
-                <div class="profile-bio-labels">
-                    <span class="bio-label">Какого человека вы ищите?</span>
-                </div>
-
-                <div class="profile-field-card glass-card-inner">
-                    <div class="field-content">
-                        <p class="field-text">Любовь всей своей жизни с двумя кошками и страстью к настольным играм</p>
-                    </div>
-                    <button class="btn-edit field-edit" aria-label="Редактировать">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path
-                                d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
-                                stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Интересы -->
-            <div class="profile-item-frame">
-                <div class="profile-bio-labels">
-                    <span class="bio-label">Интересы</span>
-                </div>
-
-                <div class="interests-container">
-                    <span class="interest-tag">#Спорт</span>
-                    <span class="interest-tag">#Кино</span>
-                    <span class="interest-tag">#Гарри Потер</span>
-                    <span class="interest-tag">#Lady GaGa</span>
-                    <span class="interest-tag">#Программирование</span>
-                    <span class="interest-tag">#Пингвины</span>
-                    <span class="interest-tag">#Аниме</span>
-                    <span class="interest-tag">#Imagine Dragons</span>
-                    <span class="interest-tag">#WoW</span>
-                    <span class="interest-tag">#ДнД</span>
-                    <button class="interest-add-btn" aria-label="Добавить интерес">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M8 1V8M8 8V15M8 8H15M8 8H1" stroke="#FF5777" stroke-width="2.5"
+            <section class="photo-gallery-card glass-card">
+                <div class="photo-grid">
+                    <!-- Slot 1: Add photo placeholder -->
+                    <div class="photo-slot photo-slot--add">
+                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <path d="M40 0V40M40 40V80M40 40H80M40 40H0" stroke="#FF5777" stroke-width="4"
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
-                    </button>
+                    </div>
+                    <!-- Slot 2 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (1).png" alt="Фото 2">
+                    </div>
+                    <!-- Slot 3 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (2).png" alt="Фото 3">
+                    </div>
+                    <!-- Slot 4 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
                 </div>
-            </div>
+            </section>
 
+            <!-- Right: Profile Info Card -->
+            <section class="profile-info-card glass-card">
+
+                <!-- Header row: avatar + name -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="photos/man_portret (4).png" alt="Аватар" class="avatar-img">
+                        <button class="btn-edit avatar-edit" aria-label="Редактировать аватар">
+                            <img src="icons/edit.png" alt="">
+                        </button>
+                    </div>
+
+                    <div class="profile-name-group">
+                        <h1 class="profile-name">Иван, 28</h1>
+                        <span class="profile-name-decoration">
+                            <img src="icons/zodiac-aquarius.png" alt="">
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Ваше описание -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Ваше описание</span>
+                    </div>
+
+                    <!-- Description card -->
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Я люблю все, начиная с настольных игр, комиксов, книг, фильмов, заканчивая
+                                технологиями, наукой и различными франшизами.</p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Локация -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Локация</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Москва</p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вы ищите -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Вы ищите</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Партнера</p>
+                        </div>
+                        <button class="btn-edit field-edit field-dropdown" aria-label="Раскрыть">
+                            <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                                <path
+                                    d="M7 5.314L11.95 0.364C12.14 0.177 12.4 0.071 12.67 0.071C12.93 0.071 13.19 0.177 13.38 0.364C13.57 0.551 13.67 0.814 13.67 1.084C13.67 1.355 13.57 1.617 13.38 1.804L7.71 7.435C7.52 7.622 7.27 7.728 7 7.728C6.73 7.728 6.48 7.622 6.29 7.435L0.64 1.804C0.45 1.617 0.34 1.355 0.34 1.084C0.34 0.814 0.45 0.551 0.64 0.364C0.83 0.177 1.09 0.071 1.36 0.071C1.63 0.071 1.89 0.177 2.08 0.364L7 5.314Z"
+                                    fill="#3C344B" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Какого человека вы ищите? -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Какого человека вы ищите?</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Любовь всей своей жизни с двумя кошками и страстью к настольным играм</p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Интересы -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Интересы</span>
+                    </div>
+
+                    <div class="interests-container">
+                        <span class="interest-tag">#Спорт</span>
+                        <span class="interest-tag">#Кино</span>
+                        <span class="interest-tag">#Гарри Потер</span>
+                        <span class="interest-tag">#Lady GaGa</span>
+                        <span class="interest-tag">#Программирование</span>
+                        <span class="interest-tag">#Пингвины</span>
+                        <span class="interest-tag">#Аниме</span>
+                        <span class="interest-tag">#Imagine Dragons</span>
+                        <span class="interest-tag">#WoW</span>
+                        <span class="interest-tag">#ДнД</span>
+                        <button class="interest-add-btn" aria-label="Добавить интерес">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 1V8M8 8V15M8 8H15M8 8H1" stroke="#FF5777" stroke-width="2.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
         </section>
-        </section>
+
+        <!--Message Page-->
+        <section class="message-page-container">
+            <!--Message List-->
+            <section class="message-list glass-card">
+
+                <div class="chat-option">
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </section>
+
+            <!--Message Chat-->
+            <section class="message-chat glass-card">
+
+                <div class="chat">
+
+                    <div class="profile-line">
+                        <div class="profile-line-img">
+                            <img src="photos/man_portret (4).png" alt="Фото профиля">
+                        </div>
+                        <div class="profile-line-info">
+                            <h2 class="chat-name">Иван Иванов</h2>
+                            <div class="second-line">
+                                <span class="chat-status">Фев 28, 2026</span>
+                            </div>
+                        </div>
+                        <div class="profile-line-menu-btn">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+
+                    <div class="message-area">
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="text-field">
+
+                            <div class="text-field-left-part">
+                                <div class="emoji">
+                                    <img src="icons/smile.png" alt="Выбор эмодзи">
+                                </div>
+
+                                <div class="text-field-input">
+                                    <textarea rows="1" placeholder="Сообщение"></textarea>
+                                </div>
+
+                            </div>
+
+                            <div class="text-field-right-part">
+                                <div class="add-file">
+                                    <img src="icons/paperclip.png" alt="Вложения">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="voice-btn-container">
+                            <div class="voice-btn">
+                                <img src="icons/mic.png" alt="Голосовое сообщение">
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+ 
+
         
     </main>
 </body>
