@@ -71,6 +71,7 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease, padding 0.4s ease;
     backface-visibility: hidden;
     transform: translateZ(0);
+    will-change: transform;
 }
 
 .nav-icon-btn.active {
@@ -86,6 +87,7 @@
     width: clamp(14px, 1.15vw, 25px);
     height: auto;
     flex-shrink: 0;
+    backface-visibility: hidden;
 }
 
 .nav-icon-btn--yellow {
@@ -110,6 +112,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    backface-visibility: hidden;
 }
 
 .nav-btn-text {
