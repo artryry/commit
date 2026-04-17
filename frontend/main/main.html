@@ -47,6 +47,10 @@
         </div>
         <div class="header-right">
             <div class="header-user">
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Уведомления">
+                    <span class="nav-notification-dot"></span>
+                    <img src="icons/notification.png" alt="Уведомления">
+                </button>
                 <a href=""><img src="photos/man_portret (3).png" alt="Аватар" class="header-user-avatar"></a>
                 <span class="header-user-name">Иван</span>
             </div>
@@ -70,7 +74,7 @@
     <!-- Main Profile Content -->
     <main class="profile-layout">
 
-        <section class="commit-page hidden">
+        <section class="commit-page">
 
             <!-- Left: Photo Gallery Card -->
             <section class="photo-gallery-card glass-card">
@@ -438,22 +442,6 @@
                                 Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
                                 вдохновляющий.</p>
                         </div>
-                        <div class="general-match">
-                            <h3>Общая совместимость</h3>
-                            <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
-                                Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы приносите
-                                идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
-                                Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
-                                вдохновляющий.</p>
-                        </div>
-                        <div class="general-match">
-                            <h3>Общая совместимость</h3>
-                            <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
-                                Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы приносите
-                                идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
-                                Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
-                                вдохновляющий.</p>
-                        </div>
                     </div>
                 </div>
 
@@ -462,11 +450,11 @@
         </section>
 
         <!-- Acquaintance page -->
-        <section class="acquaintance-page-container">
+        <section class="acquaintance-page-container hidden">
 
             <!-- Left: Photo Gallery Card -->
             <section class="photo-gallery-card-x-scroll glass-card">
-                
+
                 <div class="photo-scroll-wrapper">
                     <div class="photo-scroll-x">
                         <!-- Slot 1 -->
@@ -505,7 +493,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div class="buttons-container">
                     <div id="button-like" class="button-like">
@@ -573,12 +561,16 @@
                     </div>
 
                     <details class="astrology-container-commit">
-                        <summary class="text-field-astrology">Натальная карта</summary>
+                        <summary class="text-field-astrology">
+                            Натальная карта
+                            <img src="icons/arrow-bottom.png" alt="">
+                        </summary>
                         <div class="astrology-content-wrapper">
                             <div class="general-match">
                                 <h3>Общая совместимость</h3>
                                 <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
-                                    Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы приносите
+                                    Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы
+                                    приносите
                                     идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
                                     Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
                                     вдохновляющий.</p>
@@ -596,6 +588,26 @@
 
 
     </main>
+
+
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="btm-btn-container">
+            <div class="btn-list">
+                <button class="nav-icon-btn nav-icon-btn--yellow">
+                    <img src="icons/message.png" alt="Сообщения">
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--pink">
+                    <img src="icons/heart_light.png" alt="Коммиты">
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow">
+                    <img src="icons/stars.png" alt="Знакомства">
+                </button>
+            </div>
+        </div>
+    </nav>
+
 </body>
 
 </html>

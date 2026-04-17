@@ -52,7 +52,7 @@
 }
 
 .header-logo img {
-    width: clamp(32px, 2.6vw, 50px);
+    width: clamp(32px, 2.8vw, 60px);
     height: auto;
 }
 
@@ -66,8 +66,8 @@
 .nav-icon-btn {
     position: relative;
     width: auto;
-    min-width: clamp(28px, 2vw, 44px);
-    height: clamp(28px, 2vw, 44px);
+    min-width: clamp(28px, 2.2vw, 60px);
+    height: clamp(28px, 2.2vw, 60px);
     border-radius: 12px;
     border-color: radial-gradient(circle, var(--light-color));
     border: none;
@@ -291,7 +291,6 @@
     border-radius: 12px;
     object-fit: cover;
     display: block;
-    aspect-ratio: 3/4;
     transition: transform 0.3s ease;
 }
 
@@ -891,7 +890,7 @@
 .another-profile-info-card {
     flex-shrink: 0;
     width: clamp(320px, 41.67vw, 800px);
-    height: fit-content;
+    height: 100%;
     padding: clamp(16px, 1.35vw, 26px);
     display: flex;
     flex-direction: column;
@@ -906,8 +905,8 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: auto;
-    max-height: 75vh;
+    height: fit-content;
+    max-height: 85vh;
     row-gap: clamp(16px, 1.25vw, 32px);
     overflow-y: scroll;
 }
@@ -1008,14 +1007,6 @@
     row-gap: clamp(4px, 0.42vw, 8px);
 }
 
-.text-field-astrology {
-    width: 100%;
-    height: auto;
-    font-size: var(--fs-32);
-    line-height: var(--lh-110);
-    font-weight: 500;
-    color: var(--dark-color);
-}
 
 .general-match {
     display: flex;
@@ -1211,94 +1202,279 @@
 }
 
 .astrology-container-commit {
-    width: 100%;
-}
-
-.astrology-content-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    row-gap: clamp(8px, 0.83vw, 16px);
-    margin-top: clamp(8px, 0.83vw, 16px);
+    row-gap: clamp(4px, 0.4vw, 8px);
+}
+
+.text-field-astrology {
+    width: 100%;
+    height: auto;
+    font-size: var(--fs-32);
+    line-height: var(--lh-110);
+    font-weight: 500;
+    color: var(--dark-color);
 }
 
 .astrology-container-commit summary {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    column-gap: clamp(16px, 1.67vw, 32px);
+    align-items: center;
     list-style: none;
     cursor: pointer;
-    text-align: center;
-
+    width: 100%;
+    height: fit-content;
 }
 
-.astrology-container-commit > 
+summary img {
+    display: block;
+    object-fit: cover;
+}
 
+.hidden {
+    display: none;
+}
 
 /* ===========================
-   Responsive
+   Mobile Adaptation
    =========================== */
 
-@media (max-width: 1200px) {
-    .profile-layout {
-        flex-direction: column;
-        align-items: center;
-        padding: clamp(70px, 8vh, 100px) clamp(16px, 4vw, 40px) clamp(20px, 2vh, 40px);
-    }
-
-    .photo-gallery-card,
-    .profile-info-card {
-        width: min(100%, 700px);
-    }
-
-    .photo-grid {
-        aspect-ratio: 4 / 3;
-    }
+.header-user button {
+    display: none;
 }
 
-@media (max-width: 600px) {
-    .site-header {
-        padding: 8px 12px;
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 7vh;
+    background-color: var(--dark-color);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.btm-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    height: 100%;
+    padding: clamp(8px, 0.83vw, 16px);
+}
+
+.btn-list {
+    display: flex;
+    justify-content: center;
+    column-gap: clamp(24px, 5vw, 40px);
+    align-items: center;
+
+    height: fit-content;
+}
+
+.btn-list button {
+    width: clamp(40px, 4.17vw, 60px);
+    height: clamp(40px, 4.17vw, 60px);
+
+}
+
+.header-user .nav-icon-btn-mobile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    width: clamp(40px, 4.17vw, 60px);
+    height: clamp(40px, 4.17vw, 60px);
+    border-radius: 12%;
+}
+
+.nav-icon-btn-mobile img {
+    display: block;
+    object-fit: cover;
+    width: 50%;
+    height: 50%;
+
+}
+
+
+@media (max-width: 768px) {
+
+    .header-user .nav-icon-btn {
+        border-radius: 12%;
+        display: flex;
+    }
+
+    .background-elements {
+        display: none;
     }
 
     .header-nav {
-        gap: 4px;
+        display: none;
     }
 
-    .profile-layout {
-        padding: 64px 12px 16px;
-        gap: 12px;
+    .mobile-bottom-nav {
+        display: flex;
     }
+
+    .nav-icon-btn:hover {
+        transform: none;
+    }
+
+    .nav-icon-btn img {
+        display: block;
+        width: 50%;
+        height: 50%;
+    }
+
+    .another-user-page-container, .commit-page {
+        padding: 10px 14px 70px 14px;
+        height: 100%;
+        row-gap: 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .photo-gallery-card {
+        width: 100%;
+        height: 65vh;
+    }
+
+    .photo-gallery-card.glass-card {
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: 0;
+        padding: 0;
+        border-radius: 0;
+        border: none;
+        box-shadow: none;
+    }
+
+    .another-profile-info-card.glass-card {
+        padding: 4px 8px;
+        height: fit-content;
+        overflow-y: visible;   
+    }
+
+    .another-profile-info-card {
+        width: 100%;
+        overflow-y: visible;
+    }
+
+    .scroll-container {
+        max-height: none;    
+        overflow-y: visible;
+    }
+
+
+    .photo-slot img:hover {
+        transform: none;
+    }
+
+    .photo-slot img {
+        object-fit: 3/4;
+        width: 100%;
+    }
+
 
     .photo-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
-        aspect-ratio: unset;
+        display: flex;
+        overflow-x: auto;
+        padding: 0;
     }
 
     .photo-slot {
-        aspect-ratio: 1 / 1;
+        flex-shrink: 0;
+        width: 100%;
     }
 
-    .profile-header {
-        flex-direction: column;
-        align-items: flex-start;
+
+    .another-profile-info-card {
+        width: 100%;
+    }
+
+    .commit-page {
+        flex-direction: column-reverse;
+    }
+
+    .profile-info-card.glass-card {
+       width: 100%;
+       padding: 4px 8px;
+       height: 100vh;
+       row-gap: 16px;
+    }
+
+    
+
+    .commit-page .photo-gallery-card {
+        /* height: 20vh; */
+    }
+
+    .profile-header, .profile-item-frame {
+        background-color: var(--light-color);
+        padding: 5px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+    }
+
+    .profile-bio-labels {
+        background-color: var(--light-color);
+    }
+
+    .glass-card-inner {
+        background-color: var(--light-color);
+    }
+
+    .profile-field-card {
+        box-shadow: none;
+    }
+
+
+
+    .profile-avatar {
+        height: 100%;
+        aspect-ratio: 1/1;
     }
 
     .profile-name-group {
         flex-direction: column;
         align-items: flex-start;
+        justify-content: flex-end;
+        gap: 0;
     }
 
-    .interests-container {
-        gap: 6px;
+
+    .bio-label {
+        font-size: var(--fs-18);
+        line-height: var(--lh-110);
     }
 
-    .interest-tag {
-        font-size: var(--fs-12);
-        padding: 4px 10px;
+
+    .field-text {
+        font-size: var(--fs-32);
+        line-height: var(--lh-110);
+        padding: 8px;
     }
-}
 
+    .profile-name-decoration {
+        justify-content: flex-start;
+    }
 
-.hidden {
-    display: none;
+    .profile-field-card.glass-card-inner {
+        padding: 0;
+        background-color: var(--accent-color);
+        border: none;
+        border-radius: 12px;
+        padding: 3px 6px;
+    }
+
+    .profile-bio-labels {
+        padding: 0;
+    }
+
 }
