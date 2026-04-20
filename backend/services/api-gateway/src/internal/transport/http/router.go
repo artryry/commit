@@ -28,9 +28,9 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, keys *comm
 
 		// ================= AUTH =================
 		r.Route("/auth", func(r chi.Router) {
-			r.Post("/register", handlers.Auth.Register)
-			r.Post("/login", handlers.Auth.Authorize)
-			r.Post("/refresh", handlers.Auth.Refresh)
+			r.Post("/register", handlers.Auth.Register(clients.Auth))
+			r.Post("/login", handlers.Auth.Authorize(clients.Auth))
+			r.Post("/refresh", handlers.Auth.Refresh(clients.Auth))
 		})
 
 		// ================= PROTECTED ROUTES =================
@@ -39,7 +39,7 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, keys *comm
 
 			// -------- AUTH --------
 			r.Route("/auth", func(r chi.Router) {
-				r.Get("/delete", handlers.Auth.Delete)
+				r.Get("/delete", handlers.Auth.Delete(clients.Auth))
 			})
 
 			// -------- PROFILE --------

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	pb "github.com/artryry/commit/services/api-gateway/src/clients/auth/proto"
+	"github.com/artryry/commit/services/api-gateway/src/internal/dto"
 
 	"google.golang.org/grpc"
 )
@@ -39,10 +40,10 @@ func (c *Client) Close() error {
 	return c.Conn.Close()
 }
 
-func (c *Client) Authorize(ctx context.Context, email string, password string) (*AuthorizeResponse, error) {
+func (c *Client) Authorize(ctx context.Context, req *dto.AuthRequest) (*AuthorizeResponse, error) {
 	pbRequest := &pb.AuthorizeRequest{
-		Email:    email,
-		Password: password,
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
 	pbResponse, err := c.Client.Authorize(ctx, pbRequest)
@@ -56,10 +57,10 @@ func (c *Client) Authorize(ctx context.Context, email string, password string) (
 	}, nil
 }
 
-func (c *Client) Register(ctx context.Context, email string, password string) (*RegisterResponse, error) {
+func (c *Client) Register(ctx context.Context, req *dto.RegisterRequest) (*RegisterResponse, error) {
 	pbRequest := &pb.RegisterRequest{
-		Email:    email,
-		Password: password,
+		Email:    req.Email,
+		Password: req.Password,
 	}
 
 	pbResponse, err := c.Client.Register(ctx, pbRequest)
@@ -73,9 +74,9 @@ func (c *Client) Register(ctx context.Context, email string, password string) (*
 	}, nil
 }
 
-func (c *Client) Refresh(ctx context.Context, refreshToken string) (string, error) {
+func (c *Client) Refresh(ctx context.Context, req *dto.RefreshRequest) (string, error) {
 	pbRequest := &pb.RefreshRequest{
-		RefreshToken: refreshToken,
+		RefreshToken: req.RefreshToken,
 	}
 
 	pbResponse, err := c.Client.Refresh(ctx, pbRequest)
@@ -86,10 +87,10 @@ func (c *Client) Refresh(ctx context.Context, refreshToken string) (string, erro
 	return pbResponse.Jwt, nil
 }
 
-func (c *Client) Delete(ctx context.Context, jwt string, refreshToken string) (bool, error) {
+func (c *Client) Delete(ctx context.Context, req *dto.DeleteAccountRequest) (bool, error) {
 	pbRequest := &pb.DeleteRequest{
-		Jwt:          jwt,
-		RefreshToken: refreshToken,
+		Jwt:          req.JWT,
+		RefreshToken: req.RefreshToken,
 	}
 
 	_, err := c.Client.Delete(ctx, pbRequest)
@@ -97,5 +98,5 @@ func (c *Client) Delete(ctx context.Context, jwt string, refreshToken string) (b
 		return false, err
 	}
 
-	return true, err
+	return true, nil
 }
