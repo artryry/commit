@@ -5,14 +5,14 @@ from jwt.exceptions import InvalidTokenError
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status, Form
 
-from config import settings
-from logger import Logger
-from schemas import TokenData, UsersPostDTO
+from services.authentications.old_v.src.config import settings
+from services.authentications.old_v.src.logger import Logger
+from services.authentications.old_v.src.schemas import TokenData, UsersPostDTO
 from controllers import Users
-from database.models import UsersDB
-from database.database import async_session_factory
-from synchronizer import Synchronizer
-from interfaces import IUsers
+from services.authentications.old_v.src.database.models import UsersDB
+from services.authentications.old_v.src.database.database import async_session_factory
+from services.authentications.old_v.src.synchronizer import Synchronizer
+from services.authentications.old_v.src.interfaces import IUsers
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="users/token")

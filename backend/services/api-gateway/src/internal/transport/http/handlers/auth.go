@@ -16,7 +16,7 @@ func newAuthHandlers() *authHandlers {
 	return &authHandlers{}
 }
 
-func (h *authHandlers) Authorize(c *auth.Client) func(w http.ResponseWriter, r *http.Request) {
+func (h *authHandlers) Authorize(c *auth.GRPCClient) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var authReq dto.AuthRequest
 
@@ -46,7 +46,7 @@ func (h *authHandlers) Authorize(c *auth.Client) func(w http.ResponseWriter, r *
 	}
 }
 
-func (h *authHandlers) Register(c *auth.Client) func(w http.ResponseWriter, r *http.Request) {
+func (h *authHandlers) Register(c *auth.GRPCClient) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var regReq dto.RegisterRequest
 
@@ -76,7 +76,7 @@ func (h *authHandlers) Register(c *auth.Client) func(w http.ResponseWriter, r *h
 	}
 }
 
-func (h *authHandlers) Refresh(c *auth.Client) func(w http.ResponseWriter, r *http.Request) {
+func (h *authHandlers) Refresh(c *auth.GRPCClient) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var refreshReq dto.RefreshRequest
 
@@ -105,7 +105,7 @@ func (h *authHandlers) Refresh(c *auth.Client) func(w http.ResponseWriter, r *ht
 	}
 }
 
-func (h *authHandlers) Delete(c *auth.Client) func(w http.ResponseWriter, r *http.Request) {
+func (h *authHandlers) Delete(c *auth.GRPCClient) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var delReq dto.DeleteAccountRequest
 

@@ -2,7 +2,7 @@ import logging
 import json
 import sys
 
-from config import settings
+from services.authentications.old_v.src.config import settings
 
 
 class JsonFormatter(logging.Formatter):

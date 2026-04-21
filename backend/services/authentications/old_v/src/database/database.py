@@ -1,8 +1,8 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
-from config import settings
-from logger import Logger
+from services.authentications.old_v.src.config import settings
+from services.authentications.old_v.src.logger import Logger
 from .ORM_models import Base
 
 async_engine = create_async_engine(

@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 
-	pb "github.com/artryry/commit/services/api-gateway/src/clients/auth/proto"
 	"github.com/artryry/commit/services/api-gateway/src/internal/dto"
+	pb "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/auth/proto"
 
 	"google.golang.org/grpc"
 )
@@ -19,28 +19,28 @@ type RegisterResponse struct {
 	RefreshToken string
 }
 
-type Client struct {
+type GRPCClient struct {
 	Conn   *grpc.ClientConn
 	Client pb.AuthClient
 }
 
-func New(address string) (*Client, error) {
+func New(address string) (*GRPCClient, error) {
 	conn, err := grpc.NewClient(address)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Client{
+	return &GRPCClient{
 		Conn:   conn,
 		Client: pb.NewAuthClient(conn),
 	}, nil
 }
 
-func (c *Client) Close() error {
+func (c *GRPCClient) Close() error {
 	return c.Conn.Close()
 }
 
-func (c *Client) Authorize(ctx context.Context, req *dto.AuthRequest) (*AuthorizeResponse, error) {
+func (c *GRPCClient) Authorize(ctx context.Context, req *dto.AuthRequest) (*AuthorizeResponse, error) {
 	pbRequest := &pb.AuthorizeRequest{
 		Email:    req.Email,
 		Password: req.Password,
@@ -57,7 +57,7 @@ func (c *Client) Authorize(ctx context.Context, req *dto.AuthRequest) (*Authoriz
 	}, nil
 }
 
-func (c *Client) Register(ctx context.Context, req *dto.RegisterRequest) (*RegisterResponse, error) {
+func (c *GRPCClient) Register(ctx context.Context, req *dto.RegisterRequest) (*RegisterResponse, error) {
 	pbRequest := &pb.RegisterRequest{
 		Email:    req.Email,
 		Password: req.Password,
@@ -74,7 +74,7 @@ func (c *Client) Register(ctx context.Context, req *dto.RegisterRequest) (*Regis
 	}, nil
 }
 
-func (c *Client) Refresh(ctx context.Context, req *dto.RefreshRequest) (string, error) {
+func (c *GRPCClient) Refresh(ctx context.Context, req *dto.RefreshRequest) (string, error) {
 	pbRequest := &pb.RefreshRequest{
 		RefreshToken: req.RefreshToken,
 	}
@@ -87,7 +87,7 @@ func (c *Client) Refresh(ctx context.Context, req *dto.RefreshRequest) (string, 
 	return pbResponse.Jwt, nil
 }
 
-func (c *Client) Delete(ctx context.Context, req *dto.DeleteAccountRequest) (bool, error) {
+func (c *GRPCClient) Delete(ctx context.Context, req *dto.DeleteAccountRequest) (bool, error) {
 	pbRequest := &pb.DeleteRequest{
 		Jwt:          req.JWT,
 		RefreshToken: req.RefreshToken,

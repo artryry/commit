@@ -14,7 +14,7 @@ type Keys struct {
 	PublicKey *rsa.PublicKey
 }
 
-func NewKeys(authClient *auth.Client) *Keys {
+func NewKeys(authClient *auth.GRPCClient) *Keys {
 	pbk, err := loadPublicKey(PublicKeyPath)
 	if err != nil {
 		panic(err)

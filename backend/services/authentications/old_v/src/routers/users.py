@@ -7,10 +7,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import Depends, HTTPException, status
 from fastapi import Response
 
-from config import settings
-from logger import Logger
-from schemas import Token, UsersDTO, UsersPostDTO, TokenData
-from dependencies import get_user_post_form, get_token_data, GetUsers
+from services.authentications.old_v.src.config import settings
+from services.authentications.old_v.src.logger import Logger
+from services.authentications.old_v.src.schemas import Token, UsersDTO, UsersPostDTO, TokenData
+from services.authentications.old_v.src.dependencies import get_user_post_form, get_token_data, GetUsers
 
 
 router = APIRouter(

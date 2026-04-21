@@ -1,9 +1,9 @@
 from passlib.context import CryptContext
 from passlib.exc import InvalidHashError, UnknownHashError
 
-from interfaces import IUsers, IUsersDB, ISynchronizer
-from schemas import UsersDTO, UsersPostDTO, UsersSendDTO
-from logger import Logger
+from services.authentications.old_v.src.interfaces import IUsers, IUsersDB, ISynchronizer
+from services.authentications.old_v.src.schemas import UsersDTO, UsersPostDTO, UsersSendDTO
+from services.authentications.old_v.src.logger import Logger
 
 
 class Users(IUsers):

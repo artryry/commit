@@ -4,10 +4,10 @@ from sqlalchemy import select, or_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from logger import Logger
+from services.authentications.old_v.src.logger import Logger
 from .ORM_models import UsersOrm
-from schemas import UsersDTO, UsersPostDTO
-from interfaces import IUsersDB
+from services.authentications.old_v.src.schemas import UsersDTO, UsersPostDTO
+from services.authentications.old_v.src.interfaces import IUsersDB
 
 
 class UsersDB(IUsersDB):

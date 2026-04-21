@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from schemas import UsersPostDTO, UsersSendDTO, UsersDTO
+from services.authentications.old_v.src.schemas import UsersPostDTO, UsersSendDTO, UsersDTO
 
 
 class IUsersDB(ABC):

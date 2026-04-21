@@ -14,7 +14,7 @@ import (
 	"github.com/artryry/commit/services/api-gateway/src/internal/common"
 )
 
-func JWT(authClient *auth.Client, publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
+func JWT(authClient *auth.GRPCClient, publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Println("Verify JWT token...")

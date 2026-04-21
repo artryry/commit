@@ -6,6 +6,7 @@ import (
 
 	"github.com/artryry/commit/services/api-gateway/src/clients"
 	"github.com/artryry/commit/services/api-gateway/src/internal/common"
+	"github.com/artryry/commit/services/api-gateway/src/internal/config"
 	router "github.com/artryry/commit/services/api-gateway/src/internal/transport/http"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/handlers"
 
@@ -21,10 +22,11 @@ type App struct {
 func NewApp() *App {
 	clients := clients.NewClients()
 	handlers := handlers.NewHandlers()
+	cfg := config.Load()
 	keys := common.NewKeys(clients.Auth)
 
 	return &App{
-		Router:  router.NewRouter(clients, handlers, keys),
+		Router:  router.NewRouter(clients, handlers, cfg),
 		Clients: clients,
 		Keys:    keys,
 	}

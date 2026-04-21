@@ -4,11 +4,11 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from config import settings
-from routers import users
-from database.database import create_tables
-from logger import Logger
-from synchronizer import Synchronizer
+from services.authentications.old_v.src.config import settings
+from services.authentications.old_v.src.routers import users
+from services.authentications.old_v.src.database.database import create_tables
+from services.authentications.old_v.src.logger import Logger
+from services.authentications.old_v.src.synchronizer import Synchronizer
 
 
 @asynccontextmanager

@@ -1,9 +1,9 @@
 from aiokafka import AIOKafkaProducer
 import json
 
-from schemas import UsersSendDTO
-from interfaces import ISynchronizer
-from config import settings
+from services.authentications.old_v.src.schemas import UsersSendDTO
+from services.authentications.old_v.src.interfaces import ISynchronizer
+from services.authentications.old_v.src.config import settings
 
 
 class Synchronizer(ISynchronizer):

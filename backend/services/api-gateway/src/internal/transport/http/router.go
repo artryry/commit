@@ -6,12 +6,13 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/artryry/commit/services/api-gateway/src/clients"
-	"github.com/artryry/commit/services/api-gateway/src/internal/common"
+	"github.com/artryry/commit/services/api-gateway/src/internal/config"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/handlers"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/middleware"
+	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/proxy"
 )
 
-func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, keys *common.Keys) *chi.Mux {
+func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
 	// Global Middleware
@@ -27,19 +28,24 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, keys *comm
 	router.Route("/api/v1", func(r chi.Router) {
 
 		// ================= AUTH =================
+		// r.Route("/auth", func(r chi.Router) {
+		// 	r.Post("/register", handlers.Auth.Register(clients.Auth))
+		// 	r.Post("/login", handlers.Auth.Authorize(clients.Auth))
+		// 	r.Post("/refresh", handlers.Auth.Refresh(clients.Auth))
+		// })
 		r.Route("/auth", func(r chi.Router) {
-			r.Post("/register", handlers.Auth.Register(clients.Auth))
-			r.Post("/login", handlers.Auth.Authorize(clients.Auth))
-			r.Post("/refresh", handlers.Auth.Refresh(clients.Auth))
+			r.Mount("/register", proxy.New(cfg.AuthServiceURL))
+			r.Mount("/login", proxy.New(cfg.AuthServiceURL))
+			r.Mount("/refresh", proxy.New(cfg.AuthServiceURL))
 		})
 
 		// ================= PROTECTED ROUTES =================
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.JWT(clients.Auth, keys.PublicKey))
+			r.Use(middleware.JWT(clients.Auth, cfg.JWTPublicKey))
 
 			// -------- AUTH --------
 			r.Route("/auth", func(r chi.Router) {
-				r.Get("/delete", handlers.Auth.Delete(clients.Auth))
+				r.Mount("/delete", proxy.New(cfg.AuthServiceURL))
 			})
 
 			// -------- PROFILE --------
