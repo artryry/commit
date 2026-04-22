@@ -46,6 +46,7 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *confi
 			// -------- AUTH --------
 			r.Route("/auth", func(r chi.Router) {
 				r.Mount("/delete", proxy.New(cfg.AuthServiceURL))
+				r.Mount("/logout", proxy.New(cfg.AuthServiceURL))
 			})
 
 			// -------- PROFILE --------
