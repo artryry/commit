@@ -15,3 +15,6 @@ def setup_logger(log_level=logging.INFO):
     )
 
     return logging.getLogger()
+
+
+Logger = setup_logger()

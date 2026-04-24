@@ -1,9 +1,39 @@
+from enum import Enum
+
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, func
+from sqlalchemy import Enum as SQLEnum
 
 from db import Base
+
+
+class UserRole(str, Enum):
+    USER = "user"
+    ADMIN = "admin"
+    SUBSCRIBER = "subscriber"
 
 
 class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(nullable=False)
+    role: Mapped[UserRole] = mapped_column(
+        SQLEnum(UserRole),
+        default=UserRole.USER,
+        nullable=False,
+    )
+    subscribed_at: Mapped[DateTime] = mapped_column(nullable=True)
+    subscribed_until: Mapped[DateTime] = mapped_column(nullable=True)
+    is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(
+        server_default=func.now(), 
+        nullable=False,
+    )
+    updated_at: Mapped[DateTime] = mapped_column(
+        server_default=func.now(),
+        server_onupdate=func.now(),
+        nullable=False,
+    )
