@@ -9,60 +9,57 @@ from utils import Logger
 
 
 class RefreshTokenRepository:
-    def __init__(self, db_session: Callable[[], AsyncSession]):
+    def __init__(self, db_session: AsyncSession):
         self.__db_session = db_session
 
 
-    async def create_refresh_token(self, refresh_token: RefreshToken) -> RefreshToken | None:
-        async with self.__db_session() as session:
-            try:
-                session.add(refresh_token)
+    async def create_refresh_token(self, refresh_token: RefreshToken) -> RefreshToken:
+        try:
+            self.__db_session.add(refresh_token)
 
-                await session.commit()
-                await session.refresh(refresh_token)
-                Logger.info(f"Refresh token created with id {refresh_token.id}")
+            await self.__db_session.commit()
+            await self.__db_session.refresh(refresh_token)
+            Logger.info(f"Refresh token created with id {refresh_token.id}")
 
-                return refresh_token
-            except IntegrityError as ex:
-                Logger.error(f"func {self.create_refresh_token.__name__}: IntegrityError: {ex}")
-                await session.rollback()
+            return refresh_token
+        except IntegrityError as ex:
+            Logger.error(f"func {self.create_refresh_token.__name__}: IntegrityError: {ex}")
+            await self.__db_session.rollback()
 
-                return None
+            raise
 
 
     async def get_refresh_token_by_token(self, token: str) -> RefreshToken | None:
-        async with self.__db_session() as session:
-            try:
-                query = select(RefreshToken).where(RefreshToken.token == token)
-                result = await session.execute(query)
-                
-                return result.scalar_one_or_none()
-            except IntegrityError as ex:
-                Logger.error(f"func {self.get_refresh_token_by_token.__name__}: IntegrityError: {ex}")
-                await session.rollback()
+        try:
+            query = select(RefreshToken).where(RefreshToken.token == token)
+            result = await self.__db_session.execute(query)
+            
+            return result.scalar_one_or_none()
+        except IntegrityError as ex:
+            Logger.error(f"func {self.get_refresh_token_by_token.__name__}: IntegrityError: {ex}")
+            await self.__db_session.rollback()
 
-                return None
-            
-            
+            raise
+
+
     async def delete_refresh_token_by_id(self, token_id: int) -> bool:
-        async with self.__db_session() as session:
-            try:
-                query = select(RefreshToken).where(RefreshToken.id == token_id)
-                result = await session.execute(query)
-                refresh_token = result.scalar_one_or_none()
+        try:
+            query = select(RefreshToken).where(RefreshToken.id == token_id)
+            result = await self.__db_session.execute(query)
+            refresh_token = result.scalar_one_or_none()
 
-                if refresh_token is None:
-                    Logger.warning(f"Refresh token with id {token_id} not found for deletion")
-                    return False
-
-                await session.delete(refresh_token)
-                await session.commit()
-                Logger.info(f"Refresh token with id {token_id} deleted")
-
-                return True
-            except IntegrityError as ex:
-                Logger.error(f"func {self.delete_refresh_token_by_id.__name__}: IntegrityError: {ex}")
-                await session.rollback()
-
+            if refresh_token is None:
+                Logger.warning(f"Refresh token with id {token_id} not found for deletion")
                 return False
+
+            await self.__db_session.delete(refresh_token)
+            await self.__db_session.commit()
+            Logger.info(f"Refresh token with id {token_id} deleted")
+
+            return True
+        except IntegrityError as ex:
+            Logger.error(f"func {self.delete_refresh_token_by_id.__name__}: IntegrityError: {ex}")
+            await self.__db_session.rollback()
+
+            raise
             

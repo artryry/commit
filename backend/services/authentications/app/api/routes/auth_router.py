@@ -1,36 +1,86 @@
 from fastapi.routing import APIRouter
+from fastapi import Depends, status
+
+from app.schemas import (
+    RegisterRequest,
+    AuthResponse,
+    LoginRequest,
+    LogoutRequest,
+    MessageResponse,
+    RefreshTokenRequest,
+    RefreshTokenResponse,
+    DeleteAccountRequest,
+)
+from deps import get_auth_service
+from app.services import AuthService
 
 
-router = APIRouter(
+auth_router = APIRouter(
     tags=["auth"],
 )
 
 
-@router.get("/health")
+@auth_router.get(
+    "/health",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+    )
 async def health_check():
-    return {"status": "ok"}
+    return MessageResponse(message="Authentication service is healthy")
 
 
-@router.post("/login")
-async def login():
-    return {"message": "Login endpoint - to be implemented"}
+@auth_router.post(
+    "/register",
+    response_model=AuthResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def register(
+    request: RegisterRequest,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    return await auth_service.register(request)
 
 
-@router.post("/register")
-async def register():
-    return {"message": "Register endpoint - to be implemented"}
+@auth_router.post(
+    "/login",
+    response_model=AuthResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def login(
+    request: LoginRequest,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    return await auth_service.login(request)
 
 
-@router.post("/refresh")
-async def refresh_token():  
-    return {"message": "Refresh token endpoint - to be implemented"}
+@auth_router.post(
+    "/logout",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def logout(request: LogoutRequest, auth_service: AuthService = Depends(get_auth_service)):
+    return await auth_service.logout(request)
 
 
-@router.post("/logout")
-async def logout():
-    return {"message": "Logout endpoint - to be implemented"}
+@auth_router.post(
+    "/token",
+    response_model=RefreshTokenResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def refresh_token(
+    request: RefreshTokenRequest,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    return await auth_service.refresh_token(request)
 
 
-@router.post("/delete")
-async def delete_account():     
-    return {"message": "Delete account endpoint - to be implemented"}
+@auth_router.post(
+    "/delete",
+    response_model=MessageResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def delete_account(
+    request: DeleteAccountRequest,
+    auth_service: AuthService = Depends(get_auth_service),
+):
+    return await auth_service.delete_account(request)

@@ -21,9 +21,14 @@ class Config(BaseSettings):
     DB_NAME: str = "auth_db"
     
     # JWT settings
-    JWT_SECRET_KEY: str = "your_secret_key"
-    JWT_ALGORITHM: str = "RC256"
+    JWT_PRIVATE_KEY: str = "your_private_key"
+    JWT_PUBLIC_KEY: str = "your_public_key"
+    JWT_ALGORITHM: str = "RS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # Password settings
+    MIN_PASSWORD_LENGTH: int = 8
 
     @cached_property
     def DATABASE_URL(self) -> str:

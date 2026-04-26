@@ -1,7 +1,8 @@
 from enum import Enum
+from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import DateTime, func
+from sqlalchemy import DateTime, func, UUID
 from sqlalchemy import Enum as SQLEnum
 
 from db import Base
@@ -24,15 +25,17 @@ class User(Base):
         default=UserRole.USER,
         nullable=False,
     )
-    subscribed_at: Mapped[DateTime] = mapped_column(nullable=True)
-    subscribed_until: Mapped[DateTime] = mapped_column(nullable=True)
+    subscribed_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    subscribed_until: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-    created_at: Mapped[DateTime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
         server_default=func.now(), 
         nullable=False,
     )
-    updated_at: Mapped[DateTime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
         server_default=func.now(),
         server_onupdate=func.now(),
         nullable=False,

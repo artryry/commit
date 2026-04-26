@@ -1,5 +1,8 @@
 from pydantic import BaseModel, EmailStr
 
+from .token import AccessTokenPayload
+
+
 class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
@@ -10,7 +13,8 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class RefreshTokenRequest(BaseModel):
+class LogoutRequest(BaseModel):
+    access_token_payload: AccessTokenPayload
     refresh_token: str
 
 
@@ -18,3 +22,17 @@ class AuthResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+
+class RefreshTokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+
+
+class DeleteAccountRequest(BaseModel):
+    access_token_payload: AccessTokenPayload
+    refresh_token: str

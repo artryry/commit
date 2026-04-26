@@ -36,7 +36,7 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *confi
 		r.Route("/auth", func(r chi.Router) {
 			r.Mount("/register", proxy.New(cfg.AuthServiceURL))
 			r.Mount("/login", proxy.New(cfg.AuthServiceURL))
-			r.Mount("/refresh", proxy.New(cfg.AuthServiceURL))
+			r.Mount("/token", proxy.New(cfg.AuthServiceURL))
 		})
 
 		// ================= PROTECTED ROUTES =================
