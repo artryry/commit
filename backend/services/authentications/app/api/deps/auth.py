@@ -6,7 +6,9 @@ from app.services import TokenService
 from app.models import UserRole
 from app.repositories import UserRepository, RefreshTokenRepository
 from app.services import AuthService
-from .services import get_user_repository, get_refresh_token_repository
+from .repositories import get_user_repository, get_refresh_token_repository
+from .kafka import get_kafka_producer_service
+from app.kafka import KafkaProducerService
 
 
 security = HTTPBearer()
@@ -24,10 +26,12 @@ async def get_access_token_payload(
 async def get_auth_service(
     user_repository: UserRepository = Depends(get_user_repository),
     refresh_token_repository: RefreshTokenRepository = Depends(get_refresh_token_repository),
+    kafka_producer_service: KafkaProducerService = Depends(get_kafka_producer_service),
 ) -> AuthService:
     return AuthService(
         user_repository=user_repository,
         refresh_token_repository=refresh_token_repository,
+        kafka_producer_service=kafka_producer_service,
     )
 
 

@@ -1,16 +1,16 @@
 services:
 # Nginx
-  nginx-gateway:
-    container_name: nginx-gateway
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - 8000:8000
-    depends_on:
-      - ms-auth
-      - ms-profiles
-    restart: always
+  # nginx-gateway:
+  #   container_name: nginx-gateway
+  #   build:
+  #     context: ./nginx
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8000:8000
+  #   depends_on:
+  #     - ms-auth
+  #     - ms-profiles
+  #   restart: always
 
 # API-gateway
   api-gateway:
@@ -20,9 +20,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
+    env_file:
+      - ./services/api-gateway/.env
     depends_on:
       - ms-auth
-      - ms-profiles
+      # - ms-profiles
     restart: always
 
 # Kafka
@@ -78,141 +80,141 @@ services:
       - 5432:5432
     restart: always
 
-# Profiles Service
-  ms-profiles:
-    container_name: ms-profiles
-    build:
-      context: ./services/profiles
-      dockerfile: Dockerfile
-    ports:
-      - 8002:8002
-    env_file:
-      - ./services/profiles/.env
-    depends_on:
-      - db-profiles
-      - ms-auth
-      - redis-profiles
-    restart: always
+# # Profiles Service
+#   ms-profiles:
+#     container_name: ms-profiles
+#     build:
+#       context: ./services/profiles
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8002:8002
+#     env_file:
+#       - ./services/profiles/.env
+#     depends_on:
+#       - db-profiles
+#       - ms-auth
+#       - redis-profiles
+#     restart: always
 
-  db-profiles:
-    image: postgres:latest
-    container_name: db-profiles
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: my_own_password_123
-      POSTGRES_DB: users_profiles
-    volumes:
-      - postgres_data_profiles:/var/lib/postgresql/data
-    ports:
-      - 5433:5432
-    restart: always
+#   db-profiles:
+#     image: postgres:latest
+#     container_name: db-profiles
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: my_own_password_123
+#       POSTGRES_DB: users_profiles
+#     volumes:
+#       - postgres_data_profiles:/var/lib/postgresql/data
+#     ports:
+#       - 5433:5432
+#     restart: always
 
-# Recommendations Service
-  ms-recommendations:
-    container_name: ms-recommendations
-    build:
-      context: ./services/recommendations
-      dockerfile: Dockerfile
-    ports:
-      - 8004:8004
-    env_file:
-      - ./services/recommendations/.env
-    depends_on:
-      - db-recommendations
-      - ms-auth
-      - ms-profiles
-      - kafka
-      - redis-recommendations
-    restart: always
+# # Recommendations Service
+#   ms-recommendations:
+#     container_name: ms-recommendations
+#     build:
+#       context: ./services/recommendations
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8004:8004
+#     env_file:
+#       - ./services/recommendations/.env
+#     depends_on:
+#       - db-recommendations
+#       - ms-auth
+#       - ms-profiles
+#       - kafka
+#       - redis-recommendations
+#     restart: always
 
-  db-recommendations:
-    image: postgres:latest
-    container_name: db-recommendations
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: my_own_password_123
-      POSTGRES_DB: recommendations
-    volumes:
-      - postgres_data_recommendations:/var/lib/postgresql/data
-    ports:
-      - 5434:5432
-    restart: always
+#   db-recommendations:
+#     image: postgres:latest
+#     container_name: db-recommendations
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: my_own_password_123
+#       POSTGRES_DB: recommendations
+#     volumes:
+#       - postgres_data_recommendations:/var/lib/postgresql/data
+#     ports:
+#       - 5434:5432
+#     restart: always
 
-  redis-recommendations:
-    image: redis:7.2-alpine
-    container_name: redis-recommendations
-    restart: always
-    ports:
-      - 6379:6379
-#    command: ["redis-server", "--requirepass", "my_own_password_123"]
+#   redis-recommendations:
+#     image: redis:7.2-alpine
+#     container_name: redis-recommendations
+#     restart: always
+#     ports:
+#       - 6379:6379
+# #    command: ["redis-server", "--requirepass", "my_own_password_123"]
 
-# Swipes Service
-  ms-swipes:
-    container_name: ms-swipes
-    build:
-      context: ./services/swipes
-      dockerfile: Dockerfile
-    ports:
-      - 8003:8003
-    env_file:
-      - ./services/swipes/.env
-    depends_on:
-      - db-swipes
-      - ms-auth
-      - ms-profiles
-      - kafka
-    restart: always
+# # Swipes Service
+#   ms-swipes:
+#     container_name: ms-swipes
+#     build:
+#       context: ./services/swipes
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8003:8003
+#     env_file:
+#       - ./services/swipes/.env
+#     depends_on:
+#       - db-swipes
+#       - ms-auth
+#       - ms-profiles
+#       - kafka
+#     restart: always
   
-  db-swipes:
-    image: postgres:latest
-    container_name: db-swipes
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: my_own_password_123
-      POSTGRES_DB: swipes
-    volumes:
-      - postgres_data_swipes:/var/lib/postgresql/data
-    ports:
-      - 5435:5432
-    restart: always
+#   db-swipes:
+#     image: postgres:latest
+#     container_name: db-swipes
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: my_own_password_123
+#       POSTGRES_DB: swipes
+#     volumes:
+#       - postgres_data_swipes:/var/lib/postgresql/data
+#     ports:
+#       - 5435:5432
+#     restart: always
 
-# Chats Service
-  ms-chats:
-    container_name: ms-chats
-    build:
-      context: ./services/chats
-      dockerfile: Dockerfile
-    ports:
-      - 8005:8005
-    env_file:
-      - ./services/chats/.env
-    depends_on:
-      - ms-auth
-      - ms-profiles
-      - kafka
-    restart: always
+# # Chats Service
+#   ms-chats:
+#     container_name: ms-chats
+#     build:
+#       context: ./services/chats
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8005:8005
+#     env_file:
+#       - ./services/chats/.env
+#     depends_on:
+#       - ms-auth
+#       - ms-profiles
+#       - kafka
+#     restart: always
 
-# Notifications Service
-  ms-notifications:
-    container_name: ms-notifications
-    build:
-      context: ./services/notifications
-      dockerfile: Dockerfile
-    ports:
-      - 8006:8006
-    env_file:
-      - ./services/notifications/.env
-    depends_on:
-      - ms-auth
-      - kafka
-    restart: always
+# # Notifications Service
+#   ms-notifications:
+#     container_name: ms-notifications
+#     build:
+#       context: ./services/notifications
+#       dockerfile: Dockerfile
+#     ports:
+#       - 8006:8006
+#     env_file:
+#       - ./services/notifications/.env
+#     depends_on:
+#       - ms-auth
+#       - kafka
+#     restart: always
 
 volumes:
   postgres_data_auth:
-    driver: locald
-  postgres_data_profiles:
     driver: local
-  postgres_data_recommendations:
-    driver: local
-  postgres_data_swipes:
-    driver: local
+  # postgres_data_profiles:
+  #   driver: local
+  # postgres_data_recommendations:
+  #   driver: local
+  # postgres_data_swipes:
+  #   driver: local

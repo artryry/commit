@@ -5,7 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
 from models import User
-from services.authentications.app.db import session
 from utils import Logger
 
 

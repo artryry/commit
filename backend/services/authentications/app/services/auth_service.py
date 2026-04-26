@@ -1,3 +1,6 @@
+from uuid import uuid4
+from datetime import datetime, timezone
+
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 
@@ -16,16 +19,20 @@ from models import User
 from utils import Logger
 from .password_service import PasswordService
 from .token_service import TokenService
+from kafka import KafkaProducerService, Event, UserCreatedPayload, UserDeletedPayload
+from config import cfg
 
 
 class AuthService:
     def __init__(
         self, 
         user_repository: UserRepository, 
-        refresh_token_repository: RefreshTokenRepository
+        refresh_token_repository: RefreshTokenRepository,
+        kafka_producer_service: KafkaProducerService
     ):
         self.__user_repository = user_repository
         self.__refresh_token_repository = refresh_token_repository
+        self.__kafka_producer_service = kafka_producer_service
 
 
     async def register(self, request: RegisterRequest) -> AuthResponse:
@@ -52,6 +59,23 @@ class AuthService:
                 )
             
             raise
+
+        # Send user created event to Kafka
+        event = Event(
+            event_id=str(uuid4()),
+            event_type=cfg.KAFKA_USER_CREATED_TOPIC,
+            occurred_at=datetime.now(timezone.utc),
+            payload=UserCreatedPayload(
+                id=user.id,
+                email=user.email,
+            ).model_dump(),
+        )
+
+        await self.__kafka_producer_service.send_event(
+            cfg.KAFKA_USER_CREATED_TOPIC,
+            event,
+        )
+        Logger.info(f"UserCreated event <id: {event.event_id}, type: {event.event_type}> was sent for user: {user.id}")
 
         refresh_token = await TokenService.generate_refresh_token(
             self.__refresh_token_repository,
@@ -136,6 +160,23 @@ class AuthService:
             )
         
         await self.__user_repository.delete_user(request.access_token_payload.sub)
+
+        # Send user deleted event to Kafka
+        event = Event(
+            event_id=str(uuid4()),
+            event_type=cfg.KAFKA_USER_DELETED_TOPIC,
+            occurred_at=datetime.now(timezone.utc),
+            payload=UserDeletedPayload(
+                id=request.access_token_payload.sub,
+            ).model_dump(),
+        )
+
+        await self.__kafka_producer_service.send_event(
+            cfg.KAFKA_USER_DELETED_TOPIC,
+            event,
+        )
+        Logger.info(f"UserDeleted event <id: {event.event_id}, type: {event.event_type}> was sent for user: {request.access_token_payload.sub}")
+
 
         return MessageResponse(message="Account deleted successfully")
     

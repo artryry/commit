@@ -27,27 +27,18 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *confi
 	// API V1
 	router.Route("/api/v1", func(r chi.Router) {
 
-		// ================= AUTH =================
-		// r.Route("/auth", func(r chi.Router) {
-		// 	r.Post("/register", handlers.Auth.Register(clients.Auth))
-		// 	r.Post("/login", handlers.Auth.Authorize(clients.Auth))
-		// 	r.Post("/refresh", handlers.Auth.Refresh(clients.Auth))
-		// })
-		r.Route("/auth", func(r chi.Router) {
-			r.Mount("/register", proxy.New(cfg.AuthServiceURL))
-			r.Mount("/login", proxy.New(cfg.AuthServiceURL))
-			r.Mount("/token", proxy.New(cfg.AuthServiceURL))
-		})
+		// ================= AUTH (Public Endpoints) =================
+		r.Mount("/auth/register", proxy.New(cfg.AuthServiceURL))
+		r.Mount("/auth/login", proxy.New(cfg.AuthServiceURL))
+		r.Mount("/auth/token", proxy.New(cfg.AuthServiceURL))
 
 		// ================= PROTECTED ROUTES =================
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.JWT(clients.Auth, cfg.JWTPublicKey))
 
-			// -------- AUTH --------
-			r.Route("/auth", func(r chi.Router) {
-				r.Mount("/delete", proxy.New(cfg.AuthServiceURL))
-				r.Mount("/logout", proxy.New(cfg.AuthServiceURL))
-			})
+			// -------- AUTH (Protected Endpoints) --------
+			r.Mount("/auth/delete", proxy.New(cfg.AuthServiceURL))
+			r.Mount("/auth/logout", proxy.New(cfg.AuthServiceURL))
 
 			// -------- PROFILE --------
 			// r.Route("/profile", func(r chi.Router) {

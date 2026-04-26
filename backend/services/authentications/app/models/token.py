@@ -8,6 +8,7 @@ from db import Base
 
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
+    __table_args__ = {"extend_existing": True}
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(

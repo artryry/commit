@@ -1,11 +1,11 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/artryry/commit/services/api-gateway/src/clients"
-	"github.com/artryry/commit/services/api-gateway/src/internal/common"
 	"github.com/artryry/commit/services/api-gateway/src/internal/config"
 	router "github.com/artryry/commit/services/api-gateway/src/internal/transport/http"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/handlers"
@@ -16,24 +16,26 @@ import (
 type App struct {
 	Router  *chi.Mux
 	Clients *clients.Clients
-	Keys    *common.Keys
+	cfg     *config.Config
+	// Keys    *common.Keys
 }
 
 func NewApp() *App {
 	clients := clients.NewClients()
 	handlers := handlers.NewHandlers()
 	cfg := config.Load()
-	keys := common.NewKeys(clients.Auth)
+	// keys := common.NewKeys(cfg, clients.Auth)
 
 	return &App{
 		Router:  router.NewRouter(clients, handlers, cfg),
 		Clients: clients,
-		Keys:    keys,
+		cfg:     cfg,
+		// Keys:    keys,
 	}
 }
 
 func (a *App) Run() {
-	log.Println("Server is starting...")
-	log.Fatal(http.ListenAndServe(common.Address, a.Router))
-	log.Printf("Server is running on %s%s", common.Address, common.Port)
+	log.Println("Server is started")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", a.cfg.Address, a.cfg.Port), a.Router))
+	log.Printf("Server is stopped")
 }

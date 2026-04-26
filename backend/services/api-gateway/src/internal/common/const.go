@@ -9,6 +9,5 @@ const (
 
 	UserIDKey = "user_id"
 
-	Algo          = "RS256"
-	PublicKeyPath = "public.key"
+	Algo = "RS256"
 )

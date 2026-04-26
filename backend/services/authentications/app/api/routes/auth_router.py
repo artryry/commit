@@ -11,7 +11,7 @@ from app.schemas import (
     RefreshTokenResponse,
     DeleteAccountRequest,
 )
-from deps import get_auth_service
+from app.api.deps import get_auth_service
 from app.services import AuthService
 
 
