@@ -17,7 +17,7 @@ import (
 func JWT(authClient *auth.GRPCClient, publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Println("Verify JWT token...")
+			log.Println("Verifying JWT token...")
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -40,11 +40,21 @@ func JWT(authClient *auth.GRPCClient, publicKey *rsa.PublicKey) func(http.Handle
 				return
 			}
 
-			userID, err := claims.GetSubject()
-			if err != nil {
-				http.Error(w, "invalid claims", http.StatusUnauthorized)
+			// Extract user ID from "sub" claim
+			userIDInterface, exists := claims["sub"]
+			if !exists {
+				http.Error(w, "missing sub claim", http.StatusUnauthorized)
 				return
 			}
+
+			// JWT numbers are float64
+			userIDFloat, ok := userIDInterface.(float64)
+			if !ok {
+				http.Error(w, "invalid sub claim type", http.StatusUnauthorized)
+				return
+			}
+
+			userID := int(userIDFloat)
 			log.Printf("Verified JWT token: %v", userID)
 
 			ctx := context.WithValue(r.Context(), common.UserIDKey, userID)

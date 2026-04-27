@@ -10,7 +10,7 @@ done
 echo "Kafka is ready! Creating topics..."
 
 # Creating topics
-./opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --topic public-key
-./opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --topic auth-users
+./opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --topic user.created
+./opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --topic user.deleted
 
 echo "Topics created!"

@@ -45,7 +45,7 @@ class AuthService:
 
         user = User(
             email=request.email,
-            password=PasswordService.hash_password(request.password),
+            password_hash=PasswordService.hash_password(request.password),
         )
 
         try:
@@ -122,7 +122,7 @@ class AuthService:
             self.__refresh_token_repository,
             refresh_token.id,
         )
-        Logger.info(f"User {request.access_token_payload.sub} logged out successfully")
+        Logger.info(f"User {refresh_token.user_id} logged out successfully")
 
         return MessageResponse(message="Logged out successfully")
 
@@ -151,15 +151,8 @@ class AuthService:
             self.__refresh_token_repository,
             request.refresh_token
         )
-
-        if refresh_token.user_id != request.access_token_payload.sub:
-            Logger.info(f"User id from access token does not match user id from refresh token")
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid tokens"
-            )
         
-        await self.__user_repository.delete_user(request.access_token_payload.sub)
+        await self.__user_repository.delete_user(refresh_token.user_id)
 
         # Send user deleted event to Kafka
         event = Event(
@@ -167,7 +160,7 @@ class AuthService:
             event_type=cfg.KAFKA_USER_DELETED_TOPIC,
             occurred_at=datetime.now(timezone.utc),
             payload=UserDeletedPayload(
-                id=request.access_token_payload.sub,
+                id=refresh_token.user_id,
             ).model_dump(),
         )
 
@@ -175,7 +168,7 @@ class AuthService:
             cfg.KAFKA_USER_DELETED_TOPIC,
             event,
         )
-        Logger.info(f"UserDeleted event <id: {event.event_id}, type: {event.event_type}> was sent for user: {request.access_token_payload.sub}")
+        Logger.info(f"UserDeleted event <id: {event.event_id}, type: {event.event_type}> was sent for user: {refresh_token.user_id}")
 
 
         return MessageResponse(message="Account deleted successfully")

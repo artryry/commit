@@ -16,6 +16,7 @@ from app.services import AuthService
 
 
 auth_router = APIRouter(
+    prefix="/api/v1/auth",
     tags=["auth"],
 )
 
@@ -74,7 +75,7 @@ async def refresh_token(
     return await auth_service.refresh_token(request)
 
 
-@auth_router.post(
+@auth_router.delete(
     "/delete",
     response_model=MessageResponse,
     status_code=status.HTTP_200_OK,

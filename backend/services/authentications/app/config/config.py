@@ -36,6 +36,19 @@ class Config(BaseSettings):
     # Password settings
     MIN_PASSWORD_LENGTH: int = 8
 
+    # Debug settings
+    DEBUG: bool = False
+
+
+    @property
+    def LOGGING_LEVEL(self) -> str:
+        return "INFO" if not self.DEBUG else "DEBUG"
+
+
+    @property
+    def DB_ECHO(self) -> bool:
+        return self.DEBUG
+
 
     @cached_property
     def JWT_PRIVATE_KEY(self) -> str:

@@ -14,7 +14,6 @@ class LoginRequest(BaseModel):
 
 
 class LogoutRequest(BaseModel):
-    access_token_payload: AccessTokenPayload
     refresh_token: str
 
 
@@ -34,5 +33,4 @@ class RefreshTokenResponse(BaseModel):
 
 
 class DeleteAccountRequest(BaseModel):
-    access_token_payload: AccessTokenPayload
     refresh_token: str

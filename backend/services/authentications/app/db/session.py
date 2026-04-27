@@ -8,7 +8,7 @@ from config import cfg
 
 async_engine = create_async_engine(
     url=cfg.DATABASE_URL,
-    echo=True,
+    echo=cfg.DB_ECHO,
 )
 
 AsyncSessionLocal = async_sessionmaker(

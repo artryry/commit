@@ -71,7 +71,7 @@ class TokenService:
             user_id=user_id,
             token=token,
             expires_at=(
-                datetime.datetime.now(datetime.timezone.utc) + 
+                datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) + 
                 datetime.timedelta(days=cfg.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
             )
         )
@@ -94,7 +94,7 @@ class TokenService:
                 detail="Invalid refresh token"
             )
 
-        if refresh_token.expires_at < datetime.datetime.now(datetime.timezone.utc):
+        if refresh_token.expires_at < datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None):
             Logger.info(f"Refresh token expired")
             await refreshtoken_repository.delete_refresh_token_by_id(refresh_token.id)
             Logger.info(f"Refresh token with id {refresh_token.id} deleted due to expiration")
