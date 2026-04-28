@@ -418,7 +418,7 @@ main {
     width: 100%;
 }
 
-.action-name > p {
+.action-name>p {
     font-size: var(--fs-24);
     line-height: var(--lh-110);
 
