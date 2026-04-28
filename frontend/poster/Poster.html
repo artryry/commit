@@ -11,7 +11,7 @@
 
 <body>
     <main>
-        <div class="poster">
+        <div class="poster hidden">
             <img id="hi" src="/frontend/poster/background/Group 14.png" alt="">
             <div class="poster-logo">
                 <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
@@ -28,6 +28,112 @@
                 <button class="poster-button">Регистрация</button>
             </div>
         </div>
+
+        <div class="poster-login hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <h1 class="action-text">Вход</h1>
+            </div>
+
+            <form action="" class="form">
+                <div class="data-area">
+                    <div class="input-area">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="example@mail.ru">
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Введите пароль">
+                    </div>
+                </div>
+
+                <div class="poster-buttons second">
+                    <button type="submit" class="poster-button">Войти</button>
+                    <p class="poster-button-text">Еще нет аккаунта? <a href="">Регистрация</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="poster-registration hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <h1 class="action-text">Регистрация</h1>
+            </div>
+
+            <form action="" class="form">
+                <div class="data-area">
+                    <div class="input-area">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="example@mail.ru">
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Введите пароль">
+                        <p class="error">Пароль должен содержать не менее 8 символов</p>
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Повторите пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Повторите пароль">
+                    </div>
+                </div>
+
+                <div class="poster-buttons second">
+                    <button type="submit" class="poster-button">Зарегистрироваться</button>
+                    <p class="poster-button-text">Уже есть аккаунт? <a href="">Войти</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="poster-success hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Поздравляем!</h1>
+                    <p>Вы успешно зарегистрировались!</p>
+                </div>
+                <p>Давайте передем к вашему первому знакомству!</p>
+                <button type="button" class="poster-button">Продолжить</button>
+            </div>
+        </div>
+
+        <div class="poster-yourself">
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Расскажите о себе</h1>
+                </div>
+               <form action="" class="form">
+                <div class="data-area">
+                    <div class="input-area">
+                        <label for="name">Ваше имя</label>
+                        <input type="name" id="name" placeholder="Введите ваше имя">
+                        <p class="p-text">Ваше имя будет видно всем пользователям</p>
+                    </div>
+                    <div class="input-area">
+                        <label for="location">Локация</label>
+                        <input type="text" id="location" placeholder="Введите ваш город">
+                    </div>
+                    <div class="input-area">
+                        <label for="describe">Опишите себя</label>
+                        <textarea name="describe" id="describe" placeholder="Расскажите о себе"></textarea>
+                    </div>
+                </div>
+
+               </form>
+                <div class="poster-buttons second">
+                    <button type="submit" class="poster-button">Продолжить</button>
+                </div>
+            </div>
+        </div>
+
     </main>
     <div class="background-elements">
 
