@@ -57,7 +57,10 @@ main {
 .poster-yourself,
 .poster-success,
 .poster-registration,
-.poster-login {
+.poster-login,
+.poster-tags,
+.poster-photo-add,
+.poster-looking-for {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -313,7 +316,6 @@ main {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    padding-bottom: 32px;
     row-gap: 40px;
 }
 
@@ -349,8 +351,55 @@ main {
     line-height: var(--lh-110);
 }
 
+
 .input-area input:focus {
     outline: 2px solid var(--dark-color);
+}
+
+/* Custom Dropdown */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.custom-dropdown-selected {
+    border: none;
+    border-radius: 12px;
+    padding: 10px 16px;
+    background-color: var(--light-color);
+    color: var(--dark-color);
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-dropdown-options {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    background-color: var(--light-color);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 10;
+    box-shadow: var(--shadow);
+}
+
+.custom-dropdown-option {
+    padding: 10px 16px;
+    color: var(--dark-color);
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    cursor: pointer;
+    user-select: none;
+}
+
+.custom-dropdown-option:hover {
+    background-color: var(--main-color);
+    color: var(--light-color);
 }
 
 .input-area textarea {
@@ -429,6 +478,122 @@ main {
     text-align: start;
 }
 
+.poster-tags .action-name label,
+.p-text {
+    text-align: start;
+}
+
+.poster-looking-for .action-name label,
+.p-text {
+    text-align: start;
+}
+
+.data-area-tags {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.tags-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 24px;
+}
+
+.add-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 12px;
+    row-gap: 12px;
+}
+
+.tag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--accent-color);
+    padding: 8px 12px;
+    border-radius: 12px;
+    height: 42px;
+    max-height: 42px;
+}
+
+.tag-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-color);
+    border-radius: 12px;
+    max-height: 40px;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+p.tag {
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    color: var(--dark-color);
+}
+
+.tag-add:hover {
+    transform: scale(1.1);
+    background-color: var(--accent-color);
+}
+
+.tag-input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-color);
+    padding: 8px 12px;
+    border-radius: 12px;
+    height: 42px;
+    max-height: 42px;
+}
+
+.tag-input-container span {
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    color: var(--dark-color);
+}
+
+.tag-input-container input {
+    border: none;
+    background: transparent;
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: var(--fs-24);
+    line-height: var(--lh-110);
+    color: var(--dark-color);
+    outline: none;
+    width: 50px;
+    min-width: 50px;
+}
+
+.photo-add-conatiner {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    width: 100%;
+    padding: 0 24px 32px 24px;
+}
+
+.photo-background {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: clamp(300px, 40vw, 400px);
+    width: clamp(300px, 40vw, 400px);
+    background-color: var(--light-color);
+    border-radius: 12px;
+    transition: 0.3s ease;
+}
+
+.photo-background:hover {
+    transform: scale(1.02);
+}
 
 
 
@@ -437,6 +602,10 @@ main {
 
 
 @media (max-width: 768px) {
+
+    .action-name {
+        row-gap: 20px;
+    }
 
     .background-elements {
         display: none;
@@ -448,10 +617,11 @@ main {
 
     .form {
         padding-bottom: 0;
+        row-gap: 20px;
     }
 
-    .action-name {
-        row-gap: 15px;
+    .photo-add-conatiner {
+        padding-bottom: 0;
     }
 
 }
