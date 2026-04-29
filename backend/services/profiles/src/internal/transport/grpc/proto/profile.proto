@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+package profile.v1;
+
+option go_package = "github.com/artryry/commit/services/profiles/src/internal/transport/grpc/proto/gen;profilepb";
+
+service ProfileService {
+    rpc GetProfile(GetProfileRequest) returns (ProfileResponse);
+    rpc GetProfiles(GetProfilesRequest) returns (ProfilesResponse);
+    rpc UpdateProfile(UpdateProfileRequest) returns (ProfileResponse);
+    rpc DeleteProfileImages(DeleteProfileImagesRequest) returns (DeleteProfileImagesResponse);
+
+    rpc GetProfileBio(GetProfileBioRequest) returns (ProfileBioResponse);
+    rpc GetProfileSearchFor(GetProfileSearchForRequest) returns (ProfileSearchForResponse);
+    rpc GetProfileTags(GetProfileTagsRequest) returns (GetProfileTagsResponse);
+}
+
+message ShortProfile {
+  int64 user_id = 1;
+  string username = 2;
+  Image avatar_image = 3;
+  string bio = 4;
+  int64 age = 5;
+  string sign = 6;
+  string city = 7;
+  repeated string tags = 8;
+  repeated Image images = 9;
+}
+
+message FullProfile {
+    int64 user_id = 1;
+    string username = 2;
+    Image avatar_image = 3;
+    string bio = 4;
+    int64 age = 5;
+    string sign = 6;
+    string city = 7;
+    RelationshipType relationship_type = 8;
+    string search_for = 9;
+    repeated string tags = 10;
+    repeated Image images = 11;
+}
+
+message Image {
+    int64 id = 1;
+    string url = 2;
+}
+
+enum RelationshipType {
+    SEARCH_FOR_UNSPECIFIED = 0;
+    SEARCH_FOR_FRIENDSHIP = 1;
+    SEARCH_FOR_RELATIONSHIP = 2;
+    SEARCH_FOR_NETWORKING = 3;
+}
+
+message GetProfileRequest {
+  int64 user_id = 1;
+}
+
+message ProfileResponse {
+  FullProfile profile = 1;
+}
+
+message GetProfilesRequest {
+    repeated int64 profile_ids = 1;
+}
+
+message ProfilesResponse {
+    repeated ShortProfile profiles = 1;
+}
+
+message UpdateProfileRequest {
+    int64 user_id = 1;
+
+    optional string username = 2;
+    optional int64 avatar_image = 3;
+    optional string bio = 4;
+    optional string city = 5;
+    optional string search_for = 6;
+    optional RelationshipType relationship_type = 7;
+    
+    repeated string tags = 8;
+}
+
+message DeleteProfileImagesRequest {
+    repeated int64 image_ids = 1;
+}
+
+message DeleteProfileImagesResponse {
+    bool success = 1;
+}
+
+message GetProfileBioRequest {
+    int64 user_id = 1;
+}
+
+message ProfileBioResponse {
+    int64 user_id = 1;
+    string bio = 2;
+}
+
+message GetProfileSearchForRequest {
+    int64 user_id = 1;
+}
+
+message ProfileSearchForResponse {
+    int64 user_id = 1;
+    string search_for = 2;
+}
+
+message GetProfileTagsRequest {
+    int64 user_id = 1;
+}
+
+message GetProfileTagsResponse {
+    int64 user_id = 1;
+    repeated string tags = 2;
+}
