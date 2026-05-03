@@ -5,14 +5,16 @@ package profile.v1;
 option go_package = "github.com/artryry/commit/services/profiles/src/internal/transport/grpc/proto/gen;profilepb";
 
 service ProfileService {
-    rpc GetProfile(GetProfileRequest) returns (ProfileResponse);
-    rpc GetProfiles(GetProfilesRequest) returns (ProfilesResponse);
-    rpc UpdateProfile(UpdateProfileRequest) returns (ProfileResponse);
+    rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);
+    rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+    rpc GetProfiles(GetProfilesRequest) returns (GetProfilesResponse);
+    rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+    
+    rpc UploadProfileImage(UploadProfileImageRequest) returns (UploadProfileImageResponse);
     rpc DeleteProfileImages(DeleteProfileImagesRequest) returns (DeleteProfileImagesResponse);
 
-    rpc GetProfileBio(GetProfileBioRequest) returns (ProfileBioResponse);
-    rpc GetProfileSearchFor(GetProfileSearchForRequest) returns (ProfileSearchForResponse);
-    rpc GetProfileTags(GetProfileTagsRequest) returns (GetProfileTagsResponse);
+    rpc AttachProfileTags (AddProfileTagsRequest) returns (AddProfileTagsResponse);
+    rpc DetachProfileTags (DetachProfileTagsRequest) returns (DetachProfileTagsResponse);
 }
 
 message ShortProfile {
@@ -41,9 +43,25 @@ message FullProfile {
     repeated Image images = 11;
 }
 
+message ProfileRequest {
+    int64 user_id = 1;
+    string username = 2;
+    Image avatar_image = 3;
+    string bio = 4;
+    int64 birthday = 5;
+    Gender gender = 6;
+    string sign = 7;
+    string city = 8;
+    RelationshipType relationship_type = 9;
+    string search_for = 10;
+    repeated string tags = 11;
+    repeated Image images = 12;
+}
+
 message Image {
     int64 id = 1;
     string url = 2;
+    int64 create_at = 3;
 }
 
 enum RelationshipType {
@@ -53,33 +71,40 @@ enum RelationshipType {
     SEARCH_FOR_NETWORKING = 3;
 }
 
+enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+}
+
 message GetProfileRequest {
   int64 user_id = 1;
 }
 
-message ProfileResponse {
-  FullProfile profile = 1;
+message GetProfileResponse {
+  FullProfile profile_data = 1;
 }
 
 message GetProfilesRequest {
-    repeated int64 profile_ids = 1;
+    repeated int64 user_ids = 1;
 }
 
-message ProfilesResponse {
-    repeated ShortProfile profiles = 1;
+message GetProfilesResponse {
+    repeated ShortProfile profiles_data = 1;
 }
 
 message UpdateProfileRequest {
     int64 user_id = 1;
 
     optional string username = 2;
-    optional int64 avatar_image = 3;
+    optional int64 avatar_image_id = 3;
     optional string bio = 4;
     optional string city = 5;
     optional string search_for = 6;
     optional RelationshipType relationship_type = 7;
-    
-    repeated string tags = 8;
+}
+
+message UpdateProfileResponse {
+    FullProfile profile_data = 1;
 }
 
 message DeleteProfileImagesRequest {
@@ -90,29 +115,38 @@ message DeleteProfileImagesResponse {
     bool success = 1;
 }
 
-message GetProfileBioRequest {
+message UploadProfileImageRequest {
     int64 user_id = 1;
+    bytes image = 2;
 }
 
-message ProfileBioResponse {
+message UploadProfileImageResponse {
     int64 user_id = 1;
-    string bio = 2;
+    Image image = 2;
 }
 
-message GetProfileSearchForRequest {
-    int64 user_id = 1;
+message CreateProfileRequest {
+    ProfileRequest profile = 1;
 }
 
-message ProfileSearchForResponse {
-    int64 user_id = 1;
-    string search_for = 2;
+message CreateProfileResponse {
+    bool success = 1;
 }
 
-message GetProfileTagsRequest {
-    int64 user_id = 1;
-}
-
-message GetProfileTagsResponse {
+message AddProfileTagsRequest {
     int64 user_id = 1;
     repeated string tags = 2;
+}
+
+message AddProfileTagsResponse {
+    bool success = 1;
+}
+
+message DetachProfileTagsRequest {
+    int64 user_id = 1;
+    repeated string tags = 2;
+}
+
+message DetachProfileTagsResponse {
+    bool success = 1;
 }

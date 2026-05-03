@@ -5,8 +5,6 @@ CREATE TABLE IF NOT EXISTS images (
 
     storage_key TEXT NOT NULL,
 
-    position BIGINT NOT NULL DEFAULT 0,
-
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 
     CONSTRAINT fk_images_profile

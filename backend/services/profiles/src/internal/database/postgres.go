@@ -6,8 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/artryry/commit/services/profiles/src/internal/config"
-	"github.com/artryry/commit/services/profiles/src/internal/logger"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/config"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/logger"
 )
 
 func NewPostgres(

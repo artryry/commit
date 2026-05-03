@@ -1,0 +1,3 @@
+INSERT INTO tags (name)
+SELECT UNNEST($1::text[])
+ON CONFLICT(name) DO NOTHING;

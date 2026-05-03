@@ -14,6 +14,7 @@ type Config struct {
 	GRPC     GRPCConfig
 	Postgres PostgresConfig
 	Kafka    KafkaConfig
+	Storage  Storage
 }
 
 type AppConfig struct {
@@ -33,11 +34,20 @@ type PostgresConfig struct {
 	QueriesPathPrefix string
 }
 
+type Storage struct {
+	Endpoint  string
+	AccessKey string
+	SecretKey string
+	Bucket    string
+	UseSSL    bool
+}
+
 type KafkaConfig struct {
-	Brokers               []string
-	GroupID               string
-	UserDeletedEventTopic string
-	UserCreatedEventTopic string
+	Brokers                  []string
+	GroupID                  string
+	UserDeletedEventTopic    string
+	UserCreatedEventTopic    string
+	ProfileUpdatedEventTopic string
 }
 
 func Load() *Config {
@@ -84,6 +94,18 @@ func Load() *Config {
 				"KAFKA_TOPIC_USER_DELETED_EVENT",
 				"user.deleted",
 			),
+			ProfileUpdatedEventTopic: getEnv(
+				"KAFKA_TOPIC_PROFILE_UPDATED_EVENT",
+				"profile.updated",
+			),
+		},
+
+		Storage: Storage{
+			Endpoint:  getEnv("STORAGE_ENDPOINT", "http://localhost:9000"),
+			AccessKey: getEnv("STORAGE_ACCESS_KEY", "minio"),
+			SecretKey: getEnv("STORAGE_SECRET_KEY", "minio"),
+			Bucket:    getEnv("STORAGE_BUCKET", "profiles"),
+			UseSSL:    getEnv("STORAGE_USE_SSL", "false") == "true",
 		},
 	}
 }

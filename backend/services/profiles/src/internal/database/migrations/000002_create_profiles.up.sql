@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS profiles (
     user_id BIGINT PRIMARY KEY,
 
-    username VARCHAR(30) NOT NULL UNIQUE,
+    username VARCHAR(30),
 
-    birth_day DATE NOT NULL,
+    birth_day DATE,
 
-    gender gender NOT NULL,
+    gender gender,
 
     bio TEXT,
 
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS profiles (
 
     avatar_image_id BIGINT,
 
-    relationship_type relationship_type,
+    relationship_type relationship_type DEFAULT 'unspecified',
 
     sign VARCHAR(30),
 

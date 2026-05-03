@@ -6,7 +6,7 @@ CREATE TYPE gender AS ENUM (
 CREATE TYPE relationship_type AS ENUM (
     'friendship',
     'relationship',
-    'networking'
+    'unspecified'
 );
 
 CREATE TYPE moderation_status AS ENUM (

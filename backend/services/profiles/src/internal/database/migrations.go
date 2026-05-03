@@ -7,8 +7,8 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 
-	"github.com/artryry/commit/services/profiles/src/internal/config"
-	"github.com/artryry/commit/services/profiles/src/internal/logger"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/config"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/logger"
 )
 
 func RunMigrations(

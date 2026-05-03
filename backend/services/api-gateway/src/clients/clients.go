@@ -1,11 +1,13 @@
 package clients
 
-import "github.com/artryry/commit/services/api-gateway/src/clients/auth"
+import "github.com/artryry/commit/services/api-gateway/src/clients/profiles"
 
 type Clients struct {
-	Auth *auth.GRPCClient
+	profiles *profiles.ProfileClient
 }
 
 func NewClients() *Clients {
-	return &Clients{Auth: &auth.GRPCClient{}}
+	return &Clients{
+		profiles: profiles.NewProfileClient(),
+	}
 }

@@ -34,7 +34,7 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *confi
 
 		// ================= PROTECTED ROUTES =================
 		r.Group(func(r chi.Router) {
-			r.Use(middleware.JWT(clients.Auth, cfg.JWTPublicKey))
+			r.Use(middleware.JWT(cfg.JWTPublicKey))
 
 			// -------- AUTH (Protected Endpoints) --------
 			r.Mount("/auth/delete", proxy.New(cfg.AuthServiceURL))

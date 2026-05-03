@@ -80,34 +80,49 @@ services:
       - 5432:5432
     restart: always
 
-# # Profiles Service
-#   ms-profiles:
-#     container_name: ms-profiles
-#     build:
-#       context: ./services/profiles
-#       dockerfile: Dockerfile
-#     ports:
-#       - 8002:8002
-#     env_file:
-#       - ./services/profiles/.env
-#     depends_on:
-#       - db-profiles
-#       - ms-auth
-#       - redis-profiles
-#     restart: always
+# Profiles Service
+  ms-profiles:
+    container_name: ms-profiles
+    build:
+      context: ./services/profiles
+      dockerfile: Dockerfile
+    ports:
+      - 8002:8002
+    env_file:
+      - ./services/profiles/.env
+    depends_on:
+      - db-profiles
+      - ms-auth
+      - redis-profiles
+    restart: always
 
-#   db-profiles:
-#     image: postgres:latest
-#     container_name: db-profiles
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: my_own_password_123
-#       POSTGRES_DB: users_profiles
-#     volumes:
-#       - postgres_data_profiles:/var/lib/postgresql/data
-#     ports:
-#       - 5433:5432
-#     restart: always
+  db-profiles:
+    image: postgres:latest
+    container_name: db-profiles
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: users_profiles
+    volumes:
+      - postgres_data_profiles:/var/lib/postgresql/data
+    ports:
+      - 5433:5432
+    restart: always
+
+  minio:
+    image: minio/minio
+
+    command: server /data
+
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+
+    ports:
+      - "9000:9000"
+
+    volumes:
+      - minio_data:/var/lib/minio/data
 
 # # Recommendations Service
 #   ms-recommendations:
@@ -212,8 +227,10 @@ services:
 volumes:
   postgres_data_auth:
     driver: local
-  # postgres_data_profiles:
-  #   driver: local
+  postgres_data_profiles:
+    driver: local
+  minio_data:
+    driver: local
   # postgres_data_recommendations:
   #   driver: local
   # postgres_data_swipes:

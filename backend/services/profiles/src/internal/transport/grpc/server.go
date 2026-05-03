@@ -3,13 +3,13 @@ package grpc
 import (
 	"net"
 
-	"github.com/artryry/commit/services/profiles/src/internal/transport/grpc/handlers"
-	pb "github.com/artryry/commit/services/profiles/src/internal/transport/grpc/proto/gen"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/transport/grpc/handlers"
+	pb "github.com/artryry/commit/backend/services/profiles/src/internal/transport/grpc/proto/gen"
 	"google.golang.org/grpc"
 )
 
-func Run(handler *handlers.ProfileHandler) error {
-	lis, err := net.Listen("tcp", ":50051") // CHANGE PORTS!
+func Run(listenAddr string, handler *handlers.ProfileHandler) error {
+	lis, err := net.Listen("tcp", listenAddr)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 SELECT
     p.user_id,
     p.username,
+    p.avatar_image_id,
     p.bio,
     DATE_PART('year', AGE(p.birth_day))::BIGINT AS age,
     p.sign,

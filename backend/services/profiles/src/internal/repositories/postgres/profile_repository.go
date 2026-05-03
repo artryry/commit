@@ -6,25 +6,76 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/artryry/commit/services/profiles/src/internal/config"
-	"github.com/artryry/commit/services/profiles/src/internal/domain"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/config"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/domain"
 )
 
 type ProfileRepository struct {
-	cfg *config.Config
-	db  *pgxpool.Pool
+	db *pgxpool.Pool
 }
 
 func NewProfileRepository(cfg *config.Config, db *pgxpool.Pool) *ProfileRepository {
 	initQueries(cfg)
 
 	return &ProfileRepository{
-		cfg: cfg,
-		db:  db,
+		db: db,
 	}
 }
 
-func (r *ProfileRepository) CreateProfile(ctx context.Context, profile *domain.Profile) error {
+func (r *ProfileRepository) CreateProfile(
+	ctx context.Context,
+	userId int64,
+) error {
+	tx, err := r.db.Begin(ctx)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback(ctx)
+		}
+	}()
+
+	_, err = tx.Exec(
+		ctx,
+		createProfileQuery,
+		userId,
+	)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ProfileRepository) FillProfile(
+	ctx context.Context,
+	profile *domain.Profile,
+) error {
+	_, err := r.db.Exec(
+		ctx,
+		fillProfileQuery,
+		profile.Username,
+		profile.Avatar.Id,
+		profile.Bio,
+		profile.City,
+		profile.SearchFor,
+		profile.RelationshipType,
+		profile.Birthday,
+		profile.Gender,
+		profile.Sign,
+		profile.UserId,
+	)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -52,6 +103,7 @@ func (r *ProfileRepository) GetProfiles(
 		err := rows.Scan(
 			&profile.UserId,
 			&profile.Username,
+			&profile.Avatar.Id,
 			&profile.Bio,
 			&profile.Age,
 			&profile.Sign,
@@ -97,10 +149,41 @@ func (r *ProfileRepository) GetProfiles(
 	return profiles, nil
 }
 
-func (r *ProfileRepository) UpdateProfile(ctx context.Context, profile *domain.Profile) error {
+func (r *ProfileRepository) UpdateProfile(
+	ctx context.Context,
+	profile *domain.Profile,
+) error {
+	_, err := r.db.Exec(
+		ctx,
+		updateProfileQuery,
+		profile.Username,
+		profile.Avatar.Id,
+		profile.Bio,
+		profile.City,
+		profile.SearchFor,
+		profile.RelationshipType,
+
+		profile.UserId,
+	)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (r *ProfileRepository) DeleteProfile(ctx context.Context, userId int64) error {
+func (r *ProfileRepository) DeleteProfile(
+	ctx context.Context,
+	userId int64,
+) error {
+	_, err := r.db.Exec(
+		ctx,
+		deleteProfileQuery,
+		userId,
+	)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

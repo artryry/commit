@@ -10,11 +10,10 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"github.com/artryry/commit/services/api-gateway/src/clients/auth"
 	"github.com/artryry/commit/services/api-gateway/src/internal/common"
 )
 
-func JWT(authClient *auth.GRPCClient, publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
+func JWT(publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Println("Verifying JWT token...")
