@@ -9,18 +9,20 @@ import (
 )
 
 type Config struct {
-	Port           string
-	Address        string
-	AuthServiceURL string
-	JWTPublicKey   *rsa.PublicKey
+	Port                string
+	Address             string
+	AuthServiceURL      string
+	ProfileServiceGRPC  string
+	JWTPublicKey        *rsa.PublicKey
 }
 
 func Load() *Config {
 	return &Config{
-		Port:           getEnv("PORT", "8080"),
-		Address:        getEnv("ADDRESS", "0.0.0.0"),
-		AuthServiceURL: getEnv("AUTH_SERVICE_URL", ""),
-		JWTPublicKey:   getJWTPublicKey("JWT_PUBLIC_KEY_PATH", ""),
+		Port:               getEnv("PORT", "8080"),
+		Address:            getEnv("ADDRESS", "0.0.0.0"),
+		AuthServiceURL:     getEnv("AUTH_SERVICE_URL", ""),
+		ProfileServiceGRPC: getEnv("PROFILE_SERVICE_GRPC_ADDR", "localhost:50051"),
+		JWTPublicKey:       getJWTPublicKey("JWT_PUBLIC_KEY_PATH", ""),
 	}
 }
 

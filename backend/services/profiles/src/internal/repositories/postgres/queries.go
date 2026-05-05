@@ -14,6 +14,7 @@ var (
 	createProfileQuery string
 	fillProfileQuery   string
 	getProfilesQuery   string
+	getProfilesWithFilterQuery string
 	updateProfileQuery string
 	deleteProfileQuery string
 
@@ -28,6 +29,7 @@ const (
 	createProfileQueryName = "create_profile.sql"
 	fillProfileQueryName   = "fill_profile.sql"
 	getProfilesQueryName   = "get_profiles.sql"
+	getProfilesWithFilterQueryName = "get_profiles_with_filter.sql"
 	updateProfileQueryName = "update_profile.sql"
 	deleteProfileQueryName = "delete_profile.sql"
 
@@ -40,35 +42,38 @@ const (
 
 func initQueries(cfg *config.Config) {
 	createProfileQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, createProfileQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, createProfileQueryName),
 	)
 	fillProfileQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, fillProfileQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, fillProfileQueryName),
 	)
 	getProfilesQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, getProfilesQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, getProfilesQueryName),
+	)
+	getProfilesWithFilterQuery = loadQuery(
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, getProfilesWithFilterQueryName),
 	)
 	updateProfileQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, updateProfileQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, updateProfileQueryName),
 	)
 	deleteProfileQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, deleteProfileQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, deleteProfileQueryName),
 	)
 
 	attachTagsQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, attachTagsQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, attachTagsQueryName),
 	)
 	createImageQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, createImageQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, createImageQueryName),
 	)
 	deleteImageQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, deleteImageQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, deleteImageQueryName),
 	)
 	createTagsQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, createTagsQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, createTagsQueryName),
 	)
 	detachProfileTagsQuery = loadQuery(
-		fmt.Sprintf("%s%s", cfg.Postgres.QueriesPathPrefix, detachProfileTagsQueryName),
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, detachProfileTagsQueryName),
 	)
 }
 

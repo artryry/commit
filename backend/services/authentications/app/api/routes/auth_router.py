@@ -76,7 +76,7 @@ async def refresh_token(
 
 
 @auth_router.delete(
-    "/delete",
+    "/me",
     response_model=MessageResponse,
     status_code=status.HTTP_200_OK,
 )

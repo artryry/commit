@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package profile.v1;
 
-option go_package = "github.com/artryry/commit/services/profiles/src/internal/transport/grpc/proto/gen;profilepb";
+option go_package = "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/profiles/proto/gen;profilepb";
 
 service ProfileService {
     rpc CreateProfile(CreateProfileRequest) returns (CreateProfileResponse);

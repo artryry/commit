@@ -21,13 +21,16 @@ type App struct {
 }
 
 func NewApp() *App {
-	clients := clients.NewClients()
-	handlers := handlers.NewHandlers()
 	cfg := config.Load()
+	clients, err := clients.NewClients(cfg.ProfileServiceGRPC)
+	if err != nil {
+		log.Fatal(err)
+	}
+	handlers := handlers.NewHandlers(clients)
 	// keys := common.NewKeys(cfg, clients.Auth)
 
 	return &App{
-		Router:  router.NewRouter(clients, handlers, cfg),
+		Router:  router.NewRouter(handlers, cfg),
 		Clients: clients,
 		cfg:     cfg,
 		// Keys:    keys,

@@ -31,6 +31,13 @@ func (s *ProfileService) GetProfiles(
 	return s.profileRepository.GetProfiles(ctx, userIds)
 }
 
+func (s *ProfileService) GetProfilesWithFilter(
+	ctx context.Context,
+	filter domain.ProfileFilter,
+) ([]*domain.Profile, error) {
+	return s.profileRepository.GetProfilesWithFilter(ctx, filter)
+}
+
 func (s *ProfileService) GetProfile(
 	ctx context.Context,
 	userId int64,

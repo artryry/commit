@@ -2,6 +2,7 @@ package database
 
 import (
 	"errors"
+	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/pgx"
@@ -15,9 +16,13 @@ func RunMigrations(
 	cfg *config.Config,
 ) error {
 
+	dsn := cfg.Postgres.DSN()
+	// Replace postgres:// scheme with pgx:// for golang-migrate
+	dsn = strings.ReplaceAll(dsn, "postgres://", "pgx://")
+
 	m, err := migrate.New(
 		"file://internal/database/migrations",
-		cfg.Postgres.DSN()+"?sslmode=disable",
+		dsn+"?sslmode=disable",
 	)
 
 	if err != nil {

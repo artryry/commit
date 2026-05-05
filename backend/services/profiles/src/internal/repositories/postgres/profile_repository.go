@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/artryry/commit/backend/services/profiles/src/internal/config"
@@ -92,6 +93,66 @@ func (r *ProfileRepository) GetProfiles(
 		return nil, err
 	}
 
+	return scanProfileRows(rows)
+}
+
+func (r *ProfileRepository) GetProfilesWithFilter(
+	ctx context.Context,
+	filter domain.ProfileFilter,
+) ([]*domain.Profile, error) {
+	if len(filter.UserIDs) == 0 {
+		return []*domain.Profile{}, nil
+	}
+
+	var rel any
+	if filter.RelationshipType != nil {
+		rel = *filter.RelationshipType
+	}
+
+	var ageFrom any
+	if filter.AgeFrom != nil {
+		ageFrom = *filter.AgeFrom
+	}
+
+	var ageTo any
+	if filter.AgeTo != nil {
+		ageTo = *filter.AgeTo
+	}
+
+	var city any
+	if filter.City != nil {
+		city = *filter.City
+	}
+
+	var sign any
+	if filter.Sign != nil {
+		sign = *filter.Sign
+	}
+
+	var tags any
+	if len(filter.Tags) > 0 {
+		tags = filter.Tags
+	}
+
+	rows, err := r.db.Query(
+		ctx,
+		getProfilesWithFilterQuery,
+		filter.UserIDs,
+		rel,
+		ageFrom,
+		ageTo,
+		city,
+		sign,
+		tags,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return scanProfileRows(rows)
+}
+
+func scanProfileRows(rows pgx.Rows) ([]*domain.Profile, error) {
 	defer rows.Close()
 
 	var profiles []*domain.Profile
@@ -119,10 +180,7 @@ func (r *ProfileRepository) GetProfiles(
 
 		var images []*domain.Image
 
-		err = json.Unmarshal(
-			imagesJSON,
-			&images,
-		)
+		err = json.Unmarshal(imagesJSON, &images)
 		if err != nil {
 			return nil, err
 		}
@@ -136,13 +194,10 @@ func (r *ProfileRepository) GetProfiles(
 			}
 		}
 
-		profiles = append(
-			profiles,
-			&profile,
-		)
+		profiles = append(profiles, &profile)
 	}
 
-	if err = rows.Err(); err != nil {
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 

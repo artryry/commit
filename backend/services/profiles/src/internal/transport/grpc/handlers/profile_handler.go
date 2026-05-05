@@ -108,6 +108,48 @@ func (h *ProfileHandler) GetProfiles(
 	}, nil
 }
 
+func (h *ProfileHandler) GetProfilesWithFilter(
+	ctx context.Context,
+	req *pb.GetProfilesWithFilterRequest,
+) (*pb.GetProfilesWithFilterResponse, error) {
+	filter := domain.ProfileFilter{
+		UserIDs: req.GetUserIds(),
+		Tags:    req.GetTags(),
+	}
+
+	if req.RelationshipType != nil {
+		if db := relationshipTypeProtoToDBEnum(*req.RelationshipType); db != nil {
+			filter.RelationshipType = db
+		}
+	}
+	if req.AgeFrom != nil {
+		filter.AgeFrom = req.AgeFrom
+	}
+	if req.AgeTo != nil {
+		filter.AgeTo = req.AgeTo
+	}
+	if req.City != nil {
+		filter.City = req.City
+	}
+	if req.Sign != nil {
+		filter.Sign = req.Sign
+	}
+
+	profiles, err := h.profileService.GetProfilesWithFilter(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*pb.ShortProfile, 0, len(profiles))
+	for _, profile := range profiles {
+		result = append(result, toShortProfile(profile))
+	}
+
+	return &pb.GetProfilesWithFilterResponse{
+		ProfilesData: result,
+	}, nil
+}
+
 func (h *ProfileHandler) UpdateProfile(
 	ctx context.Context,
 	req *pb.UpdateProfileRequest,
@@ -295,5 +337,24 @@ func genderToDomain(value pb.Gender) domain.Gender {
 		return domain.GenderMale
 	default:
 		return domain.GenderMale
+	}
+}
+
+// relationshipTypeProtoToDBEnum maps proto enum to Postgres relationship_type labels.
+func relationshipTypeProtoToDBEnum(v pb.RelationshipType) *string {
+	switch v {
+	case pb.RelationshipType_SEARCH_FOR_FRIENDSHIP:
+		s := "friendship"
+		return &s
+	case pb.RelationshipType_SEARCH_FOR_RELATIONSHIP:
+		s := "relationship"
+		return &s
+	case pb.RelationshipType_SEARCH_FOR_UNSPECIFIED:
+		s := "unspecified"
+		return &s
+	case pb.RelationshipType_SEARCH_FOR_NETWORKING:
+		return nil
+	default:
+		return nil
 	}
 }

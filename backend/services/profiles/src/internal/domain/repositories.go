@@ -6,6 +6,7 @@ type ProfileRepository interface {
 	CreateProfile(ctx context.Context, userId int64) error
 	FillProfile(ctx context.Context, profile *Profile) error
 	GetProfiles(ctx context.Context, userIds []int64) ([]*Profile, error)
+	GetProfilesWithFilter(ctx context.Context, filter ProfileFilter) ([]*Profile, error)
 	UpdateProfile(ctx context.Context, profile *Profile) error
 	DeleteProfile(ctx context.Context, userId int64) error
 }

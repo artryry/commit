@@ -5,14 +5,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/artryry/commit/services/api-gateway/src/clients"
 	"github.com/artryry/commit/services/api-gateway/src/internal/config"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/handlers"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/middleware"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/proxy"
 )
 
-func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
+func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
 	// Global Middleware
@@ -37,33 +36,39 @@ func NewRouter(clients *clients.Clients, handlers *handlers.Handlers, cfg *confi
 			r.Use(middleware.JWT(cfg.JWTPublicKey))
 
 			// -------- AUTH (Protected Endpoints) --------
-			r.Mount("/auth/delete", proxy.New(cfg.AuthServiceURL))
+			r.Mount("/auth/me", proxy.New(cfg.AuthServiceURL))
 			r.Mount("/auth/logout", proxy.New(cfg.AuthServiceURL))
 
 			// -------- PROFILE --------
-			// r.Route("/profile", func(r chi.Router) {
-			// 	r.Get("/me", handlers.Profile.GetMe)
-			// 	r.Put("/me", handlers.Profile.UpdateMe)
+			r.Route("/profiles", func(r chi.Router) {
+				r.Get("/me", handlers.Profiles.GetMe)
+				r.Put("/me", handlers.Profiles.UpdateMe)
 
-			// 	r.Get("/{user_id}", handlers.Profile.GetByID)
+				r.Get("/", handlers.Profiles.GetByIDs)
+				r.Get("/{user_id}", handlers.Profiles.GetByID)
 
-			// 	r.Post("/images", handlers.Profile.UploadImage)
-			// })
+				r.Post("/images", handlers.Profiles.UploadImages)
+				r.Delete("/images", handlers.Profiles.DeleteImages)
+
+				r.Post("/tags", handlers.Profiles.AttachTags)
+				r.Delete("/tags", handlers.Profiles.DetachTags)
+			})
 
 			// -------- RECOMMENDATIONS --------
-			// r.Route("/recommendations", func(r chi.Router) {
-			// 	r.Get("/", handlers.Recommendation.GetFeed)
-			// })
+			r.Route("/recommendations", func(r chi.Router) {
+				r.Get("/", handlers.Recommendations.GetRecommendations)
+				r.Get("/filters", handlers.Recommendations.Filters)
+			})
 
 			// -------- SWIPES --------
-			// r.Route("/swipes", func(r chi.Router) {
-			// 	r.Post("/", handlers.Swipe.Action)
-			// })
+			r.Route("/swipes", func(r chi.Router) {
+				r.Post("/", handlers.Swipes.Action)
+			})
 
 			// -------- MATCHES --------
-			// r.Route("/matches", func(r chi.Router) {
-			// 	r.Get("/", handlers.Swipe.GetMatches)
-			// })
+			r.Route("/matches", func(r chi.Router) {
+				r.Get("/", handlers.Swipes.GetMatches)
+			})
 
 			// -------- CHATS --------
 			// r.Route("/chats", func(r chi.Router) {

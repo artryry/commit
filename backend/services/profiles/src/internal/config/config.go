@@ -2,11 +2,8 @@ package config
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
-
-	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -52,10 +49,10 @@ type KafkaConfig struct {
 
 func Load() *Config {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Println(".env file not found")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Println(".env file not found")
+	// }
 
 	return &Config{
 		App: AppConfig{
@@ -110,14 +107,11 @@ func Load() *Config {
 	}
 }
 
-func getEnv(key string, fallback string) string {
-	value := os.Getenv(key)
-
-	if value == "" {
-		return fallback
+func getEnv(key, fallback string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
 	}
-
-	return value
+	return fallback
 }
 
 func (p PostgresConfig) DSN() string {

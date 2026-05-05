@@ -13,11 +13,12 @@ import (
 )
 
 type mockProfileRepo struct {
-	createProfileFn func(ctx context.Context, userID int64) error
-	fillProfileFn   func(ctx context.Context, profile *domain.Profile) error
-	getProfilesFn   func(ctx context.Context, userIDs []int64) ([]*domain.Profile, error)
-	updateProfileFn func(ctx context.Context, profile *domain.Profile) error
-	deleteProfileFn func(ctx context.Context, userID int64) error
+	createProfileFn           func(ctx context.Context, userID int64) error
+	fillProfileFn             func(ctx context.Context, profile *domain.Profile) error
+	getProfilesFn             func(ctx context.Context, userIDs []int64) ([]*domain.Profile, error)
+	getProfilesWithFilterFn   func(ctx context.Context, filter domain.ProfileFilter) ([]*domain.Profile, error)
+	updateProfileFn           func(ctx context.Context, profile *domain.Profile) error
+	deleteProfileFn           func(ctx context.Context, userID int64) error
 }
 
 func (m *mockProfileRepo) CreateProfile(ctx context.Context, userID int64) error {
@@ -39,6 +40,13 @@ func (m *mockProfileRepo) GetProfiles(ctx context.Context, userIDs []int64) ([]*
 		return m.getProfilesFn(ctx, userIDs)
 	}
 	return nil, nil
+}
+
+func (m *mockProfileRepo) GetProfilesWithFilter(ctx context.Context, filter domain.ProfileFilter) ([]*domain.Profile, error) {
+	if m.getProfilesWithFilterFn != nil {
+		return m.getProfilesWithFilterFn(ctx, filter)
+	}
+	return m.GetProfiles(ctx, filter.UserIDs)
 }
 
 func (m *mockProfileRepo) UpdateProfile(ctx context.Context, profile *domain.Profile) error {

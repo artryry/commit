@@ -3,11 +3,16 @@ package clients
 import "github.com/artryry/commit/services/api-gateway/src/clients/profiles"
 
 type Clients struct {
-	profiles *profiles.ProfileClient
+	Profiles *profiles.ProfileClient
 }
 
-func NewClients() *Clients {
-	return &Clients{
-		profiles: profiles.NewProfileClient(),
+func NewClients(profileGRPCAddr string) (*Clients, error) {
+	profileClient, err := profiles.NewProfileClient(profileGRPCAddr)
+	if err != nil {
+		return nil, err
 	}
+
+	return &Clients{
+		Profiles: profileClient,
+	}, nil
 }

@@ -24,28 +24,39 @@ services:
       - ./services/api-gateway/.env
     depends_on:
       - ms-auth
-      # - ms-profiles
+      - ms-profiles
     restart: always
 
 # Kafka
   kafka:
-    image: bitnami/kafka:latest
+    image: confluentinc/cp-kafka:7.7.0
     container_name: kafka
     environment:
-      KAFKA_CFG_NODE_ID: 0
-      KAFKA_CFG_PROCESS_ROLES: controller,broker
-      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
-      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
-      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     ports:
       - 9092:9092
-      - 9094:9094
+    depends_on:
+      - zookeeper
+    restart: always
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_INIT_LIMIT: 5
+    ports:
+      - 2181:2181
     restart: always
 
   kafka-init:
-    image: bitnami/kafka:latest
+    image: confluentinc/cp-kafka:7.7.0
     depends_on:
       - kafka
     volumes:
@@ -93,7 +104,8 @@ services:
     depends_on:
       - db-profiles
       - ms-auth
-      - redis-profiles
+      - kafka-init
+      - minio
     restart: always
 
   db-profiles:
@@ -102,7 +114,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: my_own_password_123
-      POSTGRES_DB: users_profiles
+      POSTGRES_DB: profiles
     volumes:
       - postgres_data_profiles:/var/lib/postgresql/data
     ports:
@@ -111,16 +123,13 @@ services:
 
   minio:
     image: minio/minio
-
+    container_name: minio
     command: server /data
-
     environment:
       MINIO_ROOT_USER: admin
       MINIO_ROOT_PASSWORD: password
-
     ports:
       - "9000:9000"
-
     volumes:
       - minio_data:/var/lib/minio/data
 
