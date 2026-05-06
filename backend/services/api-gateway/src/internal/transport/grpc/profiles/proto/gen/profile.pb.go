@@ -1595,7 +1595,7 @@ const file_profile_proto_rawDesc = "" +
 	"\x12UploadProfileImage\x12%.profile.v1.UploadProfileImageRequest\x1a&.profile.v1.UploadProfileImageResponse\x12f\n" +
 	"\x13DeleteProfileImages\x12&.profile.v1.DeleteProfileImagesRequest\x1a'.profile.v1.DeleteProfileImagesResponse\x12Z\n" +
 	"\x11AttachProfileTags\x12!.profile.v1.AddProfileTagsRequest\x1a\".profile.v1.AddProfileTagsResponse\x12`\n" +
-	"\x11DetachProfileTags\x12$.profile.v1.DetachProfileTagsRequest\x1a%.profile.v1.DetachProfileTagsResponseB]Z[github.com/artryry/commit/services/profiles/src/internal/transport/grpc/proto/gen;profilepbb\x06proto3"
+	"\x11DetachProfileTags\x12$.profile.v1.DetachProfileTagsRequest\x1a%.profile.v1.DetachProfileTagsResponseBiZggithub.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/profiles/proto/gen;profilepbb\x06proto3"
 
 var (
 	file_profile_proto_rawDescOnce sync.Once

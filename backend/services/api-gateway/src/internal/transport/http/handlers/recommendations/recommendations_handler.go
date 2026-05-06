@@ -4,147 +4,207 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/artryry/commit/services/api-gateway/src/clients/profiles"
+	recclient "github.com/artryry/commit/services/api-gateway/src/clients/recommendations"
+	"github.com/artryry/commit/services/api-gateway/src/internal/common"
 	profilepb "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/profiles/proto/gen"
+	recommendationpb "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/recommendations/proto/gen"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 type Handler struct {
+	rec      *recclient.RecommendationClient
 	profiles *profiles.ProfileClient
 }
 
-func NewHandler(p *profiles.ProfileClient) *Handler {
-	return &Handler{profiles: p}
+func NewHandler(rec *recclient.RecommendationClient, profiles *profiles.ProfileClient) *Handler {
+	return &Handler{rec: rec, profiles: profiles}
 }
 
-// GetRecommendations handles GET /api/v1/recommendations?ids=1,2,3&...
-// Optional filter query params (same shape as profiles GetProfilesWithFilter) are expected to be
-// provided by the caller (e.g. from the recommendations service response), not stored in the gateway.
+// GetRecommendations handles GET /api/v1/recommendations with no query or body.
+// It calls the recommendations service for candidate ids + filter, then profiles GetProfilesWithFilter.
 func (h *Handler) GetRecommendations(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	q := r.URL.Query()
-	ids, err := parseCommaSeparatedInt64IDs(q.Get("ids"))
-	if err != nil || len(ids) == 0 {
-		http.Error(w, "ids query param is required (comma-separated user ids)", http.StatusBadRequest)
+	userID, ok := userIDFromRequest(r)
+	if !ok {
+		writeJSONError(w, http.StatusUnauthorized, "missing user id in token")
 		return
 	}
 
-	req := &profilepb.GetProfilesWithFilterRequest{
-		UserIds: ids,
-	}
-
-	if s := strings.TrimSpace(q.Get("relationship_type")); s != "" {
-		if rt, ok := parseRelationshipTypePB(s); ok {
-			v := rt
-			req.RelationshipType = &v
-		}
-	}
-	if v, ok := parseOptionalInt64Query(q, "age_from"); ok {
-		req.AgeFrom = v
-	}
-	if v, ok := parseOptionalInt64Query(q, "age_to"); ok {
-		req.AgeTo = v
-	}
-	if s := strings.TrimSpace(q.Get("city")); s != "" {
-		req.City = &s
-	}
-	if s := strings.TrimSpace(q.Get("sign")); s != "" {
-		req.Sign = &s
-	}
-	if tags := parseCommaSeparatedStrings(q.Get("tags")); len(tags) > 0 {
-		req.Tags = tags
-	}
-
-	resp, err := h.profiles.GetProfilesWithFilter(r.Context(), req)
+	recResp, err := h.rec.GetRecommendationsForUser(r.Context(), &recommendationpb.GetRecommendationsForUserRequest{
+		UserId: userID,
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	out, err := protojson.Marshal(resp)
+	profReq := profileFilterFromRecommendations(recResp)
+	profResp, err := h.profiles.GetProfilesWithFilter(r.Context(), profReq)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+
+	out, err := protojson.Marshal(profResp)
 	if err != nil {
 		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(out)
 }
 
-// Filters is markup for /api/v1/recommendations/filters (recommendations service will own filter persistence).
+// Filters handles GET/POST /api/v1/recommendations/filters via the recommendations service.
 func (h *Handler) Filters(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusNotImplemented)
-	_ = json.NewEncoder(w).Encode(map[string]string{
-		"error": "recommendations filters are served by the recommendations service (not implemented in gateway)",
-	})
-}
-
-func parseCommaSeparatedInt64IDs(raw string) ([]int64, error) {
-	if strings.TrimSpace(raw) == "" {
-		return nil, errors.New("empty ids")
+	userID, ok := userIDFromRequest(r)
+	if !ok {
+		writeJSONError(w, http.StatusUnauthorized, "missing user id in token")
+		return
 	}
-	parts := strings.Split(raw, ",")
-	out := make([]int64, 0, len(parts))
-	for _, part := range parts {
-		id, err := strconv.ParseInt(strings.TrimSpace(part), 10, 64)
+
+	switch r.Method {
+	case http.MethodGet:
+		resp, err := h.rec.GetFilters(r.Context(), &recommendationpb.GetFiltersRequest{UserId: userID})
 		if err != nil {
-			return nil, errors.New("invalid id")
+			http.Error(w, err.Error(), http.StatusBadGateway)
+			return
 		}
-		out = append(out, id)
-	}
-	return out, nil
-}
-
-func parseOptionalInt64Query(q url.Values, key string) (*int64, bool) {
-	s := strings.TrimSpace(q.Get(key))
-	if s == "" {
-		return nil, false
-	}
-	v, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		return nil, false
-	}
-	return &v, true
-}
-
-func parseCommaSeparatedStrings(raw string) []string {
-	if strings.TrimSpace(raw) == "" {
-		return nil
-	}
-	parts := strings.Split(raw, ",")
-	out := make([]string, 0, len(parts))
-	for _, p := range parts {
-		if t := strings.TrimSpace(p); t != "" {
-			out = append(out, t)
+		writeProtoJSON(w, http.StatusOK, resp)
+	case http.MethodPost:
+		var body filtersHTTPBody
+		if err := common.DecodeJsonBody(r, &body); err != nil {
+			writeJSONError(w, http.StatusBadRequest, "invalid json body")
+			return
 		}
+		req := &recommendationpb.SetFiltersRequest{UserId: userID}
+		if body.RelationshipType != nil {
+			rt, err := parseRelationshipTypeString(*body.RelationshipType)
+			if err != nil {
+				writeJSONError(w, http.StatusBadRequest, err.Error())
+				return
+			}
+			v := rt
+			req.RelationshipType = &v
+		}
+		if body.AgeFrom != nil {
+			req.AgeFrom = body.AgeFrom
+		}
+		if body.AgeTo != nil {
+			req.AgeTo = body.AgeTo
+		}
+		if body.City != nil {
+			req.City = body.City
+		}
+		if body.Sign != nil {
+			req.Sign = body.Sign
+		}
+		if body.Tags != nil {
+			req.Tags = body.Tags
+		}
+		resp, err := h.rec.SetFilters(r.Context(), req)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadGateway)
+			return
+		}
+		writeProtoJSON(w, http.StatusOK, resp)
+	default:
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 	}
-	return out
 }
 
-func parseRelationshipTypePB(s string) (profilepb.RelationshipType, bool) {
-	s = strings.ToUpper(strings.TrimSpace(s))
-	if s == "" {
-		return 0, false
+type filtersHTTPBody struct {
+	RelationshipType *string  `json:"relationship_type"`
+	AgeFrom          *int64   `json:"age_from"`
+	AgeTo            *int64   `json:"age_to"`
+	City             *string  `json:"city"`
+	Sign             *string  `json:"sign"`
+	Tags             []string `json:"tags"`
+}
+
+func profileFilterFromRecommendations(rec *recommendationpb.GetRecommendationsForUserResponse) *profilepb.GetProfilesWithFilterRequest {
+	req := &profilepb.GetProfilesWithFilterRequest{
+		UserIds: rec.GetCandidateUserIds(),
 	}
-	switch s {
-	case "FRIENDSHIP", "SEARCH_FOR_FRIENDSHIP":
-		return profilepb.RelationshipType_SEARCH_FOR_FRIENDSHIP, true
-	case "RELATIONSHIP", "SEARCH_FOR_RELATIONSHIP":
-		return profilepb.RelationshipType_SEARCH_FOR_RELATIONSHIP, true
-	case "NETWORKING", "SEARCH_FOR_NETWORKING":
-		return profilepb.RelationshipType_SEARCH_FOR_NETWORKING, true
-	case "UNSPECIFIED", "SEARCH_FOR_UNSPECIFIED":
-		return profilepb.RelationshipType_SEARCH_FOR_UNSPECIFIED, true
+	if len(rec.Tags) > 0 {
+		req.Tags = rec.Tags
+	}
+	if rec.RelationshipType != nil {
+		v := *rec.RelationshipType
+		req.RelationshipType = &v
+	}
+	if rec.AgeFrom != nil {
+		req.AgeFrom = rec.AgeFrom
+	}
+	if rec.AgeTo != nil {
+		req.AgeTo = rec.AgeTo
+	}
+	if rec.City != nil {
+		req.City = rec.City
+	}
+	if rec.Sign != nil {
+		req.Sign = rec.Sign
+	}
+	return req
+}
+
+func userIDFromRequest(r *http.Request) (int64, bool) {
+	v := r.Context().Value(common.UserIDKey)
+	switch val := v.(type) {
+	case int:
+		return int64(val), true
+	case int64:
+		return val, true
+	case float64:
+		return int64(val), true
+	case string:
+		id, err := strconv.ParseInt(val, 10, 64)
+		if err != nil {
+			return 0, false
+		}
+		return id, true
 	default:
 		return 0, false
 	}
+}
+
+func parseRelationshipTypeString(value string) (profilepb.RelationshipType, error) {
+	switch strings.ToUpper(strings.TrimSpace(value)) {
+	case "FRIENDSHIP", "SEARCH_FOR_FRIENDSHIP":
+		return profilepb.RelationshipType_SEARCH_FOR_FRIENDSHIP, nil
+	case "RELATIONSHIP", "SEARCH_FOR_RELATIONSHIP":
+		return profilepb.RelationshipType_SEARCH_FOR_RELATIONSHIP, nil
+	case "NETWORKING", "SEARCH_FOR_NETWORKING":
+		return profilepb.RelationshipType_SEARCH_FOR_NETWORKING, nil
+	case "", "UNSPECIFIED", "SEARCH_FOR_UNSPECIFIED":
+		return profilepb.RelationshipType_SEARCH_FOR_UNSPECIFIED, nil
+	default:
+		return 0, errors.New("invalid relationship_type")
+	}
+}
+
+func writeJSONError(w http.ResponseWriter, status int, msg string) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_ = json.NewEncoder(w).Encode(map[string]string{"error": msg})
+}
+
+func writeProtoJSON(w http.ResponseWriter, status int, m proto.Message) {
+	out, err := protojson.Marshal(m)
+	if err != nil {
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	_, _ = w.Write(out)
 }

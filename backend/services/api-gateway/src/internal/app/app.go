@@ -22,7 +22,7 @@ type App struct {
 
 func NewApp() *App {
 	cfg := config.Load()
-	clients, err := clients.NewClients(cfg.ProfileServiceGRPC)
+	clients, err := clients.NewClients(cfg.ProfileServiceGRPC, cfg.RecommendationsServiceGRPC)
 	if err != nil {
 		log.Fatal(err)
 	}

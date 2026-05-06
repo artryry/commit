@@ -18,7 +18,7 @@ type Handlers struct {
 func NewHandlers(c *clients.Clients) *Handlers {
 	return &Handlers{
 		Profiles:        profiles.NewProfileHandler(c.Profiles),
-		Recommendations: recommendations.NewHandler(c.Profiles),
+		Recommendations: recommendations.NewHandler(c.Recommendations, c.Profiles),
 		Swipes:          swipes.NewHandler(),
 	}
 }

@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package recommendation.v1;
+
+option go_package = "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/recommendations/proto/gen;recommendationpb";
+
+import "profile.proto";
+
+// RecommendationService is implemented by the recommendations microservice.
+// The API gateway calls it to obtain candidate user ids and filter criteria, then loads profile rows via profiles.GetProfilesWithFilter.
+service RecommendationService {
+  // Returns candidate profile user ids and filter fields to apply when loading profiles.
+  rpc GetRecommendationsForUser(GetRecommendationsForUserRequest) returns (GetRecommendationsForUserResponse);
+
+  rpc GetFilters(GetFiltersRequest) returns (GetFiltersResponse);
+  rpc SetFilters(SetFiltersRequest) returns (SetFiltersResponse);
+}
+
+message GetRecommendationsForUserRequest {
+  int64 user_id = 1;
+}
+
+message GetRecommendationsForUserResponse {
+  repeated int64 candidate_user_ids = 1;
+  optional profile.v1.RelationshipType relationship_type = 2;
+  optional int64 age_from = 3;
+  optional int64 age_to = 4;
+  optional string city = 5;
+  optional string sign = 6;
+  repeated string tags = 7;
+}
+
+message GetFiltersRequest {
+  int64 user_id = 1;
+}
+
+message GetFiltersResponse {
+  optional profile.v1.RelationshipType relationship_type = 1;
+  optional int64 age_from = 2;
+  optional int64 age_to = 3;
+  optional string city = 4;
+  optional string sign = 5;
+  repeated string tags = 6;
+}
+
+message SetFiltersRequest {
+  int64 user_id = 1;
+  optional profile.v1.RelationshipType relationship_type = 2;
+  optional int64 age_from = 3;
+  optional int64 age_to = 4;
+  optional string city = 5;
+  optional string sign = 6;
+  repeated string tags = 7;
+}
+
+message SetFiltersResponse {
+  bool success = 1;
+}

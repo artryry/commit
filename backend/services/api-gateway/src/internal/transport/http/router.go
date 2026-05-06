@@ -58,6 +58,7 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 			r.Route("/recommendations", func(r chi.Router) {
 				r.Get("/", handlers.Recommendations.GetRecommendations)
 				r.Get("/filters", handlers.Recommendations.Filters)
+				r.Post("/filters", handlers.Recommendations.Filters)
 			})
 
 			// -------- SWIPES --------
