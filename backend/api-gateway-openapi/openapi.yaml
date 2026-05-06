@@ -18,8 +18,10 @@ info:
   version: 1.0.0
 
 servers:
+  - url: http://localhost:18000
+    description: API gateway from host when using docker-compose on Windows (host port avoids 7916–8015 exclusion)
   - url: http://localhost:8080
-    description: Local API gateway (change host/port to match your deployment)
+    description: Local API gateway without Docker (or custom mapping)
 
 tags:
   - name: Health

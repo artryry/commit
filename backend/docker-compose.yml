@@ -1,3 +1,5 @@
+# Host ports 18000–18002: Windows often reserves 7916–8015 (Hyper-V/WSL), so binding 8000–8002 on the host fails.
+# Container ports stay 8000/8001/8002; service-to-service URLs (e.g. http://ms-auth:8001) are unchanged.
 services:
 # Nginx
   # nginx-gateway:
@@ -19,7 +21,7 @@ services:
       context: ./services/api-gateway
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - 18000:8000
     env_file:
       - ./services/api-gateway/.env
     depends_on:
@@ -79,7 +81,7 @@ services:
       context: ./services/authentications
       dockerfile: Dockerfile
     ports:
-      - 8001:8001
+      - 18001:8001
     env_file:
       - ./services/authentications/.env
     depends_on:
@@ -107,7 +109,7 @@ services:
       context: ./services/profiles
       dockerfile: Dockerfile
     ports:
-      - 8002:8002
+      - 18002:8002
     env_file:
       - ./services/profiles/.env
     depends_on:
