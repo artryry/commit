@@ -140,24 +140,6 @@ paths:
           description: Bad gateway
 
   /api/v1/auth/me:
-    get:
-      tags: [Auth]
-      summary: Current user (proxied)
-      description: |
-        Forwarded to the authentication service. The backend currently documents `DELETE /api/v1/auth/me` for account deletion;
-        `GET` availability depends on the auth service implementation.
-      operationId: authGetMe
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: Success (shape defined by auth service)
-        '401':
-          description: Missing or invalid JWT
-        '404':
-          description: Not implemented on auth service
-        '502':
-          description: Bad gateway
     delete:
       tags: [Auth]
       summary: Delete account
@@ -227,6 +209,34 @@ paths:
           description: Bad gateway
 
   /api/v1/profiles:
+    post:
+      tags: [Profiles]
+      summary: Create my profile (first time)
+      description: >
+        Inserts the profile row if needed, then applies full profile fields via the profiles service
+        (same as gRPC `CreateProfile`). User id is taken from the JWT.
+      operationId: profilesCreate
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProfileRequestBody'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateProfileResponseSnake'
+        '400':
+          description: Invalid body
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad gateway
     get:
       tags: [Profiles]
       summary: Get profiles by ids
@@ -673,6 +683,47 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ShortProfileSnake'
+
+    CreateProfileRequestBody:
+      type: object
+      required: [username, bio, birthday, gender, relationship_type]
+      properties:
+        username:
+          type: string
+        avatar_image_id:
+          type: integer
+          format: int64
+          description: Optional; must reference an existing uploaded image for this user.
+        bio:
+          type: string
+        birthday:
+          type: integer
+          format: int64
+          description: Unix seconds (protobuf `ProfileRequest.birthday`)
+        gender:
+          type: string
+          description: `MALE`, `FEMALE`, or short `M` / `F`
+        sign:
+          type: string
+        city:
+          type: string
+        search_for:
+          type: string
+        relationship_type:
+          type: string
+          description: >
+            `FRIENDSHIP`, `SEARCH_FOR_FRIENDSHIP`, `RELATIONSHIP`, `SEARCH_FOR_RELATIONSHIP`,
+            `NETWORKING`, `SEARCH_FOR_NETWORKING`, `UNSPECIFIED`, `SEARCH_FOR_UNSPECIFIED`
+        tags:
+          type: array
+          items:
+            type: string
+
+    CreateProfileResponseSnake:
+      type: object
+      properties:
+        success:
+          type: boolean
 
     UpdateProfileRequestBody:
       type: object

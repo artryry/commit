@@ -24,6 +24,7 @@ func NewHandlers(c *clients.Clients) *Handlers {
 }
 
 type ProfileHandler interface {
+	Create(w http.ResponseWriter, r *http.Request)
 	GetMe(w http.ResponseWriter, r *http.Request)
 	UpdateMe(w http.ResponseWriter, r *http.Request)
 	GetByIDs(w http.ResponseWriter, r *http.Request)

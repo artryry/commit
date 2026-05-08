@@ -59,17 +59,22 @@ func (r *ProfileRepository) FillProfile(
 	ctx context.Context,
 	profile *domain.Profile,
 ) error {
+	var avatarID any
+	if profile.Avatar != nil && profile.Avatar.Id != 0 {
+		avatarID = profile.Avatar.Id
+	}
+
 	_, err := r.db.Exec(
 		ctx,
 		fillProfileQuery,
 		profile.Username,
-		profile.Avatar.Id,
+		avatarID,
 		profile.Bio,
 		profile.City,
 		profile.SearchFor,
-		profile.RelationshipType,
+		relationshipTypeToPG(profile.RelationshipType),
 		profile.Birthday,
-		profile.Gender,
+		genderToPG(profile.Gender),
 		profile.Sign,
 		profile.UserId,
 	)
@@ -78,6 +83,24 @@ func (r *ProfileRepository) FillProfile(
 	}
 
 	return nil
+}
+
+func genderToPG(g domain.Gender) string {
+	if g == domain.GenderFemale {
+		return "female"
+	}
+	return "male"
+}
+
+func relationshipTypeToPG(rt domain.RelationshipType) string {
+	switch rt {
+	case domain.SearchForFriendship:
+		return "friendship"
+	case domain.SearchForRelationship:
+		return "relationship"
+	default:
+		return "unspecified"
+	}
 }
 
 func (r *ProfileRepository) GetProfiles(

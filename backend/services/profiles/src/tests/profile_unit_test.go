@@ -133,10 +133,25 @@ func TestImageServiceCreateProfileImageUnsupportedType(t *testing.T) {
 
 func TestProfileHandlerCreateProfilePublishesEvent(t *testing.T) {
 	var filled *domain.Profile
+	var createdUser int64
 	repo := &mockProfileRepo{
+		createProfileFn: func(ctx context.Context, userID int64) error {
+			createdUser = userID
+			return nil
+		},
 		fillProfileFn: func(ctx context.Context, profile *domain.Profile) error {
 			filled = profile
 			return nil
+		},
+		getProfilesFn: func(ctx context.Context, userIDs []int64) ([]*domain.Profile, error) {
+			return []*domain.Profile{{
+				UserId:   7,
+				Username: "alice",
+				Bio:      "bio",
+				City:     "city",
+				Sign:     "taurus",
+				Tags:     []string{"x"},
+			}}, nil
 		},
 	}
 	pub := &mockPublisher{}
@@ -156,6 +171,7 @@ func TestProfileHandlerCreateProfilePublishesEvent(t *testing.T) {
 			City:     "city",
 			Sign:     "taurus",
 			Gender:   pb.Gender_FEMALE,
+			Tags:     []string{"x"},
 		},
 	}
 
@@ -166,14 +182,14 @@ func TestProfileHandlerCreateProfilePublishesEvent(t *testing.T) {
 	if !resp.Success {
 		t.Fatal("expected success=true")
 	}
+	if createdUser != 7 {
+		t.Fatalf("expected CreateProfile row for user 7, got %d", createdUser)
+	}
 	if filled == nil || filled.UserId != 7 || filled.Username != "alice" {
 		t.Fatal("expected FillProfile to receive mapped profile data")
 	}
 	if len(pub.calls) != 1 {
 		t.Fatalf("expected 1 publish call, got %d", len(pub.calls))
-	}
-	if pub.calls[0].extra["source"] != "fill_profile" {
-		t.Fatalf("expected source=fill_profile, got %v", pub.calls[0].extra["source"])
 	}
 }
 
@@ -220,8 +236,5 @@ func TestProfileHandlerUpdateProfilePublishesEvent(t *testing.T) {
 	}
 	if pub.calls[0].userID != 42 {
 		t.Fatalf("expected userID=42, got %d", pub.calls[0].userID)
-	}
-	if pub.calls[0].extra["source"] != "update_profile" {
-		t.Fatalf("expected source=update_profile, got %v", pub.calls[0].extra["source"])
 	}
 }

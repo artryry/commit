@@ -41,6 +41,7 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 
 			// -------- PROFILE --------
 			r.Route("/profiles", func(r chi.Router) {
+				r.Post("/", handlers.Profiles.Create)
 				r.Get("/me", handlers.Profiles.GetMe)
 				r.Put("/me", handlers.Profiles.UpdateMe)
 

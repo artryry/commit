@@ -22,6 +22,68 @@ func NewProfileHandler(client *profiles.ProfileClient) *ProfileHandler {
 	return &ProfileHandler{client: client}
 }
 
+func (h *ProfileHandler) Create(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "missing user id in token")
+		return
+	}
+
+	var body createProfileRequest
+	if err := common.DecodeJsonBody(r, &body); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid json body")
+		return
+	}
+
+	if body.Username == "" || body.Bio == "" || body.Birthday == 0 {
+		writeError(w, http.StatusBadRequest, "username, bio, and birthday are required")
+		return
+	}
+
+	gender, err := parseGender(body.Gender)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	rt, err := parseRelationshipType(body.RelationshipType)
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	pbProfile := &profilepb.ProfileRequest{
+		UserId:           userID,
+		Username:         body.Username,
+		Bio:              body.Bio,
+		Birthday:         body.Birthday,
+		Gender:           gender,
+		Sign:             derefString(body.Sign),
+		City:             derefString(body.City),
+		SearchFor:        derefString(body.SearchFor),
+		RelationshipType: rt,
+		Tags:             body.Tags,
+	}
+	if body.AvatarImageID != nil && *body.AvatarImageID != 0 {
+		pbProfile.AvatarImage = &profilepb.Image{Id: *body.AvatarImageID}
+	}
+
+	resp, err := h.client.CreateProfile(r.Context(), &profilepb.CreateProfileRequest{Profile: pbProfile})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	writeJSON(w, http.StatusOK, resp)
+}
+
+func derefString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
 func (h *ProfileHandler) GetMe(w http.ResponseWriter, r *http.Request) {
 	userID, ok := getUserID(r)
 	if !ok {
@@ -255,6 +317,19 @@ type updateProfileRequest struct {
 	RelationshipType *string `json:"relationship_type"`
 }
 
+type createProfileRequest struct {
+	Username         string   `json:"username"`
+	AvatarImageID    *int64   `json:"avatar_image_id"`
+	Bio              string   `json:"bio"`
+	Birthday         int64    `json:"birthday"`
+	Gender           string   `json:"gender"`
+	Sign             *string  `json:"sign"`
+	City             *string  `json:"city"`
+	SearchFor        *string  `json:"search_for"`
+	RelationshipType string   `json:"relationship_type"`
+	Tags             []string `json:"tags"`
+}
+
 type imageIDsRequest struct {
 	ImageIDs []int64 `json:"image_ids"`
 }
@@ -279,6 +354,17 @@ func parseIDsQuery(raw string) ([]int64, error) {
 	}
 
 	return result, nil
+}
+
+func parseGender(value string) (profilepb.Gender, error) {
+	switch strings.ToUpper(strings.TrimSpace(value)) {
+	case "M", "MALE", "GENDER_MALE":
+		return profilepb.Gender_MALE, nil
+	case "F", "FEMALE", "GENDER_FEMALE":
+		return profilepb.Gender_FEMALE, nil
+	default:
+		return 0, errors.New("invalid gender")
+	}
 }
 
 func parseRelationshipType(value string) (profilepb.RelationshipType, error) {

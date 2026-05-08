@@ -52,10 +52,20 @@ func (h *ProfileHandler) CreateProfile(
 		return &pb.CreateProfileResponse{Success: false}, nil
 	}
 
+	userID := profileData.GetUserId()
+	if err := h.profileService.CreateProfile(ctx, userID); err != nil {
+		return nil, err
+	}
+
+	var avatar *domain.Image
+	if img := profileData.GetAvatarImage(); img != nil && img.GetId() != 0 {
+		avatar = &domain.Image{Id: img.GetId()}
+	}
+
 	profile := &domain.Profile{
-		UserId:           profileData.GetUserId(),
+		UserId:           userID,
 		Username:         profileData.GetUsername(),
-		Avatar:           &domain.Image{Id: profileData.GetAvatarImage().GetId()},
+		Avatar:           avatar,
 		Bio:              profileData.GetBio(),
 		City:             profileData.GetCity(),
 		SearchFor:        profileData.GetSearchFor(),
@@ -69,11 +79,18 @@ func (h *ProfileHandler) CreateProfile(
 		return nil, err
 	}
 
-	latest, err := h.profileService.GetProfile(ctx, profile.UserId)
+	tags := profileData.GetTags()
+	if len(tags) > 0 {
+		if err := h.tagService.AttachTags(ctx, userID, tags); err != nil {
+			return nil, err
+		}
+	}
+
+	latest, err := h.profileService.GetProfile(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
-	h.emitProfileUpdated(ctx, profile.UserId, profileToEventPayload(latest))
+	h.emitProfileUpdated(ctx, userID, profileToEventPayload(latest))
 
 	return &pb.CreateProfileResponse{Success: true}, nil
 }

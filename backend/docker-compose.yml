@@ -14,7 +14,7 @@ services:
   #     - ms-profiles
   #   restart: always
 
-# API-gateway
+# API-gateway Эмбер
   api-gateway:
     container_name: api-gateway
     build:

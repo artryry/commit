@@ -52,6 +52,10 @@ func (c *ProfileClient) UpdateProfile(ctx context.Context, req *profilepb.Update
 	return c.client.UpdateProfile(ctx, req)
 }
 
+func (c *ProfileClient) CreateProfile(ctx context.Context, req *profilepb.CreateProfileRequest) (*profilepb.CreateProfileResponse, error) {
+	return c.client.CreateProfile(ctx, req)
+}
+
 func (c *ProfileClient) UploadProfileImage(ctx context.Context, req *profilepb.UploadProfileImageRequest) (*profilepb.UploadProfileImageResponse, error) {
 	return c.client.UploadProfileImage(ctx, req)
 }
