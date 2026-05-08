@@ -163,6 +163,7 @@ message GetProfilesWithFilterRequest {
     optional string sign = 6;
 
     repeated string tags = 7;
+    optional Gender partner_gender = 8;
 }
 
 message GetProfilesWithFilterResponse {

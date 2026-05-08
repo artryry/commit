@@ -75,6 +75,7 @@ type GetRecommendationsForUserResponse struct {
 	City             *string                `protobuf:"bytes,5,opt,name=city,proto3,oneof" json:"city,omitempty"`
 	Sign             *string                `protobuf:"bytes,6,opt,name=sign,proto3,oneof" json:"sign,omitempty"`
 	Tags             []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	PartnerGender    *gen.Gender            `protobuf:"varint,8,opt,name=partner_gender,json=partnerGender,proto3,enum=profile.v1.Gender,oneof" json:"partner_gender,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -158,6 +159,13 @@ func (x *GetRecommendationsForUserResponse) GetTags() []string {
 	return nil
 }
 
+func (x *GetRecommendationsForUserResponse) GetPartnerGender() gen.Gender {
+	if x != nil && x.PartnerGender != nil {
+		return *x.PartnerGender
+	}
+	return gen.Gender(0)
+}
+
 type GetFiltersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -210,6 +218,7 @@ type GetFiltersResponse struct {
 	City             *string                `protobuf:"bytes,4,opt,name=city,proto3,oneof" json:"city,omitempty"`
 	Sign             *string                `protobuf:"bytes,5,opt,name=sign,proto3,oneof" json:"sign,omitempty"`
 	Tags             []string               `protobuf:"bytes,6,rep,name=tags,proto3" json:"tags,omitempty"`
+	PartnerGender    *gen.Gender            `protobuf:"varint,7,opt,name=partner_gender,json=partnerGender,proto3,enum=profile.v1.Gender,oneof" json:"partner_gender,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -286,6 +295,13 @@ func (x *GetFiltersResponse) GetTags() []string {
 	return nil
 }
 
+func (x *GetFiltersResponse) GetPartnerGender() gen.Gender {
+	if x != nil && x.PartnerGender != nil {
+		return *x.PartnerGender
+	}
+	return gen.Gender(0)
+}
+
 type SetFiltersRequest struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	UserId           int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -295,6 +311,7 @@ type SetFiltersRequest struct {
 	City             *string                `protobuf:"bytes,5,opt,name=city,proto3,oneof" json:"city,omitempty"`
 	Sign             *string                `protobuf:"bytes,6,opt,name=sign,proto3,oneof" json:"sign,omitempty"`
 	Tags             []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	PartnerGender    *gen.Gender            `protobuf:"varint,8,opt,name=partner_gender,json=partnerGender,proto3,enum=profile.v1.Gender,oneof" json:"partner_gender,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -378,6 +395,13 @@ func (x *SetFiltersRequest) GetTags() []string {
 	return nil
 }
 
+func (x *SetFiltersRequest) GetPartnerGender() gen.Gender {
+	if x != nil && x.PartnerGender != nil {
+		return *x.PartnerGender
+	}
+	return gen.Gender(0)
+}
+
 type SetFiltersResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
@@ -428,7 +452,7 @@ const file_recommendation_proto_rawDesc = "" +
 	"\n" +
 	"\x14recommendation.proto\x12\x11recommendation.v1\x1a\rprofile.proto\";\n" +
 	" GetRecommendationsForUserRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xe3\x02\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xb6\x03\n" +
 	"!GetRecommendationsForUserResponse\x12,\n" +
 	"\x12candidate_user_ids\x18\x01 \x03(\x03R\x10candidateUserIds\x12N\n" +
 	"\x11relationship_type\x18\x02 \x01(\x0e2\x1c.profile.v1.RelationshipTypeH\x00R\x10relationshipType\x88\x01\x01\x12\x1e\n" +
@@ -436,26 +460,30 @@ const file_recommendation_proto_rawDesc = "" +
 	"\x06age_to\x18\x04 \x01(\x03H\x02R\x05ageTo\x88\x01\x01\x12\x17\n" +
 	"\x04city\x18\x05 \x01(\tH\x03R\x04city\x88\x01\x01\x12\x17\n" +
 	"\x04sign\x18\x06 \x01(\tH\x04R\x04sign\x88\x01\x01\x12\x12\n" +
-	"\x04tags\x18\a \x03(\tR\x04tagsB\x14\n" +
+	"\x04tags\x18\a \x03(\tR\x04tags\x12>\n" +
+	"\x0epartner_gender\x18\b \x01(\x0e2\x12.profile.v1.GenderH\x05R\rpartnerGender\x88\x01\x01B\x14\n" +
 	"\x12_relationship_typeB\v\n" +
 	"\t_age_fromB\t\n" +
 	"\a_age_toB\a\n" +
 	"\x05_cityB\a\n" +
-	"\x05_sign\",\n" +
+	"\x05_signB\x11\n" +
+	"\x0f_partner_gender\",\n" +
 	"\x11GetFiltersRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xa6\x02\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xf9\x02\n" +
 	"\x12GetFiltersResponse\x12N\n" +
 	"\x11relationship_type\x18\x01 \x01(\x0e2\x1c.profile.v1.RelationshipTypeH\x00R\x10relationshipType\x88\x01\x01\x12\x1e\n" +
 	"\bage_from\x18\x02 \x01(\x03H\x01R\aageFrom\x88\x01\x01\x12\x1a\n" +
 	"\x06age_to\x18\x03 \x01(\x03H\x02R\x05ageTo\x88\x01\x01\x12\x17\n" +
 	"\x04city\x18\x04 \x01(\tH\x03R\x04city\x88\x01\x01\x12\x17\n" +
 	"\x04sign\x18\x05 \x01(\tH\x04R\x04sign\x88\x01\x01\x12\x12\n" +
-	"\x04tags\x18\x06 \x03(\tR\x04tagsB\x14\n" +
+	"\x04tags\x18\x06 \x03(\tR\x04tags\x12>\n" +
+	"\x0epartner_gender\x18\a \x01(\x0e2\x12.profile.v1.GenderH\x05R\rpartnerGender\x88\x01\x01B\x14\n" +
 	"\x12_relationship_typeB\v\n" +
 	"\t_age_fromB\t\n" +
 	"\a_age_toB\a\n" +
 	"\x05_cityB\a\n" +
-	"\x05_sign\"\xbe\x02\n" +
+	"\x05_signB\x11\n" +
+	"\x0f_partner_gender\"\x91\x03\n" +
 	"\x11SetFiltersRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12N\n" +
 	"\x11relationship_type\x18\x02 \x01(\x0e2\x1c.profile.v1.RelationshipTypeH\x00R\x10relationshipType\x88\x01\x01\x12\x1e\n" +
@@ -463,12 +491,14 @@ const file_recommendation_proto_rawDesc = "" +
 	"\x06age_to\x18\x04 \x01(\x03H\x02R\x05ageTo\x88\x01\x01\x12\x17\n" +
 	"\x04city\x18\x05 \x01(\tH\x03R\x04city\x88\x01\x01\x12\x17\n" +
 	"\x04sign\x18\x06 \x01(\tH\x04R\x04sign\x88\x01\x01\x12\x12\n" +
-	"\x04tags\x18\a \x03(\tR\x04tagsB\x14\n" +
+	"\x04tags\x18\a \x03(\tR\x04tags\x12>\n" +
+	"\x0epartner_gender\x18\b \x01(\x0e2\x12.profile.v1.GenderH\x05R\rpartnerGender\x88\x01\x01B\x14\n" +
 	"\x12_relationship_typeB\v\n" +
 	"\t_age_fromB\t\n" +
 	"\a_age_toB\a\n" +
 	"\x05_cityB\a\n" +
-	"\x05_sign\".\n" +
+	"\x05_signB\x11\n" +
+	"\x0f_partner_gender\".\n" +
 	"\x12SetFiltersResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess2\xd6\x02\n" +
 	"\x15RecommendationService\x12\x86\x01\n" +
@@ -499,22 +529,26 @@ var file_recommendation_proto_goTypes = []any{
 	(*SetFiltersRequest)(nil),                 // 4: recommendation.v1.SetFiltersRequest
 	(*SetFiltersResponse)(nil),                // 5: recommendation.v1.SetFiltersResponse
 	(gen.RelationshipType)(0),                 // 6: profile.v1.RelationshipType
+	(gen.Gender)(0),                           // 7: profile.v1.Gender
 }
 var file_recommendation_proto_depIdxs = []int32{
 	6, // 0: recommendation.v1.GetRecommendationsForUserResponse.relationship_type:type_name -> profile.v1.RelationshipType
-	6, // 1: recommendation.v1.GetFiltersResponse.relationship_type:type_name -> profile.v1.RelationshipType
-	6, // 2: recommendation.v1.SetFiltersRequest.relationship_type:type_name -> profile.v1.RelationshipType
-	0, // 3: recommendation.v1.RecommendationService.GetRecommendationsForUser:input_type -> recommendation.v1.GetRecommendationsForUserRequest
-	2, // 4: recommendation.v1.RecommendationService.GetFilters:input_type -> recommendation.v1.GetFiltersRequest
-	4, // 5: recommendation.v1.RecommendationService.SetFilters:input_type -> recommendation.v1.SetFiltersRequest
-	1, // 6: recommendation.v1.RecommendationService.GetRecommendationsForUser:output_type -> recommendation.v1.GetRecommendationsForUserResponse
-	3, // 7: recommendation.v1.RecommendationService.GetFilters:output_type -> recommendation.v1.GetFiltersResponse
-	5, // 8: recommendation.v1.RecommendationService.SetFilters:output_type -> recommendation.v1.SetFiltersResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	7, // 1: recommendation.v1.GetRecommendationsForUserResponse.partner_gender:type_name -> profile.v1.Gender
+	6, // 2: recommendation.v1.GetFiltersResponse.relationship_type:type_name -> profile.v1.RelationshipType
+	7, // 3: recommendation.v1.GetFiltersResponse.partner_gender:type_name -> profile.v1.Gender
+	6, // 4: recommendation.v1.SetFiltersRequest.relationship_type:type_name -> profile.v1.RelationshipType
+	7, // 5: recommendation.v1.SetFiltersRequest.partner_gender:type_name -> profile.v1.Gender
+	0, // 6: recommendation.v1.RecommendationService.GetRecommendationsForUser:input_type -> recommendation.v1.GetRecommendationsForUserRequest
+	2, // 7: recommendation.v1.RecommendationService.GetFilters:input_type -> recommendation.v1.GetFiltersRequest
+	4, // 8: recommendation.v1.RecommendationService.SetFilters:input_type -> recommendation.v1.SetFiltersRequest
+	1, // 9: recommendation.v1.RecommendationService.GetRecommendationsForUser:output_type -> recommendation.v1.GetRecommendationsForUserResponse
+	3, // 10: recommendation.v1.RecommendationService.GetFilters:output_type -> recommendation.v1.GetFiltersResponse
+	5, // 11: recommendation.v1.RecommendationService.SetFilters:output_type -> recommendation.v1.SetFiltersResponse
+	9, // [9:12] is the sub-list for method output_type
+	6, // [6:9] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_recommendation_proto_init() }

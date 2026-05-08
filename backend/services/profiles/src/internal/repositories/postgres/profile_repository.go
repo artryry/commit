@@ -134,6 +134,11 @@ func (r *ProfileRepository) GetProfilesWithFilter(
 		tags = filter.Tags
 	}
 
+	var partnerGender any
+	if filter.PartnerGender != nil {
+		partnerGender = *filter.PartnerGender
+	}
+
 	rows, err := r.db.Query(
 		ctx,
 		getProfilesWithFilterQuery,
@@ -144,6 +149,7 @@ func (r *ProfileRepository) GetProfilesWithFilter(
 		city,
 		sign,
 		tags,
+		partnerGender,
 	)
 	if err != nil {
 		return nil, err

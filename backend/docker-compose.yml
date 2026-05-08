@@ -27,6 +27,7 @@ services:
     depends_on:
       - ms-auth
       - ms-profiles
+      - ms-recommendations
     restart: always
 
   api-gateway-docs:
@@ -144,44 +145,41 @@ services:
     volumes:
       - minio_data:/var/lib/minio/data
 
-# # Recommendations Service
-#   ms-recommendations:
-#     container_name: ms-recommendations
-#     build:
-#       context: ./services/recommendations
-#       dockerfile: Dockerfile
-#     ports:
-#       - 8004:8004
-#     env_file:
-#       - ./services/recommendations/.env
-#     depends_on:
-#       - db-recommendations
-#       - ms-auth
-#       - ms-profiles
-#       - kafka
-#       - redis-recommendations
-#     restart: always
+  ms-recommendations:
+    container_name: ms-recommendations
+    build:
+      context: ./services/recommendation
+      dockerfile: Dockerfile
+    ports:
+      - 50052:50052
+    env_file:
+      - ./services/recommendation/.env
+    depends_on:
+      - db-recommendations
+      - kafka-init
+      - kafka
+      - redis-recommendations
+    restart: always
 
-#   db-recommendations:
-#     image: postgres:latest
-#     container_name: db-recommendations
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: my_own_password_123
-#       POSTGRES_DB: recommendations
-#     volumes:
-#       - postgres_data_recommendations:/var/lib/postgresql/data
-#     ports:
-#       - 5434:5432
-#     restart: always
+  db-recommendations:
+    image: pgvector/pgvector:pg16
+    container_name: db-recommendations
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: recommendations
+    volumes:
+      - postgres_data_recommendations:/var/lib/postgresql/data
+    ports:
+      - 5434:5432
+    restart: always
 
-#   redis-recommendations:
-#     image: redis:7.2-alpine
-#     container_name: redis-recommendations
-#     restart: always
-#     ports:
-#       - 6379:6379
-# #    command: ["redis-server", "--requirepass", "my_own_password_123"]
+  redis-recommendations:
+    image: redis:7.2-alpine
+    container_name: redis-recommendations
+    restart: always
+    ports:
+      - 6379:6379
 
 # # Swipes Service
 #   ms-swipes:
@@ -251,7 +249,7 @@ volumes:
     driver: local
   minio_data:
     driver: local
-  # postgres_data_recommendations:
-  #   driver: local
+  postgres_data_recommendations:
+    driver: local
   # postgres_data_swipes:
   #   driver: local

@@ -1336,6 +1336,7 @@ type GetProfilesWithFilterRequest struct {
 	City             *string                `protobuf:"bytes,5,opt,name=city,proto3,oneof" json:"city,omitempty"`
 	Sign             *string                `protobuf:"bytes,6,opt,name=sign,proto3,oneof" json:"sign,omitempty"`
 	Tags             []string               `protobuf:"bytes,7,rep,name=tags,proto3" json:"tags,omitempty"`
+	PartnerGender    *Gender                `protobuf:"varint,8,opt,name=partner_gender,json=partnerGender,proto3,enum=profile.v1.Gender,oneof" json:"partner_gender,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1417,6 +1418,13 @@ func (x *GetProfilesWithFilterRequest) GetTags() []string {
 		return x.Tags
 	}
 	return nil
+}
+
+func (x *GetProfilesWithFilterRequest) GetPartnerGender() Gender {
+	if x != nil && x.PartnerGender != nil {
+		return *x.PartnerGender
+	}
+	return Gender_MALE
 }
 
 type GetProfilesWithFilterResponse struct {
@@ -1560,7 +1568,7 @@ const file_profile_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
 	"\x04tags\x18\x02 \x03(\tR\x04tags\"5\n" +
 	"\x19DetachProfileTagsResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess\"\xcb\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"\x9e\x03\n" +
 	"\x1cGetProfilesWithFilterRequest\x12\x19\n" +
 	"\buser_ids\x18\x01 \x03(\x03R\auserIds\x12N\n" +
 	"\x11relationship_type\x18\x02 \x01(\x0e2\x1c.profile.v1.RelationshipTypeH\x00R\x10relationshipType\x88\x01\x01\x12\x1e\n" +
@@ -1568,12 +1576,14 @@ const file_profile_proto_rawDesc = "" +
 	"\x06age_to\x18\x04 \x01(\x03H\x02R\x05ageTo\x88\x01\x01\x12\x17\n" +
 	"\x04city\x18\x05 \x01(\tH\x03R\x04city\x88\x01\x01\x12\x17\n" +
 	"\x04sign\x18\x06 \x01(\tH\x04R\x04sign\x88\x01\x01\x12\x12\n" +
-	"\x04tags\x18\a \x03(\tR\x04tagsB\x14\n" +
+	"\x04tags\x18\a \x03(\tR\x04tags\x12>\n" +
+	"\x0epartner_gender\x18\b \x01(\x0e2\x12.profile.v1.GenderH\x05R\rpartnerGender\x88\x01\x01B\x14\n" +
 	"\x12_relationship_typeB\v\n" +
 	"\t_age_fromB\t\n" +
 	"\a_age_toB\a\n" +
 	"\x05_cityB\a\n" +
-	"\x05_sign\"^\n" +
+	"\x05_signB\x11\n" +
+	"\x0f_partner_gender\"^\n" +
 	"\x1dGetProfilesWithFilterResponse\x12=\n" +
 	"\rprofiles_data\x18\x01 \x03(\v2\x18.profile.v1.ShortProfileR\fprofilesData*\x81\x01\n" +
 	"\x10RelationshipType\x12\x1a\n" +
@@ -1654,30 +1664,31 @@ var file_profile_proto_depIdxs = []int32{
 	5,  // 13: profile.v1.UploadProfileImageResponse.image:type_name -> profile.v1.Image
 	4,  // 14: profile.v1.CreateProfileRequest.profile:type_name -> profile.v1.ProfileRequest
 	0,  // 15: profile.v1.GetProfilesWithFilterRequest.relationship_type:type_name -> profile.v1.RelationshipType
-	2,  // 16: profile.v1.GetProfilesWithFilterResponse.profiles_data:type_name -> profile.v1.ShortProfile
-	16, // 17: profile.v1.ProfileService.CreateProfile:input_type -> profile.v1.CreateProfileRequest
-	6,  // 18: profile.v1.ProfileService.GetProfile:input_type -> profile.v1.GetProfileRequest
-	8,  // 19: profile.v1.ProfileService.GetProfiles:input_type -> profile.v1.GetProfilesRequest
-	10, // 20: profile.v1.ProfileService.UpdateProfile:input_type -> profile.v1.UpdateProfileRequest
-	22, // 21: profile.v1.ProfileService.GetProfilesWithFilter:input_type -> profile.v1.GetProfilesWithFilterRequest
-	14, // 22: profile.v1.ProfileService.UploadProfileImage:input_type -> profile.v1.UploadProfileImageRequest
-	12, // 23: profile.v1.ProfileService.DeleteProfileImages:input_type -> profile.v1.DeleteProfileImagesRequest
-	18, // 24: profile.v1.ProfileService.AttachProfileTags:input_type -> profile.v1.AddProfileTagsRequest
-	20, // 25: profile.v1.ProfileService.DetachProfileTags:input_type -> profile.v1.DetachProfileTagsRequest
-	17, // 26: profile.v1.ProfileService.CreateProfile:output_type -> profile.v1.CreateProfileResponse
-	7,  // 27: profile.v1.ProfileService.GetProfile:output_type -> profile.v1.GetProfileResponse
-	9,  // 28: profile.v1.ProfileService.GetProfiles:output_type -> profile.v1.GetProfilesResponse
-	11, // 29: profile.v1.ProfileService.UpdateProfile:output_type -> profile.v1.UpdateProfileResponse
-	23, // 30: profile.v1.ProfileService.GetProfilesWithFilter:output_type -> profile.v1.GetProfilesWithFilterResponse
-	15, // 31: profile.v1.ProfileService.UploadProfileImage:output_type -> profile.v1.UploadProfileImageResponse
-	13, // 32: profile.v1.ProfileService.DeleteProfileImages:output_type -> profile.v1.DeleteProfileImagesResponse
-	19, // 33: profile.v1.ProfileService.AttachProfileTags:output_type -> profile.v1.AddProfileTagsResponse
-	21, // 34: profile.v1.ProfileService.DetachProfileTags:output_type -> profile.v1.DetachProfileTagsResponse
-	26, // [26:35] is the sub-list for method output_type
-	17, // [17:26] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	1,  // 16: profile.v1.GetProfilesWithFilterRequest.partner_gender:type_name -> profile.v1.Gender
+	2,  // 17: profile.v1.GetProfilesWithFilterResponse.profiles_data:type_name -> profile.v1.ShortProfile
+	16, // 18: profile.v1.ProfileService.CreateProfile:input_type -> profile.v1.CreateProfileRequest
+	6,  // 19: profile.v1.ProfileService.GetProfile:input_type -> profile.v1.GetProfileRequest
+	8,  // 20: profile.v1.ProfileService.GetProfiles:input_type -> profile.v1.GetProfilesRequest
+	10, // 21: profile.v1.ProfileService.UpdateProfile:input_type -> profile.v1.UpdateProfileRequest
+	22, // 22: profile.v1.ProfileService.GetProfilesWithFilter:input_type -> profile.v1.GetProfilesWithFilterRequest
+	14, // 23: profile.v1.ProfileService.UploadProfileImage:input_type -> profile.v1.UploadProfileImageRequest
+	12, // 24: profile.v1.ProfileService.DeleteProfileImages:input_type -> profile.v1.DeleteProfileImagesRequest
+	18, // 25: profile.v1.ProfileService.AttachProfileTags:input_type -> profile.v1.AddProfileTagsRequest
+	20, // 26: profile.v1.ProfileService.DetachProfileTags:input_type -> profile.v1.DetachProfileTagsRequest
+	17, // 27: profile.v1.ProfileService.CreateProfile:output_type -> profile.v1.CreateProfileResponse
+	7,  // 28: profile.v1.ProfileService.GetProfile:output_type -> profile.v1.GetProfileResponse
+	9,  // 29: profile.v1.ProfileService.GetProfiles:output_type -> profile.v1.GetProfilesResponse
+	11, // 30: profile.v1.ProfileService.UpdateProfile:output_type -> profile.v1.UpdateProfileResponse
+	23, // 31: profile.v1.ProfileService.GetProfilesWithFilter:output_type -> profile.v1.GetProfilesWithFilterResponse
+	15, // 32: profile.v1.ProfileService.UploadProfileImage:output_type -> profile.v1.UploadProfileImageResponse
+	13, // 33: profile.v1.ProfileService.DeleteProfileImages:output_type -> profile.v1.DeleteProfileImagesResponse
+	19, // 34: profile.v1.ProfileService.AttachProfileTags:output_type -> profile.v1.AddProfileTagsResponse
+	21, // 35: profile.v1.ProfileService.DetachProfileTags:output_type -> profile.v1.DetachProfileTagsResponse
+	27, // [27:36] is the sub-list for method output_type
+	18, // [18:27] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_profile_proto_init() }

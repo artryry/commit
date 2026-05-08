@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package profile.v1;
+
+option go_package = "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/profiles/proto/gen;profilepb";
+
+enum RelationshipType {
+    SEARCH_FOR_UNSPECIFIED = 0;
+    SEARCH_FOR_FRIENDSHIP = 1;
+    SEARCH_FOR_RELATIONSHIP = 2;
+    SEARCH_FOR_NETWORKING = 3;
+}
+
+enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+}

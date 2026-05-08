@@ -69,7 +69,11 @@ func (h *ProfileHandler) CreateProfile(
 		return nil, err
 	}
 
-	h.emitProfileUpdated(ctx, profile.UserId, map[string]any{"source": "fill_profile"})
+	latest, err := h.profileService.GetProfile(ctx, profile.UserId)
+	if err != nil {
+		return nil, err
+	}
+	h.emitProfileUpdated(ctx, profile.UserId, profileToEventPayload(latest))
 
 	return &pb.CreateProfileResponse{Success: true}, nil
 }
@@ -112,6 +116,7 @@ func (h *ProfileHandler) GetProfilesWithFilter(
 	ctx context.Context,
 	req *pb.GetProfilesWithFilterRequest,
 ) (*pb.GetProfilesWithFilterResponse, error) {
+	// User ids that do not exist in DB are ignored; the response may contain fewer rows than requested ids.
 	filter := domain.ProfileFilter{
 		UserIDs: req.GetUserIds(),
 		Tags:    req.GetTags(),
@@ -133,6 +138,10 @@ func (h *ProfileHandler) GetProfilesWithFilter(
 	}
 	if req.Sign != nil {
 		filter.Sign = req.Sign
+	}
+	if req.PartnerGender != nil {
+		g := partnerGenderProtoToDB(*req.PartnerGender)
+		filter.PartnerGender = &g
 	}
 
 	profiles, err := h.profileService.GetProfilesWithFilter(ctx, filter)
@@ -189,7 +198,7 @@ func (h *ProfileHandler) UpdateProfile(
 		return nil, err
 	}
 
-	h.emitProfileUpdated(ctx, req.GetUserId(), map[string]any{"source": "update_profile"})
+	h.emitProfileUpdated(ctx, req.GetUserId(), profileToEventPayload(latest))
 
 	return &pb.UpdateProfileResponse{
 		ProfileData: toFullProfile(latest),
@@ -234,6 +243,12 @@ func (h *ProfileHandler) AttachProfileTags(
 		return nil, err
 	}
 
+	p, err := h.profileService.GetProfile(ctx, req.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	h.emitProfileUpdated(ctx, req.GetUserId(), profileToEventPayload(p))
+
 	return &pb.AddProfileTagsResponse{
 		Success: true,
 	}, nil
@@ -247,9 +262,33 @@ func (h *ProfileHandler) DetachProfileTags(
 		return nil, err
 	}
 
+	p, err := h.profileService.GetProfile(ctx, req.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	h.emitProfileUpdated(ctx, req.GetUserId(), profileToEventPayload(p))
+
 	return &pb.DetachProfileTagsResponse{
 		Success: true,
 	}, nil
+}
+
+func profileToEventPayload(p *domain.Profile) map[string]any {
+	tags := p.Tags
+	if tags == nil {
+		tags = []string{}
+	}
+	return map[string]any{
+		"user_id":           p.UserId,
+		"bio":               p.Bio,
+		"search_for":        p.SearchFor,
+		"birthday":          p.Birthday.Unix(),
+		"gender":            string(p.Gender),
+		"sign":              p.Sign,
+		"city":              p.City,
+		"relationship_type": string(p.RelationshipType),
+		"tags":              tags,
+	}
 }
 
 func toShortProfile(profile *domain.Profile) *pb.ShortProfile {
@@ -341,6 +380,15 @@ func genderToDomain(value pb.Gender) domain.Gender {
 }
 
 // relationshipTypeProtoToDBEnum maps proto enum to Postgres relationship_type labels.
+func partnerGenderProtoToDB(v pb.Gender) string {
+	switch v {
+	case pb.Gender_FEMALE:
+		return "female"
+	default:
+		return "male"
+	}
+}
+
 func relationshipTypeProtoToDBEnum(v pb.RelationshipType) *string {
 	switch v {
 	case pb.RelationshipType_SEARCH_FOR_FRIENDSHIP:

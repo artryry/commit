@@ -111,6 +111,15 @@ func (h *Handler) Filters(w http.ResponseWriter, r *http.Request) {
 		if body.Tags != nil {
 			req.Tags = body.Tags
 		}
+		if body.PartnerGender != nil {
+			g, err := parseGenderString(*body.PartnerGender)
+			if err != nil {
+				writeJSONError(w, http.StatusBadRequest, err.Error())
+				return
+			}
+			v := g
+			req.PartnerGender = &v
+		}
 		resp, err := h.rec.SetFilters(r.Context(), req)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadGateway)
@@ -129,6 +138,7 @@ type filtersHTTPBody struct {
 	City             *string  `json:"city"`
 	Sign             *string  `json:"sign"`
 	Tags             []string `json:"tags"`
+	PartnerGender    *string  `json:"partner_gender"`
 }
 
 func profileFilterFromRecommendations(rec *recommendationpb.GetRecommendationsForUserResponse) *profilepb.GetProfilesWithFilterRequest {
@@ -154,6 +164,10 @@ func profileFilterFromRecommendations(rec *recommendationpb.GetRecommendationsFo
 	if rec.Sign != nil {
 		req.Sign = rec.Sign
 	}
+	if rec.PartnerGender != nil {
+		v := *rec.PartnerGender
+		req.PartnerGender = &v
+	}
 	return req
 }
 
@@ -174,6 +188,17 @@ func userIDFromRequest(r *http.Request) (int64, bool) {
 		return id, true
 	default:
 		return 0, false
+	}
+}
+
+func parseGenderString(value string) (profilepb.Gender, error) {
+	switch strings.ToUpper(strings.TrimSpace(value)) {
+	case "MALE", "M":
+		return profilepb.Gender_MALE, nil
+	case "FEMALE", "F":
+		return profilepb.Gender_FEMALE, nil
+	default:
+		return 0, errors.New("invalid partner_gender (use MALE or FEMALE)")
 	}
 }
 

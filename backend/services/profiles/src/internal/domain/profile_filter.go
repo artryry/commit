@@ -10,4 +10,7 @@ type ProfileFilter struct {
 	City             *string
 	Sign             *string
 	Tags             []string
+	// PartnerGender filters candidates by profiles.gender when RelationshipType is relationship (DB value).
+	// Values match Postgres gender enum: "male", "female".
+	PartnerGender *string
 }

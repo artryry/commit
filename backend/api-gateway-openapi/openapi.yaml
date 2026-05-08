@@ -813,6 +813,9 @@ components:
           type: array
           items:
             type: string
+        partnerGender:
+          type: string
+          description: MALE or FEMALE; applied for relationship search mode only.
 
     SetFiltersRequestBody:
       type: object
@@ -837,6 +840,9 @@ components:
           type: array
           items:
             type: string
+        partner_gender:
+          type: string
+          description: MALE or FEMALE
 
     SetFiltersResponseProtoJson:
       type: object

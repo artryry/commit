@@ -43,6 +43,12 @@ WHERE
     AND ($5::text IS NULL OR p.city ILIKE '%' || $5::text || '%')
     AND ($6::text IS NULL OR p.sign ILIKE '%' || $6::text || '%')
     AND (
+        $8::text IS NULL
+        OR $2::text IS NULL
+        OR $2::text <> 'relationship'
+        OR p.gender::text = $8::text
+    )
+    AND (
         $7 IS NULL OR cardinality($7::text[]) = 0 OR NOT EXISTS (
             SELECT 1
             FROM (

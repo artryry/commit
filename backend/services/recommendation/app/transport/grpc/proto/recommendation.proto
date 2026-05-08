@@ -6,12 +6,8 @@ option go_package = "github.com/artryry/commit/services/api-gateway/src/internal
 
 import "profile.proto";
 
-// RecommendationService is implemented by the recommendations microservice.
-// The API gateway calls it to obtain candidate user ids and filter criteria, then loads profile rows via profiles.GetProfilesWithFilter.
 service RecommendationService {
-  // Returns candidate profile user ids and filter fields to apply when loading profiles.
   rpc GetRecommendationsForUser(GetRecommendationsForUserRequest) returns (GetRecommendationsForUserResponse);
-
   rpc GetFilters(GetFiltersRequest) returns (GetFiltersResponse);
   rpc SetFilters(SetFiltersRequest) returns (SetFiltersResponse);
 }
