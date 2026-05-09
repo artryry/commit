@@ -55,8 +55,31 @@
                     <span class="nav-notification-dot"></span>
                     <img src="icons/notification.png" alt="Уведомления">
                 </button>
-                <a href=""><img src="photos/man_portret (3).png" alt="Аватар" class="header-user-avatar"></a>
-                <span class="header-user-name">Иван</span>
+                <div class="header-profile-menu-container"
+                    style="position: relative; display: flex; align-items: center; gap: inherit; cursor: pointer;"
+                    id="profileMenuBtn">
+                    <img src="photos/man_portret (3).png" alt="Аватар" class="header-user-avatar">
+                    <span class="header-user-name">Иван</span>
+                    <div class="chat-dropdown-menu hidden" id="profileMenuDropdown">
+                        <button class="chat-dropdown-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Профиль
+                        </button>
+                        <button class="chat-dropdown-item danger">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Выйти из профиля
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -789,28 +812,7 @@
         </div>
     </div>
 
-    <!-- Модальное окно "Карточки" -->
-    <div id="cardsModal" class="cards-modal-overlay hidden">
-        <div class="cards-modal-content">
-            <button class="cards-modal-close" id="cardsBtnClose" title="Закрыть">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </button>
-            <h2 class="cards-modal-title">Карточки</h2>
-
-            <div class="cards-modal-question">
-                <p>Ты любишь спонтанные поездки в другие города на выходные?</p>
-            </div>
-
-            <div class="cards-modal-actions">
-                <button class="cards-btn-no" id="cardsBtnNo">Нет</button>
-                <button class="cards-btn-yes" id="cardsBtnYes">Да</button>
-            </div>
-        </div>
-    </div>
+    <!-- Модальное окно удалено: карточки теперь отправляются в чат -->
 
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
@@ -879,10 +881,26 @@
             setupDropdown('customLookingFor', 'looking_for');
             setupDropdown('customGender', 'gender');
 
+            // Логика для меню профиля в хедере
+            const profileMenuBtn = document.getElementById('profileMenuBtn');
+            const profileMenuDropdown = document.getElementById('profileMenuDropdown');
+
+            if (profileMenuBtn && profileMenuDropdown) {
+                profileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileMenuDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!profileMenuBtn.contains(e.target) && !profileMenuDropdown.contains(e.target)) {
+                        profileMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
             // Логика для меню чата (три точки)
             const chatMenuBtn = document.getElementById('chatMenuBtn');
             const chatMenuDropdown = document.getElementById('chatMenuDropdown');
-            const cardsModal = document.getElementById('cardsModal');
 
             if (chatMenuBtn && chatMenuDropdown) {
                 chatMenuBtn.addEventListener('click', (e) => {
@@ -896,77 +914,47 @@
                     }
                 });
 
-                // Обработчик для открытия модалки "Карточки"
+                // Обработчик для отправки "Карточки" в чат
                 const cardsBtn = chatMenuDropdown.querySelector('.chat-dropdown-item:first-child');
-                if (cardsBtn && cardsModal) {
+                const messageArea = document.querySelector('.message-area');
+                
+                if (cardsBtn && messageArea) {
                     cardsBtn.addEventListener('click', () => {
-                        cardsModal.classList.remove('hidden');
                         chatMenuDropdown.classList.add('hidden'); // закрываем дропдаун
-                    });
-                }
-            }
 
-            // Логика закрытия модалки "Карточки"
-            if (cardsModal) {
-                const btnNo = document.getElementById('cardsBtnNo');
-                const btnYes = document.getElementById('cardsBtnYes');
-                const btnClose = document.getElementById('cardsBtnClose');
-                const questionText = cardsModal.querySelector('.cards-modal-question p');
+                        const dummyQuestions = [
+                            "Ты любишь спонтанные поездки в другие города на выходные?",
+                            "Часто ли ты слушаешь музыку по пути на работу?",
+                            "Предпочитаешь ли ты активный отдых на природе вместо кино?",
+                            "Любишь ли ты пробовать экзотическую еду?"
+                        ];
+                        
+                        // Выбираем случайный вопрос
+                        const randomQuestion = dummyQuestions[Math.floor(Math.random() * dummyQuestions.length)];
 
-                // Моковые вопросы для демонстрации смены карточек
-                const dummyQuestions = [
-                    "Ты любишь спонтанные поездки в другие города на выходные?",
-                    "Часто ли ты слушаешь музыку по пути на работу?",
-                    "Предпочитаешь ли ты активный отдых на природе вместо кино?",
-                    "Любишь ли ты пробовать экзотическую еду?"
-                ];
-                let currentQuestionIndex = 0;
+                        const now = new Date();
+                        const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-                const resetModal = () => {
-                    cardsModal.classList.add('hidden');
-                    currentQuestionIndex = 0;
-                    setTimeout(() => {
-                        questionText.textContent = dummyQuestions[0];
-                        questionText.style.opacity = 1;
-                    }, 300);
-                };
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message outgoing';
+                        messageDiv.innerHTML = `
+                            <div class="message-content" style="background-color: transparent; box-shadow: none; padding: 0; max-width: 80%;">
+                                <div style="background-color: #EAE1FA; padding: 12px 16px; border-radius: 20px; border-bottom-right-radius: 4px; box-shadow: var(--shadow);">
+                                    <div class="cards-message-question" style="margin-bottom: 4px;">
+                                        <p>${randomQuestion}</p>
+                                    </div>
+                                    <span class="message-time" style="display: block; text-align: right;">${timeString}</span>
+                                </div>
+                            </div>
+                        `;
 
-                const showNextQuestion = () => {
-                    currentQuestionIndex++;
-                    if (currentQuestionIndex < dummyQuestions.length) {
-                        // Анимация затухания
-                        questionText.style.opacity = 0;
+                        messageArea.appendChild(messageDiv);
+                        // Прокручиваем чат вниз
                         setTimeout(() => {
-                            questionText.textContent = dummyQuestions[currentQuestionIndex];
-                            // Анимация появления
-                            questionText.style.opacity = 1;
-                        }, 200);
-                    } else {
-                        // Вопросы закончились
-                        resetModal();
-                    }
-                };
-
-                // Закрываем по клику на фон
-                cardsModal.addEventListener('click', (e) => {
-                    if (e.target === cardsModal) {
-                        resetModal();
-                    }
-                });
-
-                // Закрываем по крестику
-                if (btnClose) {
-                    btnClose.addEventListener('click', () => {
-                        resetModal();
+                            messageArea.scrollTop = messageArea.scrollHeight;
+                        }, 50);
                     });
                 }
-
-                // Переход к следующему вопросу при нажатии Да/Нет
-                [btnNo, btnYes].forEach(btn => {
-                    if (btn) {
-                        btn.addEventListener('click', showNextQuestion);
-                    }
-                });
             }
         });
     </script>
