@@ -14,6 +14,7 @@ type Config struct {
 	AuthServiceURL             string
 	ProfileServiceGRPC         string
 	RecommendationsServiceGRPC string
+	SwipesServiceGRPC          string
 	JWTPublicKey               *rsa.PublicKey
 }
 
@@ -24,6 +25,7 @@ func Load() *Config {
 		AuthServiceURL:             getEnv("AUTH_SERVICE_URL", ""),
 		ProfileServiceGRPC:         getEnv("PROFILE_SERVICE_GRPC_ADDR", "localhost:50051"),
 		RecommendationsServiceGRPC: getEnv("RECOMMENDATIONS_SERVICE_GRPC_ADDR", "localhost:50052"),
+		SwipesServiceGRPC:          getEnv("SWIPES_SERVICE_GRPC_ADDR", "localhost:50053"),
 		JWTPublicKey:               getJWTPublicKey("JWT_PUBLIC_KEY_PATH", ""),
 	}
 }

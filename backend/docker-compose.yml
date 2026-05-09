@@ -28,6 +28,7 @@ services:
       - ms-auth
       - ms-profiles
       - ms-recommendations
+      - ms-swipes
     restart: always
 
   api-gateway-docs:
@@ -181,35 +182,33 @@ services:
     ports:
       - 6379:6379
 
-# # Swipes Service
-#   ms-swipes:
-#     container_name: ms-swipes
-#     build:
-#       context: ./services/swipes
-#       dockerfile: Dockerfile
-#     ports:
-#       - 8003:8003
-#     env_file:
-#       - ./services/swipes/.env
-#     depends_on:
-#       - db-swipes
-#       - ms-auth
-#       - ms-profiles
-#       - kafka
-#     restart: always
-  
-#   db-swipes:
-#     image: postgres:latest
-#     container_name: db-swipes
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: my_own_password_123
-#       POSTGRES_DB: swipes
-#     volumes:
-#       - postgres_data_swipes:/var/lib/postgresql/data
-#     ports:
-#       - 5435:5432
-#     restart: always
+  ms-swipes:
+    container_name: ms-swipes
+    build:
+      context: ./services/swipes
+      dockerfile: Dockerfile
+    ports:
+      - 50053:50053
+    env_file:
+      - ./services/swipes/.env
+    depends_on:
+      - db-swipes
+      - kafka-init
+      - kafka
+    restart: always
+
+  db-swipes:
+    image: postgres:latest
+    container_name: db-swipes
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: swipes
+    volumes:
+      - postgres_data_swipes:/var/lib/postgresql/data
+    ports:
+      - 5435:5432
+    restart: always
 
 # # Chats Service
 #   ms-chats:
@@ -251,5 +250,5 @@ volumes:
     driver: local
   postgres_data_recommendations:
     driver: local
-  # postgres_data_swipes:
-  #   driver: local
+  postgres_data_swipes:
+    driver: local

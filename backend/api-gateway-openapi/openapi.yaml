@@ -6,7 +6,7 @@ info:
 
     - **Auth** paths under `/api/v1/auth/*` are reverse-proxied to the authentication service (FastAPI).
       Request/response bodies match that service unless noted.
-    - **Profiles**, **recommendations**, **swipes**, and **matches** handlers are implemented in the gateway (or stubbed).
+    - **Profiles**, **recommendations**, **swipes**, and **matches** are routed through the gateway to the backing gRPC services.
     - **Recommendations** HTTP routes call the **recommendations** gRPC service for ids and stored filters, then the **profiles** gRPC service to load profile rows.
     - Protected routes require `Authorization: Bearer <JWT>`. The gateway validates the token and expects a numeric `sub` claim (user id).
 
@@ -481,36 +481,51 @@ paths:
   /api/v1/swipes:
     post:
       tags: [Swipes]
-      summary: Record swipe action (stub)
+      summary: Record swipe (like or dislike) on a profile
       operationId: swipesAction
       security:
         - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwipeRequestBody'
       responses:
-        '501':
-          description: Not implemented
+        '200':
+          description: OK — protobuf JSON `{ success }`
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotImplementedError'
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: Invalid body or self-swipe
         '401':
           description: Unauthorized
+        '502':
+          description: Bad gateway
 
   /api/v1/matches:
     get:
       tags: [Matches]
-      summary: List matches (stub)
+      summary: List matched profiles for the current user
       operationId: matchesGet
       security:
         - bearerAuth: []
       responses:
-        '501':
-          description: Not implemented
+        '200':
+          description: OK — same shape as `GetProfiles` (protobuf JSON)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/NotImplementedError'
+                $ref: '#/components/schemas/GetProfilesResponseSnake'
         '401':
           description: Unauthorized
+        '502':
+          description: Bad gateway
 
 components:
   securitySchemes:
@@ -540,6 +555,16 @@ components:
           format: email
         password:
           type: string
+
+    SwipeRequestBody:
+      type: object
+      required: [target_user_id, liked]
+      properties:
+        target_user_id:
+          type: integer
+          format: int64
+        liked:
+          type: boolean
 
     AuthResponse:
       type: object

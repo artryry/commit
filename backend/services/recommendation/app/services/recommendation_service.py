@@ -11,6 +11,7 @@ from repositories import (
     IUserFilterRepository,
 )
 from services.candidate_rules import CandidateRules, StackRanker
+from utils.vectors import VectorMath
 
 
 class RecommendationService:
@@ -39,6 +40,8 @@ class RecommendationService:
         scored: List[Tuple[float, int]] = []
 
         for cand in candidates:
+            if cand.user_id == viewer_id:
+                continue
             if await self._seen.exists(viewer_id, cand.user_id):
                 continue
             if not await CandidateRules.matches(viewer, filt, filter_tag_names, cand, self._tags):
@@ -62,6 +65,8 @@ class RecommendationService:
                 cid = await self._stack.rpop_id(viewer_id)
                 if cid is None:
                     break
+            if cid == viewer_id:
+                continue
             await self._seen.insert_ignore(viewer_id, cid, now)
             out.append(cid)
 
@@ -155,3 +160,28 @@ class RecommendationService:
         await self._tags.replace_filter_tags(user_id, list(tag_names))
         await self._stack.delete_stack(user_id)
         await self.rebuild_stack(user_id)
+
+    async def record_swipe_pair(self, viewer_id: int, target_id: int) -> None:
+        """Persist swipe as seen so future rebuilds exclude this pair.
+
+        No stack rebuild: recommendations were already popped from Redis when shown;
+        marking seen is enough for scoring/filter consistency without recomputing the stack.
+        """
+        if viewer_id == target_id:
+            return
+        now = datetime.now(timezone.utc)
+        await self._seen.insert_ignore(viewer_id, target_id, now)
+
+    async def apply_swipe_search_nudge(self, viewer_id: int, target_id: int, liked: bool) -> None:
+        """Optional tiny rotation of viewer `search_for_vector` toward target `bio_vector` after a like."""
+        alpha = settings.SWIPE_SEARCH_NUDGE_ALPHA
+        if alpha <= 0 or not liked:
+            return
+        viewer = await self._users.get(viewer_id)
+        target = await self._users.get(target_id)
+        if viewer is None or target is None:
+            return
+        if viewer.search_for_vector is None or target.bio_vector is None:
+            return
+        new_sf = VectorMath.lerp_unit(viewer.search_for_vector, target.bio_vector, alpha)
+        await self._users.update_search_for_vector(viewer_id, new_sf)

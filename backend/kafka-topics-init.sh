@@ -33,5 +33,15 @@ kafka-topics --bootstrap-server kafka:9092 \
   --partitions 3 --replication-factor 1 \
   --if-not-exists
 
+kafka-topics --bootstrap-server kafka:9092 \
+  --create --topic swipe.created \
+  --partitions 3 --replication-factor 1 \
+  --if-not-exists
+
+kafka-topics --bootstrap-server kafka:9092 \
+  --create --topic match.created \
+  --partitions 3 --replication-factor 1 \
+  --if-not-exists
+
 echo "Topics created!"
 kafka-topics --bootstrap-server kafka:9092 --list

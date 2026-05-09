@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package swipes.v1;
+
+option go_package = "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/swipes/proto/gen;swipespb";
+
+service SwipesService {
+  rpc RecordSwipe(RecordSwipeRequest) returns (RecordSwipeResponse);
+  rpc ListMatches(ListMatchesRequest) returns (ListMatchesResponse);
+}
+
+message RecordSwipeRequest {
+  int64 viewer_user_id = 1;
+  int64 target_user_id = 2;
+  bool liked = 3;
+}
+
+message RecordSwipeResponse {
+  bool success = 1;
+}
+
+message ListMatchesRequest {
+  int64 user_id = 1;
+}
+
+message ListMatchesResponse {
+  repeated int64 matched_user_ids = 1;
+}

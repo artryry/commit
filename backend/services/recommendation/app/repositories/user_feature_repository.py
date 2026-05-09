@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,6 +28,10 @@ class IUserFeatureRepository(ABC):
     async def delete(self, user_id: int) -> None:
         pass
 
+    @abstractmethod
+    async def update_search_for_vector(self, user_id: int, search_for_vector: List[float]) -> None:
+        pass
+
 
 class SqlUserFeatureRepository(IUserFeatureRepository):
     def __init__(self, session: AsyncSession):
@@ -51,3 +55,10 @@ class SqlUserFeatureRepository(IUserFeatureRepository):
 
     async def delete(self, user_id: int) -> None:
         await self._session.execute(delete(UserFeature).where(UserFeature.user_id == user_id))
+
+    async def update_search_for_vector(self, user_id: int, search_for_vector: List[float]) -> None:
+        uf = await self.get(user_id)
+        if uf is None:
+            return
+        uf.search_for_vector = search_for_vector
+        await self.flush()
