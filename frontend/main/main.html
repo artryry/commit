@@ -43,6 +43,10 @@
                     onclick="this.classList.toggle('active')">
                     <img src="icons/stars.png" alt="Знакомства">
                 </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Фильтр"
+                    onclick="this.classList.toggle('active')">
+                    <img src="icons/filter.png" alt="Фильтр">
+                </button>
             </nav>
         </div>
         <div class="header-right">
@@ -244,7 +248,7 @@
         </section>
 
         <!--Message Page-->
-        <section class="message-page-container hidden">
+        <section class="message-page-container">
             <!--Message List-->
             <section class="message-list glass-card">
 
@@ -297,14 +301,81 @@
                                 <span class="chat-status">Фев 28, 2026</span>
                             </div>
                         </div>
-                        <div class="profile-line-menu-btn">
-                            <span></span>
-                            <span></span>
-                            <span></span>
+                        <div class="profile-line-menu">
+                            <div class="profile-line-menu-btn" id="chatMenuBtn">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="chat-dropdown-menu hidden" id="chatMenuDropdown">
+                                <button class="chat-dropdown-item">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="5" y="5" width="10" height="14" rx="2" ry="2"
+                                            transform="rotate(-12 10 12)"></rect>
+                                        <rect x="9" y="5" width="10" height="14" rx="2" ry="2"
+                                            transform="rotate(12 14 12)"></rect>
+                                    </svg>
+                                    Карточки
+                                </button>
+                                <button class="chat-dropdown-item">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                    </svg>
+                                    Очистить чат
+                                </button>
+                                <button class="chat-dropdown-item danger">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                    </svg>
+                                    Заблокировать
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     <div class="message-area">
+
+                        <!-- Текстовое сообщение от собеседника (входящее) -->
+                        <div class="message incoming">
+                            <div class="message-content">
+                                <p>Привет! Как дела? Чем планируешь заняться на выходных?</p>
+                                <span class="message-time">14:20</span>
+                            </div>
+                        </div>
+
+                        <!-- Текстовое сообщение от пользователя (исходящее) -->
+                        <div class="message outgoing">
+                            <div class="message-content">
+                                <p>Привет! Всё отлично, думаю сходить в кино. А ты?</p>
+                                <span class="message-time">14:25</span>
+                            </div>
+                        </div>
+
+                        <!-- Фото-сообщение без подписи от собеседника -->
+                        <div class="message incoming">
+                            <div class="message-content message-photo">
+                                <img src="photos/man_portret (1).png" alt="Фото">
+                                <span class="message-time time-overlay">14:30</span>
+                            </div>
+                        </div>
+
+
+                        <!-- Фото-сообщение с подписью от пользователя -->
+                        <div class="message outgoing">
+                            <div class="message-content message-photo-caption">
+                                <img src="photos/man_portret (2).png" alt="Фото">
+                                <p>Смотри, какую классную штуку нашел!</p>
+                                <span class="message-time">14:35</span>
+                            </div>
+                        </div>
+
 
                     </div>
 
@@ -313,27 +384,44 @@
                         <div class="text-field">
 
                             <div class="text-field-left-part">
-                                <div class="emoji">
-                                    <img src="icons/smile.png" alt="Выбор эмодзи">
+                                <div class="emoji" title="Выбор эмодзи">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="var(--dark-color)" stroke-width="1" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                    </svg>
                                 </div>
 
                                 <div class="text-field-input">
-                                    <textarea rows="1" placeholder="Сообщение"></textarea>
+                                    <textarea rows="1" placeholder="Сообщение" maxlength="255"></textarea>
                                 </div>
 
                             </div>
 
                             <div class="text-field-right-part">
-                                <div class="add-file">
-                                    <img src="icons/paperclip.png" alt="Вложения">
+                                <div class="add-file" title="Вложения">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="var(--dark-color)" stroke-width="1" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path
+                                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                                        </path>
+                                    </svg>
                                 </div>
                             </div>
 
                         </div>
 
-                        <div class="voice-btn-container">
-                            <div class="voice-btn">
-                                <img src="icons/mic.png" alt="Голосовое сообщение">
+                        <div class="send-btn-container" title="Отправить сообщение">
+                            <div class="send-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--dark-color)"
+                                    stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
                             </div>
                         </div>
 
@@ -450,7 +538,7 @@
         </section>
 
         <!-- Acquaintance page -->
-        <section class="acquaintance-page-container">
+        <section class="acquaintance-page-container hidden">
 
             <!-- Left: Photo Gallery Card -->
             <section class="photo-gallery-card-x-scroll glass-card">
@@ -589,7 +677,140 @@
 
     </main>
 
+    <div class="filter-menu hidden">
+        <div class="filters">
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label for="age">Возраст</label>
+                    <span class="age-value">40</span>
+                </div>
 
+                <div class="filter-item-bottom">
+                    <input type="range" id="age" class="custom-range" value="40" min="18" max="99">
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Партнер</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="custom-dropdown" id="customLookingFor">
+                        <div class="custom-dropdown-selected">Выберите
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="arrow-down-icon">
+                                <path d="M6 9L12 15L18 9" stroke="#3C344B" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="custom-dropdown-options hidden">
+                            <div class="custom-dropdown-option" data-value="">Выберите</div>
+                            <div class="custom-dropdown-option" data-value="1">Партнёра</div>
+                            <div class="custom-dropdown-option" data-value="2">Друга</div>
+                        </div>
+                        <input type="hidden" name="looking_for" id="looking_for" value="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Пол</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="custom-dropdown" id="customGender">
+                        <div class="custom-dropdown-selected">Выберите пол
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="arrow-down-icon">
+                                <path d="M6 9L12 15L18 9" stroke="#3C344B" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="custom-dropdown-options hidden">
+                            <div class="custom-dropdown-option" data-value="">Выберите пол</div>
+                            <div class="custom-dropdown-option" data-value="male">Мужской</div>
+                            <div class="custom-dropdown-option" data-value="female">Женский</div>
+                        </div>
+                        <input type="hidden" name="gender" id="gender" value="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Интересы</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="input-with-icon">
+                        <input type="text" placeholder="Спорт" style="color: rgba(60, 52, 75, 0.5);">
+                    </div>
+                    <div class="filter-tags">
+                        <span class="interest-tag">#Спорт</span>
+                        <span class="interest-tag">#Кино</span>
+                        <span class="interest-tag">#Гарри Потер</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-menu">
+        <h2 class="notification-header">Уведомления</h2>
+        <div class="notification-list">
+
+            <div class="chat-profile-line">
+                <div class="chat-profile-avatar">
+                    <img src="photos/man_portret (2).png" alt="Фото профиля">
+                </div>
+                <div class="chat-profile-info">
+                    <div class="chat-profile-name">
+                        <span class="chat-profile-name-text">Иван Иванов</span>
+                        <span class="chat-profile-date">Фев 28, 2026</span>
+                    </div>
+                    <div class="chat-profile-last-message">Оценил ваш профиль!</div>
+                </div>
+            </div>
+
+            <div class="chat-profile-line">
+                <div class="chat-profile-avatar">
+                    <img src="photos/man_portret (2).png" alt="Фото профиля">
+                </div>
+                <div class="chat-profile-info">
+                    <div class="chat-profile-name">
+                        <span class="chat-profile-name-text">Иван Иванов</span>
+                        <span class="chat-profile-date">Фев 28, 2026</span>
+                    </div>
+                    <div class="chat-profile-last-message">Оценил ваш профиль!</div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <!-- Модальное окно "Карточки" -->
+    <div id="cardsModal" class="cards-modal-overlay hidden">
+        <div class="cards-modal-content">
+            <button class="cards-modal-close" id="cardsBtnClose" title="Закрыть">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="cards-modal-title">Карточки</h2>
+
+            <div class="cards-modal-question">
+                <p>Ты любишь спонтанные поездки в другие города на выходные?</p>
+            </div>
+
+            <div class="cards-modal-actions">
+                <button class="cards-btn-no" id="cardsBtnNo">Нет</button>
+                <button class="cards-btn-yes" id="cardsBtnYes">Да</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-bottom-nav">
@@ -608,6 +829,147 @@
         </div>
     </nav>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function setupDropdown(dropdownId, inputId) {
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    const selected = dropdown.querySelector('.custom-dropdown-selected');
+                    const optionsContainer = dropdown.querySelector('.custom-dropdown-options');
+                    const options = dropdown.querySelectorAll('.custom-dropdown-option');
+                    const hiddenInput = document.getElementById(inputId);
+
+                    selected.addEventListener('click', (e) => {
+                        optionsContainer.classList.toggle('hidden');
+                    });
+
+                    options.forEach(option => {
+                        option.addEventListener('click', () => {
+                            selected.innerHTML = option.textContent + `<svg 
+                                        width="24" 
+                                        height="24" 
+                                        viewBox="0 0 24 24" 
+                                        fill="none" 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        aria-hidden="true"
+                                        class="arrow-down-icon">
+                                        <path 
+                                            d="M6 9L12 15L18 9" 
+                                            stroke="#3C344B" 
+                                            stroke-width="2.5" 
+                                            stroke-linecap="round" 
+                                            stroke-linejoin="round"/>
+                                        </svg>`;
+                            if (hiddenInput) {
+                                hiddenInput.value = option.getAttribute('data-value');
+                            }
+                            optionsContainer.classList.add('hidden');
+                        });
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        if (!dropdown.contains(e.target)) {
+                            optionsContainer.classList.add('hidden');
+                        }
+                    });
+                }
+            }
+
+            // Инициализируем оба дропдауна
+            setupDropdown('customLookingFor', 'looking_for');
+            setupDropdown('customGender', 'gender');
+
+            // Логика для меню чата (три точки)
+            const chatMenuBtn = document.getElementById('chatMenuBtn');
+            const chatMenuDropdown = document.getElementById('chatMenuDropdown');
+            const cardsModal = document.getElementById('cardsModal');
+
+            if (chatMenuBtn && chatMenuDropdown) {
+                chatMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    chatMenuDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!chatMenuBtn.contains(e.target) && !chatMenuDropdown.contains(e.target)) {
+                        chatMenuDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Обработчик для открытия модалки "Карточки"
+                const cardsBtn = chatMenuDropdown.querySelector('.chat-dropdown-item:first-child');
+                if (cardsBtn && cardsModal) {
+                    cardsBtn.addEventListener('click', () => {
+                        cardsModal.classList.remove('hidden');
+                        chatMenuDropdown.classList.add('hidden'); // закрываем дропдаун
+                    });
+                }
+            }
+
+            // Логика закрытия модалки "Карточки"
+            if (cardsModal) {
+                const btnNo = document.getElementById('cardsBtnNo');
+                const btnYes = document.getElementById('cardsBtnYes');
+                const btnClose = document.getElementById('cardsBtnClose');
+                const questionText = cardsModal.querySelector('.cards-modal-question p');
+
+                // Моковые вопросы для демонстрации смены карточек
+                const dummyQuestions = [
+                    "Ты любишь спонтанные поездки в другие города на выходные?",
+                    "Часто ли ты слушаешь музыку по пути на работу?",
+                    "Предпочитаешь ли ты активный отдых на природе вместо кино?",
+                    "Любишь ли ты пробовать экзотическую еду?"
+                ];
+                let currentQuestionIndex = 0;
+
+                const resetModal = () => {
+                    cardsModal.classList.add('hidden');
+                    currentQuestionIndex = 0;
+                    setTimeout(() => {
+                        questionText.textContent = dummyQuestions[0];
+                        questionText.style.opacity = 1;
+                    }, 300);
+                };
+
+                const showNextQuestion = () => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < dummyQuestions.length) {
+                        // Анимация затухания
+                        questionText.style.opacity = 0;
+                        setTimeout(() => {
+                            questionText.textContent = dummyQuestions[currentQuestionIndex];
+                            // Анимация появления
+                            questionText.style.opacity = 1;
+                        }, 200);
+                    } else {
+                        // Вопросы закончились
+                        resetModal();
+                    }
+                };
+
+                // Закрываем по клику на фон
+                cardsModal.addEventListener('click', (e) => {
+                    if (e.target === cardsModal) {
+                        resetModal();
+                    }
+                });
+
+                // Закрываем по крестику
+                if (btnClose) {
+                    btnClose.addEventListener('click', () => {
+                        resetModal();
+                    });
+                }
+
+                // Переход к следующему вопросу при нажатии Да/Нет
+                [btnNo, btnYes].forEach(btn => {
+                    if (btn) {
+                        btn.addEventListener('click', showNextQuestion);
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

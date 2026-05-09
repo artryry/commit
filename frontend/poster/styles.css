@@ -364,6 +364,10 @@ main {
 
 .custom-dropdown-selected {
     border: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 12px;
     padding: 10px 16px;
     background-color: var(--light-color);
@@ -377,6 +381,8 @@ main {
 
 .custom-dropdown-options {
     position: absolute;
+    color: var(--dark-color);
+    text-align: left;
     top: calc(100% + 5px);
     left: 0;
     width: 100%;
@@ -400,6 +406,10 @@ main {
 .custom-dropdown-option:hover {
     background-color: var(--main-color);
     color: var(--light-color);
+}
+
+.arrow-down-icon {
+    color: var(--dark-color);
 }
 
 .input-area textarea {

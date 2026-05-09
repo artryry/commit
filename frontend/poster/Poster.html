@@ -206,11 +206,27 @@
                         <div class="input-area">
                             <label>Вы ищите</label>
                             <div class="custom-dropdown" id="customLookingFor">
-                                <div class="custom-dropdown-selected">Выберите</div>
+                                <div class="custom-dropdown-selected">Выберите
+                                    <svg 
+                                    width="24" 
+                                    height="24" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    aria-hidden="true"
+                                    class="arrow-down-icon">
+                                    <path 
+                                        d="M6 9L12 15L18 9" 
+                                        stroke="#3C344B" 
+                                        stroke-width="2.5" 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
                                 <div class="custom-dropdown-options hidden">
                                     <div class="custom-dropdown-option" data-value="">Выберите</div>
-                                    <div class="custom-dropdown-option" data-value="1">Парня</div>
-                                    <div class="custom-dropdown-option" data-value="2">Девушку</div>
+                                    <div class="custom-dropdown-option" data-value="1">Партнёра</div>
+                                    <div class="custom-dropdown-option" data-value="2">Друга</div>
                                 </div>
                                 <input type="hidden" name="looking_for" id="looking_for" value="">
                             </div>
@@ -327,7 +343,21 @@
 
                 options.forEach(option => {
                     option.addEventListener('click', () => {
-                        selected.textContent = option.textContent;
+                        selected.innerHTML = option.textContent + `<svg 
+                                    width="24" 
+                                    height="24" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    aria-hidden="true"
+                                    class="arrow-down-icon">
+                                    <path 
+                                        d="M6 9L12 15L18 9" 
+                                        stroke="#3C344B" 
+                                        stroke-width="2.5" 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round"/>
+                                    </svg>`;
                         hiddenInput.value = option.getAttribute('data-value');
                         optionsContainer.classList.add('hidden');
                     });
