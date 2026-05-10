@@ -12,6 +12,7 @@ type Config struct {
 	Port                       string
 	Address                    string
 	AuthServiceURL             string
+	NotificationsServiceURL    string
 	ProfileServiceGRPC         string
 	RecommendationsServiceGRPC string
 	SwipesServiceGRPC          string
@@ -23,6 +24,7 @@ func Load() *Config {
 		Port:                       getEnv("PORT", "8080"),
 		Address:                    getEnv("ADDRESS", "0.0.0.0"),
 		AuthServiceURL:             getEnv("AUTH_SERVICE_URL", ""),
+		NotificationsServiceURL:  getEnv("NOTIFICATIONS_SERVICE_URL", ""),
 		ProfileServiceGRPC:         getEnv("PROFILE_SERVICE_GRPC_ADDR", "localhost:50051"),
 		RecommendationsServiceGRPC: getEnv("RECOMMENDATIONS_SERVICE_GRPC_ADDR", "localhost:50052"),
 		SwipesServiceGRPC:          getEnv("SWIPES_SERVICE_GRPC_ADDR", "localhost:50053"),

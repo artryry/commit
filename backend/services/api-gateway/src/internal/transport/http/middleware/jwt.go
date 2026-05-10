@@ -17,14 +17,19 @@ func JWT(publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Println("Verifying JWT token...")
-			authHeader := r.Header.Get("Authorization")
-			if authHeader == "" {
+			var tokenString string
+			if authHeader := r.Header.Get("Authorization"); authHeader != "" {
+				tokenString = strings.TrimPrefix(authHeader, "Bearer ")
+			} else if q := r.URL.Query().Get("token"); q != "" {
+				// WebSocket clients often cannot set Authorization; query param is forwarded by the proxy.
+				tokenString = q
+			}
+			if tokenString == "" {
 				http.Error(w, "Unauthorized", http.StatusUnauthorized)
 				return
 			}
 
 			// JWT Verification
-			tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 
 			token, err := verifyJWT(tokenString, publicKey)
 			if err != nil {

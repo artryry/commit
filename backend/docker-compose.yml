@@ -29,6 +29,7 @@ services:
       - ms-profiles
       - ms-recommendations
       - ms-swipes
+      - ms-notifications
     restart: always
 
   api-gateway-docs:
@@ -226,20 +227,36 @@ services:
 #       - kafka
 #     restart: always
 
-# # Notifications Service
-#   ms-notifications:
-#     container_name: ms-notifications
-#     build:
-#       context: ./services/notifications
-#       dockerfile: Dockerfile
-#     ports:
-#       - 8006:8006
-#     env_file:
-#       - ./services/notifications/.env
-#     depends_on:
-#       - ms-auth
-#       - kafka
-#     restart: always
+  ms-notifications:
+    container_name: ms-notifications
+    build:
+      context: ./services/notifications
+      dockerfile: Dockerfile
+    ports:
+      - 18006:8006
+    environment:
+      DB_HOST: db-notifications
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    env_file:
+      - ./services/notifications/.env
+    depends_on:
+      - db-notifications
+      - kafka-init
+      - kafka
+    restart: always
+
+  db-notifications:
+    image: postgres:latest
+    container_name: db-notifications
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: notifications
+    volumes:
+      - postgres_data_notifications:/var/lib/postgresql/data
+    ports:
+      - 5436:5432
+    restart: always
 
 volumes:
   postgres_data_auth:
@@ -251,4 +268,6 @@ volumes:
   postgres_data_recommendations:
     driver: local
   postgres_data_swipes:
+    driver: local
+  postgres_data_notifications:
     driver: local

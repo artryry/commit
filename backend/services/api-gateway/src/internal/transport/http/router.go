@@ -72,15 +72,13 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 				r.Get("/", handlers.Swipes.GetMatches)
 			})
 
+			// -------- NOTIFICATIONS (FastAPI + WebSocket; JWT at gateway → X-User-Id to service) --------
+			r.Mount("/notifications", proxy.NewForwardingUserID(cfg.NotificationsServiceURL))
+
 			// -------- CHATS --------
 			// r.Route("/chats", func(r chi.Router) {
 			// 	r.Get("/", handlers.Chat.GetChats)
 			// 	r.Get("/{chat_id}/messages", handlers.Chat.GetMessages)
-			// })
-
-			// -------- NOTIFICATIONS --------
-			// r.Route("/notifications", func(r chi.Router) {
-			// 	r.Get("/", handlers.Notification.GetAll)
 			// })
 		})
 	})
