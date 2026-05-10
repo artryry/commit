@@ -43,5 +43,15 @@ kafka-topics --bootstrap-server kafka:9092 \
   --partitions 3 --replication-factor 1 \
   --if-not-exists
 
+kafka-topics --bootstrap-server kafka:9092 \
+  --create --topic chat.deleted \
+  --partitions 3 --replication-factor 1 \
+  --if-not-exists
+
+kafka-topics --bootstrap-server kafka:9092 \
+  --create --topic chat.message \
+  --partitions 3 --replication-factor 1 \
+  --if-not-exists
+
 echo "Topics created!"
 kafka-topics --bootstrap-server kafka:9092 --list

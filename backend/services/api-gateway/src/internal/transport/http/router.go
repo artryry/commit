@@ -76,10 +76,7 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 			r.Mount("/notifications", proxy.NewForwardingUserID(cfg.NotificationsServiceURL))
 
 			// -------- CHATS --------
-			// r.Route("/chats", func(r chi.Router) {
-			// 	r.Get("/", handlers.Chat.GetChats)
-			// 	r.Get("/{chat_id}/messages", handlers.Chat.GetMessages)
-			// })
+			r.Mount("/chats", proxy.NewForwardingUserID(cfg.ChatsServiceURL))
 		})
 	})
 

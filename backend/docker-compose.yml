@@ -30,6 +30,7 @@ services:
       - ms-recommendations
       - ms-swipes
       - ms-notifications
+      - ms-chats
     restart: always
 
   api-gateway-docs:
@@ -211,21 +212,38 @@ services:
       - 5435:5432
     restart: always
 
-# # Chats Service
-#   ms-chats:
-#     container_name: ms-chats
-#     build:
-#       context: ./services/chats
-#       dockerfile: Dockerfile
-#     ports:
-#       - 8005:8005
-#     env_file:
-#       - ./services/chats/.env
-#     depends_on:
-#       - ms-auth
-#       - ms-profiles
-#       - kafka
-#     restart: always
+  ms-chats:
+    container_name: ms-chats
+    build:
+      context: ./services/chats
+      dockerfile: Dockerfile
+    ports:
+      - 18005:8005
+    environment:
+      DB_HOST: db-chats
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      STORAGE_ENDPOINT: http://minio:9000
+    env_file:
+      - ./services/chats/.env
+    depends_on:
+      - db-chats
+      - kafka-init
+      - kafka
+      - minio
+    restart: always
+
+  db-chats:
+    image: postgres:latest
+    container_name: db-chats
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: my_own_password_123
+      POSTGRES_DB: chats
+    volumes:
+      - postgres_data_chats:/var/lib/postgresql/data
+    ports:
+      - 5437:5432
+    restart: always
 
   ms-notifications:
     container_name: ms-notifications
@@ -270,4 +288,6 @@ volumes:
   postgres_data_swipes:
     driver: local
   postgres_data_notifications:
+    driver: local
+  postgres_data_chats:
     driver: local

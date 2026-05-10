@@ -9,6 +9,7 @@ from aiokafka import AIOKafkaConsumer
 
 from config import cfg
 from db.session import AsyncSessionLocal
+from kafka.chat_events import handle_chat_deleted_envelope, handle_chat_message_envelope
 from kafka.match_events import handle_match_created_envelope
 from services.connection_manager import ConnectionManager
 
@@ -19,10 +20,17 @@ def _bootstrap_servers() -> list[str]:
     return [s.strip() for s in cfg.KAFKA_BOOTSTRAP_SERVERS.split(",") if s.strip()]
 
 
-async def _process_envelope(connection_manager: ConnectionManager, raw: dict[str, Any]) -> None:
+async def _process_record(connection_manager: ConnectionManager, topic: str, raw: dict[str, Any]) -> None:
     async with AsyncSessionLocal() as session:
         try:
-            await handle_match_created_envelope(session, connection_manager, raw)
+            if topic == cfg.KAFKA_TOPIC_MATCH_CREATED:
+                await handle_match_created_envelope(session, connection_manager, raw)
+            elif topic == cfg.KAFKA_TOPIC_CHAT_DELETED:
+                await handle_chat_deleted_envelope(session, connection_manager, raw)
+            elif topic == cfg.KAFKA_TOPIC_CHAT_MESSAGE:
+                await handle_chat_message_envelope(session, connection_manager, raw)
+            else:
+                return
             await session.commit()
         except Exception:
             await session.rollback()
@@ -32,6 +40,8 @@ async def _process_envelope(connection_manager: ConnectionManager, raw: dict[str
 async def run_kafka_consumer(connection_manager: ConnectionManager) -> None:
     consumer = AIOKafkaConsumer(
         cfg.KAFKA_TOPIC_MATCH_CREATED,
+        cfg.KAFKA_TOPIC_CHAT_DELETED,
+        cfg.KAFKA_TOPIC_CHAT_MESSAGE,
         bootstrap_servers=_bootstrap_servers(),
         group_id=cfg.KAFKA_GROUP_ID,
         auto_offset_reset="earliest",
@@ -39,10 +49,15 @@ async def run_kafka_consumer(connection_manager: ConnectionManager) -> None:
         value_deserializer=lambda b: json.loads(b.decode("utf-8")),
     )
     await consumer.start()
-    logger.info("kafka consumer started topic=%s", cfg.KAFKA_TOPIC_MATCH_CREATED)
+    logger.info(
+        "kafka consumer started topics=%s,%s,%s",
+        cfg.KAFKA_TOPIC_MATCH_CREATED,
+        cfg.KAFKA_TOPIC_CHAT_DELETED,
+        cfg.KAFKA_TOPIC_CHAT_MESSAGE,
+    )
     try:
         async for msg in consumer:
-            await _process_envelope(connection_manager, msg.value)
+            await _process_record(connection_manager, msg.topic, msg.value)
     except asyncio.CancelledError:
         logger.info("kafka consumer cancelled")
         raise
