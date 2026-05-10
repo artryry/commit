@@ -73,6 +73,7 @@
     width: auto;
     min-width: clamp(28px, 2.2vw, 60px);
     height: clamp(28px, 2.2vw, 60px);
+    min-height: clamp(28px, 2.2vw, 60px);
     border-radius: 12px;
     border-color: radial-gradient(circle, var(--light-color));
     border: none;
@@ -80,7 +81,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 4px;
     transition: transform 0.2s ease, box-shadow 0.2s ease, padding 0.4s ease;
     backface-visibility: hidden;
     transform: translateZ(0);
@@ -95,12 +96,22 @@
     transform: scale(1.1) translateZ(0);
 }
 
-.nav-icon-btn img {
+.nav-icon-btn svg {
     display: block;
-    width: clamp(14px, 1.15vw, 25px);
+    width: clamp(24px, 1.4vw, 50px);
     height: auto;
     flex-shrink: 0;
     backface-visibility: hidden;
+    color: var(--dark-color);
+    transition: color 0.3s ease;
+}
+
+.nav-icon-btn--pink svg {
+    color: var(--light-color);
+}
+
+.nav-icon-btn.active svg {
+    color: var(--light-color);
 }
 
 .nav-icon-btn--yellow {
@@ -112,11 +123,17 @@
 }
 
 .nav-notification-dot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--light-color);
+    font-size: var(--fs-12);
     position: absolute;
     top: -10%;
     right: -10%;
-    width: clamp(6px, 0.9vw, 14px);
-    height: clamp(6px, 0.9vw, 14px);
+    width: clamp(14px, 1vw, 19px);
+    height: clamp(14px, 1vw, 19px);
+    padding: 5px;
     border-radius: 50%;
     background-color: var(--supper-accent-color);
 }
@@ -1645,10 +1662,31 @@ summary img {
 
 
 @media (max-width: 768px) {
+    body {
+        height: auto;
+        overflow-y: scroll;
+    }
+
+    .profile-layout {
+        max-height: none;
+        overflow-y: scroll;
+        justify-content: center;
+    }
 
     .header-user .nav-icon-btn {
-        border-radius: 12%;
         display: flex;
+        height: auto;
+        width: auto;
+    }
+
+    .header-user-avatar {
+        width: clamp(40px, 4.17vw, 60px);
+        height: clamp(40px, 4.17vw, 60px);
+    }
+
+    .header-logo img {
+        width: clamp(40px, 5vw, 70px);
+        height: auto;
     }
 
     .background-elements {
@@ -1820,4 +1858,45 @@ summary img {
         padding: 0;
     }
 
+    /* Mobile Chat Layout */
+    .back-to-chats-btn {
+        display: flex;
+    }
+
+    .message-list {
+        width: 100%;
+        height: calc(100vh - 150px);
+    }
+
+    .message-chat {
+        display: none;
+        width: 100%;
+        height: calc(100vh - 150px);
+    }
+
+    .message-page-container.chat-active .message-list {
+        display: none;
+    }
+
+    .message-page-container.chat-active .message-chat {
+        display: flex;
+    }
+}
+
+/* Base style for back button (Desktop) */
+.back-to-chats-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--dark-color);
+    cursor: pointer;
+    padding: 0;
+    margin-right: 12px;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.back-to-chats-btn:hover {
+    color: var(--accent-color);
 }
