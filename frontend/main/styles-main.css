@@ -423,6 +423,7 @@
     line-height: var(--lh-110);
     color: #3C344B;
     font-weight: 500;
+
 }
 
 /* --- Field Cards --- */
@@ -1662,6 +1663,11 @@ summary img {
 
 
 @media (max-width: 768px) {
+
+    :root {
+        --shadow: none;
+    }
+
     body {
         height: auto;
         overflow-y: scroll;
@@ -1720,6 +1726,14 @@ summary img {
         overflow-x: hidden;
     }
 
+    .commit-page {
+        padding: 4px 8px;
+    }
+
+    .commit-page {
+        margin-bottom: 70px;
+    }
+
     .photo-gallery-card {
         width: 100%;
         height: 65vh;
@@ -1749,8 +1763,20 @@ summary img {
     .scroll-container {
         max-height: none;
         overflow-y: visible;
+        row-gap: 16px;
     }
 
+    .general-match {
+        row-gap: 8px;
+    }
+
+    .general-match h3 {
+        font-size: var(--fs-32);
+    }
+
+    .general-match p {
+        font-size: var(--fs-32);
+    }
 
     .photo-slot img:hover {
         transform: none;
@@ -1784,9 +1810,20 @@ summary img {
 
     .profile-info-card.glass-card {
         width: 100%;
-        padding: 4px 8px;
         height: 100vh;
-        row-gap: 16px;
+        row-gap: 8px;
+    }
+
+    .profile-info-card {
+        padding: 0;
+    }
+
+    .profile-header {
+        padding: 5px;
+    }
+
+    .profile-item-frame {
+        padding: 5px;
     }
 
 
@@ -1798,9 +1835,9 @@ summary img {
     .profile-header,
     .profile-item-frame {
         background-color: var(--light-color);
-        padding: 5px;
         border-radius: 12px;
         box-shadow: var(--shadow);
+        row-gap: 8px;
     }
 
     .profile-bio-labels {
@@ -1831,7 +1868,7 @@ summary img {
 
 
     .bio-label {
-        font-size: var(--fs-18);
+        font-size: var(--fs-32);
         line-height: var(--lh-110);
     }
 
@@ -1881,6 +1918,54 @@ summary img {
     .message-page-container.chat-active .message-chat {
         display: flex;
     }
+
+    /* Commit page */
+    .acquaintance-page-container {
+        width: 100%;
+        height: fit-content;
+        row-gap: 16px;
+        margin-bottom: 70px;
+    }
+
+    .photo-gallery-card-x-scroll {
+        width: 100%;
+        padding: 4px 8px;
+    }
+
+    .photo-slot-x {
+        height: 55vh;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .photo-slot-x img {
+        width: 100%;
+    }
+
+    .button-like,
+    .button-dislike {
+        height: 10%;
+    }
+
+    .button-like img,
+    .button-dislike img {
+        width: 50%;
+        height: 50%;
+    }
+
+    .another-profile-info-card {
+        background-color: var(--light-color);
+    }
+
+    .description p,
+    .interest-tag {
+        font-size: var(--fs-32);
+    }
+
+    .interest-tag {
+        height: 40px;
+        font-weight: 400;
+    }
 }
 
 /* Base style for back button (Desktop) */
@@ -1899,4 +1984,78 @@ summary img {
 
 .back-to-chats-btn:hover {
     color: var(--accent-color);
+}
+
+/* ===========================
+   Modals
+   =========================== */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(60, 52, 75, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+    display: none;
+    opacity: 0;
+}
+
+.modal-content {
+    background-color: var(--light-color);
+    padding: clamp(20px, 2vw, 40px);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+}
+
+.modal-title {
+    font-size: var(--fs-24);
+    color: var(--dark-color);
+    margin-bottom: clamp(20px, 2vw, 30px);
+    font-weight: 600;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: clamp(10px, 1vw, 20px);
+}
+
+.btn-modal {
+    padding: clamp(10px, 1vw, 15px) clamp(20px, 2vw, 40px);
+    border-radius: 12px;
+    border: none;
+    font-size: var(--fs-18);
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-modal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-modal--yes {
+    background-color: var(--supper-accent-color);
+    color: var(--light-color);
+}
+
+.btn-modal--no {
+    background-color: var(--accent-color);
+    color: var(--dark-color);
 }
