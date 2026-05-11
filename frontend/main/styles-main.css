@@ -876,7 +876,7 @@
 }
 
 .message.outgoing .message-content {
-    background-color: #EAE1FA;
+    background-color: #ccb8ef;
     color: var(--dark-color);
     border-bottom-right-radius: 4px;
     box-shadow: var(--shadow);
@@ -1432,8 +1432,8 @@ summary img {
 .notification-menu {
     position: fixed;
     top: clamp(70px, 7vh, 120px);
-    left: clamp(20px, 2vw, 400px);
-    width: clamp(320px, 25vw, 750px);
+    left: clamp(20px, 19vw, 400px);
+    width: clamp(320px, 30vw, 750px);
     background-color: #EAE1FA;
     border-radius: 20px;
     padding: 30px;
@@ -1660,6 +1660,10 @@ summary img {
     margin: 0;
 }
 
+.profile-zodiak-mobile {
+    display: none;
+}
+
 
 
 @media (max-width: 768px) {
@@ -1677,6 +1681,10 @@ summary img {
         max-height: none;
         overflow-y: scroll;
         justify-content: center;
+    }
+
+    .header-user-name {
+        display: none;
     }
 
     .header-user .nav-icon-btn {
@@ -1809,6 +1817,7 @@ summary img {
     }
 
     .profile-info-card.glass-card {
+        padding: 5px;
         width: 100%;
         height: 100vh;
         row-gap: 8px;
@@ -1819,12 +1828,11 @@ summary img {
     }
 
     .profile-header {
+        height: 92px;
         padding: 5px;
     }
 
-    .profile-item-frame {
-        padding: 5px;
-    }
+
 
 
 
@@ -1834,14 +1842,14 @@ summary img {
 
     .profile-header,
     .profile-item-frame {
-        background-color: var(--light-color);
         border-radius: 12px;
         box-shadow: var(--shadow);
         row-gap: 8px;
     }
 
-    .profile-bio-labels {
-        background-color: var(--light-color);
+    .profile-item-frame {
+        padding: 5px;
+        row-gap: 0;
     }
 
     .glass-card-inner {
@@ -1852,10 +1860,9 @@ summary img {
         box-shadow: none;
     }
 
-
-
     .profile-avatar {
-        height: 100%;
+        height: 80px;
+        width: 80px;
         aspect-ratio: 1/1;
     }
 
@@ -1876,19 +1883,25 @@ summary img {
     .field-text {
         font-size: var(--fs-32);
         line-height: var(--lh-110);
-        padding: 8px;
+        padding: 0 16px;
     }
 
     .profile-name-decoration {
         justify-content: flex-start;
+        column-gap: 8px;
     }
 
     .profile-field-card.glass-card-inner {
         padding: 0;
-        background-color: var(--accent-color);
+        background-color: var(--light-color);
+        align-items: center;
         border: none;
         border-radius: 12px;
         padding: 3px 6px;
+    }
+
+    .profile-field-card.glass-card-inner button {
+        align-self: flex-start;
     }
 
     .profile-bio-labels {
@@ -1965,6 +1978,29 @@ summary img {
     .interest-tag {
         height: 40px;
         font-weight: 400;
+    }
+
+    .profile-info-card span[class="bio-label"] {
+        font-size: var(--fs-24);
+        font-weight: 400;
+        padding: 8px;
+    }
+
+    .profile-zodiak-mobile {
+        display: flex;
+    }
+
+    .notification-menu {
+        left: auto;
+        right: 5px;
+    }
+
+    .filter-menu {
+        top: auto;
+        bottom: 70px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: clamp(320px, 25vw, 750px);
     }
 }
 
