@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/frontend/poster/icons/Logo.png">
+    <link rel="stylesheet" href="styles.css">
+    <title>Commit</title>
+</head>
+
+<body>
+    <main>
+        <div class="poster hidden">
+            <img id="hi" src="/frontend/poster/background/Group 14.png" alt="">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="poster-slogan">
+                <h1 class="poster-slogan-text"><span class="dark-text">Найди Свой</span></h1>
+                <h1 class="poster-slogan-text"><span class="accent-text">Коммит</span></h1>
+            </div>
+
+            <div class="poster-buttons">
+                <button class="poster-button">Вход</button>
+                <p class="poster-button-text">или</p>
+                <button class="poster-button">Регистрация</button>
+            </div>
+        </div>
+
+        <div class="poster-login hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <h1 class="action-text">Вход</h1>
+            </div>
+
+            <form action="" class="form">
+                <div class="data-area">
+                    <div class="input-area">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="example@mail.ru">
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Введите пароль">
+                    </div>
+                </div>
+
+                <div class="poster-buttons second">
+                    <button type="submit" class="poster-button">Войти</button>
+                    <p class="poster-button-text">Еще нет аккаунта? <a href="">Регистрация</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="poster-registration hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <h1 class="action-text">Регистрация</h1>
+            </div>
+
+            <form action="" class="form">
+                <div class="data-area">
+                    <div class="input-area">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="example@mail.ru">
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Введите пароль">
+                        <p class="error">Пароль должен содержать не менее 8 символов</p>
+                    </div>
+                    <div class="input-area">
+                        <label for="password">Повторите пароль</label>
+                        <input minlength="8" type="password" id="password" placeholder="Повторите пароль">
+                    </div>
+                </div>
+
+                <div class="poster-buttons second">
+                    <button type="submit" class="poster-button">Зарегистрироваться</button>
+                    <p class="poster-button-text">Уже есть аккаунт? <a href="">Войти</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="poster-success hidden">
+            <div class="poster-logo">
+                <img src="/frontend/poster/icons/Logo.png" class="poster-logo-img" alt="Логотип Commit">
+                <p class="poster-logo-text">COMMIT</p>
+            </div>
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Поздравляем!</h1>
+                    <p>Вы успешно зарегистрировались!</p>
+                </div>
+                <p>Давайте передем к вашему первому знакомству!</p>
+                <button type="button" class="poster-button">Продолжить</button>
+            </div>
+        </div>
+
+        <div class="poster-yourself hidden">
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Расскажите о себе</h1>
+                </div>
+                <form action="POST" class="form">
+                    <div class="data-area">
+                        <div class="input-area">
+                            <label for="name">Ваше имя</label>
+                            <input type="name" id="name" placeholder="Введите ваше имя">
+                            <p class="p-text">Ваше имя будет видно всем пользователям</p>
+                        </div>
+                        <div class="input-area">
+                            <label for="location">Локация</label>
+                            <input type="text" id="location" placeholder="Введите ваш город">
+                        </div>
+                        <div class="input-area">
+                            <label for="describe">Опишите себя</label>
+                            <textarea name="describe" id="describe" placeholder="Расскажите о себе"></textarea>
+                        </div>
+                    </div>
+                    <div class="poster-buttons second">
+                        <button type="submit" class="poster-button">Продолжить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="poster-tags hidden">
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Добавьте ваши интересы</h1>
+                </div>
+                <form action="POST" class="form">
+                    <div class="data-area-tags">
+                        <div class="tags-container">
+                            <div class="add-tags">
+                                <div class="tag">
+                                    <p>#Imagine Dragons</p>
+                                </div>
+                                <div class="tag">
+                                    <p>#Спорт</p>
+                                </div>
+                                <div class="tag">
+                                    <p>#Сериалы</p>
+                                </div>
+                                <div class="tag-add">
+                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                        <path d="M20 9V33" stroke="#BB8DFF" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                        <path d="M8 21H32" stroke="#BB8DFF" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="poster-buttons second">
+                        <button type="submit" class="poster-button">Продолжить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="poster-photo-add hidden">
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">Добавьте ваше фото</h1>
+                </div>
+                <form action="POST" class="form">
+                    <div class="photo-add-conatiner">
+                        <div class="photo-background">
+                            <div class="photo">
+                                <svg width="100" height="100" viewBox="0 0 40 40" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path d="M20 9V33" stroke="#BB8DFF" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M8 21H32" stroke="#BB8DFF" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="poster-buttons second">
+                        <button type="submit" class="poster-button">Продолжить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="poster-looking-for">
+            <div class="action-name">
+                <div class="message-area">
+                    <h1 class="action-text">С кем вы хотите познакомиться?</h1>
+                </div>
+                <form action="POST" class="form">
+                    <div class="data-area">
+                        <div class="input-area">
+                            <label>Вы ищите</label>
+                            <div class="custom-dropdown" id="customLookingFor">
+                                <div class="custom-dropdown-selected">Выберите
+                                    <svg 
+                                    width="24" 
+                                    height="24" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    aria-hidden="true"
+                                    class="arrow-down-icon">
+                                    <path 
+                                        d="M6 9L12 15L18 9" 
+                                        stroke="#3C344B" 
+                                        stroke-width="2.5" 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <div class="custom-dropdown-options hidden">
+                                    <div class="custom-dropdown-option" data-value="">Выберите</div>
+                                    <div class="custom-dropdown-option" data-value="1">Партнёра</div>
+                                    <div class="custom-dropdown-option" data-value="2">Друга</div>
+                                </div>
+                                <input type="hidden" name="looking_for" id="looking_for" value="">
+                            </div>
+                        </div>
+                        <div class="input-area">
+                            <label for="describe">Опишите, какого человека вы ищете</label>
+                            <textarea name="describe" id="describe"
+                                placeholder="Любовь всей своей жизни с двумя кошками и страстью к настольным играм"></textarea>
+                        </div>
+                    </div>
+                    <div class="poster-buttons second">
+                        <button type="submit" class="poster-button">Завершить</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+    <div class="background-elements">
+
+        <img id="black-eclipse" src="/frontend/poster/background/Ellipse 14.png" alt="">
+        <img id="eyes" src="/frontend/poster/background/392001500_EYES_EMOJI_STICKER_400 1.png" alt="">
+        <img id="ellipse-3" src="/frontend/poster/background/Ellipse 3.png" alt="">
+        <img id="smile-4" src="/frontend/poster/background/image 5.png" alt="">
+        <img id="ellipse-15" src="/frontend/poster/background/Ellipse 15.png" alt="">
+        <img id="ellipse-16" src="/frontend/poster/background/Ellipse 16.png" alt="">
+        <img id="ellipse-19" src="/frontend/poster/background/Ellipse 19.png" alt="">
+        <img id="ellipse-17" src="/frontend/poster/background/Ellipse 17.png" alt="">
+        <img id="ellipse-18" src="/frontend/poster/background/Ellipse 18.png" alt="">
+
+        <img id="ellipse-12" src="/frontend/poster/background/Ellipse 12.svg" alt="">
+        <img id="ellipse-13" src="/frontend/poster/background/Ellipse 13.svg" alt="">
+    </div>
+
+    <script>
+        document.querySelector('.tag-add').addEventListener('click', function () {
+            if (document.querySelector('.tag-input-container')) return;
+
+            const container = document.createElement('div');
+            container.className = 'tag-input-container';
+
+            const span = document.createElement('span');
+            span.textContent = '#';
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'тэг';
+            input.className = 'tag-input';
+
+            // Adaptive width logic
+            const adjustWidth = () => {
+                const hiddenSpan = document.createElement('span');
+                hiddenSpan.style.visibility = 'hidden';
+                hiddenSpan.style.position = 'absolute';
+                hiddenSpan.style.fontFamily = window.getComputedStyle(input).fontFamily;
+                hiddenSpan.style.fontSize = window.getComputedStyle(input).fontSize;
+                hiddenSpan.style.whiteSpace = 'pre';
+                hiddenSpan.textContent = input.value || input.placeholder;
+                document.body.appendChild(hiddenSpan);
+                input.style.width = (hiddenSpan.getBoundingClientRect().width + 10) + 'px';
+                document.body.removeChild(hiddenSpan);
+            };
+
+            input.addEventListener('input', adjustWidth);
+
+            container.appendChild(span);
+            container.appendChild(input);
+
+            const parent = this.parentNode;
+            parent.insertBefore(container, this);
+
+            input.focus();
+            adjustWidth();
+
+            const saveTag = () => {
+                const val = input.value.trim();
+                if (val) {
+                    const newTag = document.createElement('div');
+                    newTag.className = 'tag';
+                    newTag.innerHTML = `<p>#${val}</p>`;
+                    parent.insertBefore(newTag, this);
+                }
+                if (container.parentNode) {
+                    container.remove();
+                }
+            };
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveTag();
+                } else if (e.key === 'Escape') {
+                    if (container.parentNode) {
+                        container.remove();
+                    }
+                }
+            });
+
+            input.addEventListener('blur', saveTag);
+        });
+
+        // Custom dropdown logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropdown = document.getElementById('customLookingFor');
+            if (dropdown) {
+                const selected = dropdown.querySelector('.custom-dropdown-selected');
+                const optionsContainer = dropdown.querySelector('.custom-dropdown-options');
+                const options = dropdown.querySelectorAll('.custom-dropdown-option');
+                const hiddenInput = dropdown.querySelector('#looking_for');
+
+                selected.addEventListener('click', (e) => {
+                    optionsContainer.classList.toggle('hidden');
+                });
+
+                options.forEach(option => {
+                    option.addEventListener('click', () => {
+                        selected.innerHTML = option.textContent + `<svg 
+                                    width="24" 
+                                    height="24" 
+                                    viewBox="0 0 24 24" 
+                                    fill="none" 
+                                    xmlns="http://www.w3.org/2000/svg" 
+                                    aria-hidden="true"
+                                    class="arrow-down-icon">
+                                    <path 
+                                        d="M6 9L12 15L18 9" 
+                                        stroke="#3C344B" 
+                                        stroke-width="2.5" 
+                                        stroke-linecap="round" 
+                                        stroke-linejoin="round"/>
+                                    </svg>`;
+                        hiddenInput.value = option.getAttribute('data-value');
+                        optionsContainer.classList.add('hidden');
+                    });
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target)) {
+                        optionsContainer.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
