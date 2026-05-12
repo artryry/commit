@@ -7,7 +7,8 @@ info:
     - **Auth** paths under `/api/v1/auth/*` are reverse-proxied to the authentication service (FastAPI).
       Request/response bodies match that service unless noted.
     - **Profiles**, **recommendations**, **swipes**, and **matches** are routed through the gateway to the backing gRPC services.
-    - **Recommendations** HTTP routes call the **recommendations** gRPC service for ids and stored filters, then the **profiles** gRPC service to load profile rows.
+    - **Chats** (`/api/v1/chats/*`) are reverse-proxied to the **chats** FastAPI service. The gateway validates JWT and forwards **`X-User-Id`** (numeric user id); the chats service does not verify JWT itself.
+    - **Recommendations** HTTP routes call the **recommendations** gRPC service for candidate ids (and filter CRUD on `/recommendations/filters`); **GET /recommendations** loads profile rows via **profiles** `GetProfiles` by those ids (except **compatibility**, which stays inside the recommendations service and uses **Ollama** for text generation).
     - Protected routes require `Authorization: Bearer <JWT>`. The gateway validates the token and expects a numeric `sub` claim (user id).
 
     **JSON naming**
@@ -31,6 +32,8 @@ tags:
   - name: Recommendations
   - name: Swipes
   - name: Matches
+  - name: Chats
+    description: Reverse-proxied to the chats service (FastAPI); requires JWT at gateway
 
 paths:
   /health:
@@ -416,13 +419,13 @@ paths:
       summary: Recommended profiles for the current user
       description: |
         No query parameters or body. The gateway calls the **recommendations** gRPC `GetRecommendationsForUser` with the JWT user id,
-        receives candidate user ids and filter criteria, then calls **profiles** `GetProfilesWithFilter` and returns that result.
+        receives candidate user ids, then calls **profiles** `GetProfiles` with those ids and returns that result (filters still apply inside the recommendations service when computing ids).
       operationId: recommendationsGet
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: OK — same shape as profiles `GetProfilesWithFilter` (camelCase protobuf JSON)
+          description: OK — same shape as profiles `GetProfiles` (camelCase protobuf JSON, `profilesData`)
           content:
             application/json:
               schema:
@@ -431,6 +434,44 @@ paths:
           description: Unauthorized
         '502':
           description: Bad gateway (recommendations or profiles gRPC error)
+
+  /api/v1/recommendations/compatibility:
+    post:
+      tags: [Recommendations]
+      summary: Short astrological compatibility blurbs vs other user ids
+      description: |
+        Proxies to recommendations gRPC `GetCompatibilityTexts`. The service loads **viewer** and **candidates**
+        from its own Postgres `user_features` (**sign**, **birthday** as Unix seconds). It calls a **local Ollama**
+        model (`OLLAMA_MODEL`, default `llama3.2:1b`) and returns one text per requested id (longer Russian blurbs; see recommendations service prompts).
+
+        - Request body lists **`user_ids`** to compare with the JWT user. The viewer’s own id is ignored if present.
+        - Unknown user ids (no `user_features` row) still appear in the response with a **default** placeholder text (Russian).
+        - Generated blurbs are requested **in Russian** (local Ollama model).
+        - Duplicate ids are deduplicated; at most **20** ids are processed.
+
+        Response is **protobuf JSON** (`protojson`, camelCase), same as other recommendation RPCs exposed as JSON.
+      operationId: recommendationsCompatibility
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompatibilityRequestBody'
+      responses:
+        '200':
+          description: "OK — `{ items: [ { userId, text } ] }` (protobuf JSON field names)"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCompatibilityTextsResponseProtoJson'
+        '400':
+          description: Invalid JSON body
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad gateway (recommendations gRPC error)
 
   /api/v1/recommendations/filters:
     get:
@@ -522,6 +563,111 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetProfilesResponseSnake'
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad gateway
+
+  /api/v1/chats:
+    get:
+      tags: [Chats]
+      summary: List chats for the current user
+      description: |
+        Proxied to `GET /api/v1/chats` on the chats service. Returns chat summaries sorted by latest activity.
+      operationId: chatsList
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK — JSON array of chat summaries (**snake_case** from FastAPI)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatSummaryItem'
+        '401':
+          description: Unauthorized (missing JWT at gateway or missing `X-User-Id` at chats service)
+        '502':
+          description: Bad gateway (chats service unreachable)
+
+  /api/v1/chats/{peer_user_id}:
+    parameters:
+      - name: peer_user_id
+        in: path
+        required: true
+        description: Other participant user id (the chat partner)
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags: [Chats]
+      summary: Open chat — list messages with a user
+      description: |
+        Proxied to `GET /api/v1/chats/{peer_user_id}`. Returns all messages if a chat exists between the JWT user and `peer_user_id`.
+      operationId: chatsGetWithPeer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatWithMessagesResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Chat not found for this pair
+        '502':
+          description: Bad gateway
+    delete:
+      tags: [Chats]
+      summary: Delete chat with a user
+      description: |
+        Proxied to `DELETE /api/v1/chats/{peer_user_id}`. Removes the chat (and related data) for both participants.
+      operationId: chatsDeleteWithPeer
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Deleted (no body)
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad gateway
+
+  /api/v1/chats/{peer_user_id}/messages:
+    parameters:
+      - name: peer_user_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    post:
+      tags: [Chats]
+      summary: Send a text message
+      description: |
+        Proxied to `POST /api/v1/chats/{peer_user_id}/messages` on the chats service (`201 Created`).
+      operationId: chatsSendMessage
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendChatTextMessageBody'
+      responses:
+        '201':
+          description: Created — message object (**snake_case**)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatMessageItem'
+        '400':
+          description: Invalid body (e.g. empty `body`)
         '401':
           description: Unauthorized
         '502':
@@ -727,7 +873,7 @@ components:
           description: Unix seconds (protobuf `ProfileRequest.birthday`)
         gender:
           type: string
-          description: `MALE`, `FEMALE`, or short `M` / `F`
+          description: "`MALE`, `FEMALE`, or short `M` / `F`"
         sign:
           type: string
         city:
@@ -870,6 +1016,36 @@ components:
           items:
             $ref: '#/components/schemas/ShortProfileProtoJson'
 
+    CompatibilityRequestBody:
+      type: object
+      required: [user_ids]
+      properties:
+        user_ids:
+          type: array
+          description: Other profile user ids to compare with the authenticated user (snake_case JSON field name). May be empty.
+          items:
+            type: integer
+            format: int64
+
+    CompatibilityTextItemProtoJson:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Protobuf JSON may serialize int64 as string
+        text:
+          type: string
+          description: Generated blurb or default placeholder when the user is unknown in recommendations DB
+
+    GetCompatibilityTextsResponseProtoJson:
+      type: object
+      description: Recommendations gRPC GetCompatibilityTexts response (camelCase protobuf JSON)
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompatibilityTextItemProtoJson'
+
     GetFiltersResponseProtoJson:
       type: object
       description: Recommendations gRPC GetFilters response (camelCase protobuf JSON)
@@ -895,19 +1071,33 @@ components:
 
     SetFiltersRequestBody:
       type: object
-      description: All fields optional; only sent fields are applied by the recommendations service.
+      description: >
+        All fields optional; only sent fields are applied by the recommendations service.
+        Each property may be sent in snake_case (below) or camelCase as in protobuf JSON
+        (`relationshipType`, `ageFrom`, `ageTo`, `partnerGender`). Age bounds may be JSON numbers or quoted strings.
       properties:
         relationship_type:
           type: string
           description: >
             `FRIENDSHIP`, `SEARCH_FOR_FRIENDSHIP`, `RELATIONSHIP`, `SEARCH_FOR_RELATIONSHIP`,
             `NETWORKING`, `SEARCH_FOR_NETWORKING`, `UNSPECIFIED`, `SEARCH_FOR_UNSPECIFIED`
+        relationshipType:
+          type: string
+          description: camelCase alias of relationship_type
         age_from:
           type: integer
           format: int64
+        ageFrom:
+          type: integer
+          format: int64
+          description: camelCase alias of age_from; may be sent as a string in clients that quote numbers
         age_to:
           type: integer
           format: int64
+        ageTo:
+          type: integer
+          format: int64
+          description: camelCase alias of age_to; may be sent as a string
         city:
           type: string
         sign:
@@ -919,9 +1109,73 @@ components:
         partner_gender:
           type: string
           description: MALE or FEMALE
+        partnerGender:
+          type: string
+          description: camelCase alias of partner_gender
 
     SetFiltersResponseProtoJson:
       type: object
       properties:
         success:
           type: boolean
+
+    ChatSummaryItem:
+      type: object
+      description: One row from `GET /api/v1/chats` (chats service)
+      properties:
+        chat_id:
+          type: string
+          description: Chat UUID as string
+        peer_user_id:
+          type: integer
+          format: int64
+        last_message_at:
+          type: string
+          nullable: true
+          description: ISO-8601 timestamp or null if no messages
+        last_message_preview:
+          type: string
+          nullable: true
+          description: Text preview or `[image]` for image-only last message
+
+    ChatMessageItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Message UUID as string
+        sender_id:
+          type: integer
+          format: int64
+        body:
+          type: string
+          nullable: true
+        image_storage_key:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          description: ISO-8601 timestamp
+
+    ChatWithMessagesResponse:
+      type: object
+      properties:
+        chat_id:
+          type: string
+        peer_user_id:
+          type: integer
+          format: int64
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChatMessageItem'
+
+    SendChatTextMessageBody:
+      type: object
+      required: [body]
+      properties:
+        body:
+          type: string
+          minLength: 1
+          maxLength: 10000
+          description: Message text

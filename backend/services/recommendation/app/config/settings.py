@@ -39,6 +39,16 @@ class Settings(BaseSettings):
     RECOMMENDATIONS_BATCH_SIZE: int = 25
     STACK_PREFETCH_LIMIT: int = 500
 
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    # Single model for /recommendations/compatibility (no fallbacks or HTTP retries in code).
+    OLLAMA_MODEL: str = "llama3.2:1b"
+    OLLAMA_TIMEOUT_SEC: float = 180.0
+
+    COMPATIBILITY_MAX_IDS: int = 20
+    COMPATIBILITY_DEFAULT_TEXT: str = (
+        "Недостаточно данных, чтобы описать астрологическую совместимость для этого профиля."
+    )
+
     DEBUG: bool = False
 
     @cached_property

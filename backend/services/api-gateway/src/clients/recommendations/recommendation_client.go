@@ -46,3 +46,7 @@ func (c *RecommendationClient) GetFilters(ctx context.Context, req *recommendati
 func (c *RecommendationClient) SetFilters(ctx context.Context, req *recommendationpb.SetFiltersRequest) (*recommendationpb.SetFiltersResponse, error) {
 	return c.client.SetFilters(ctx, req)
 }
+
+func (c *RecommendationClient) GetCompatibilityTexts(ctx context.Context, req *recommendationpb.GetCompatibilityTextsRequest) (*recommendationpb.GetCompatibilityTextsResponse, error) {
+	return c.client.GetCompatibilityTexts(ctx, req)
+}

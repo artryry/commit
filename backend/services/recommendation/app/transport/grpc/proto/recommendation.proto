@@ -8,6 +8,7 @@ import "profile.proto";
 
 service RecommendationService {
   rpc GetRecommendationsForUser(GetRecommendationsForUserRequest) returns (GetRecommendationsForUserResponse);
+  rpc GetCompatibilityTexts(GetCompatibilityTextsRequest) returns (GetCompatibilityTextsResponse);
   rpc GetFilters(GetFiltersRequest) returns (GetFiltersResponse);
   rpc SetFilters(SetFiltersRequest) returns (SetFiltersResponse);
 }
@@ -25,6 +26,20 @@ message GetRecommendationsForUserResponse {
   optional string sign = 6;
   repeated string tags = 7;
   optional profile.v1.Gender partner_gender = 8;
+}
+
+message GetCompatibilityTextsRequest {
+  int64 viewer_user_id = 1;
+  repeated int64 other_user_ids = 2;
+}
+
+message CompatibilityTextItem {
+  int64 user_id = 1;
+  string text = 2;
+}
+
+message GetCompatibilityTextsResponse {
+  repeated CompatibilityTextItem items = 1;
 }
 
 message GetFiltersRequest {

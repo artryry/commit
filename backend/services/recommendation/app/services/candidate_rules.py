@@ -9,12 +9,14 @@ from utils.vectors import VectorMath
 class CandidateRules:
     @staticmethod
     def gender_ok_for_relationship(viewer: UserFeature, filt: Optional[UserFilter], cand: UserFeature) -> bool:
-        if filt is None or filt.relationship_type is None:
+        if filt is None:
             return True
-        if filt.relationship_type != 2:
-            return True
+        # Partner gender from filters applies whenever set (not only for relationship-type search).
         if filt.partner_gender is not None:
             return cand.gender == filt.partner_gender
+        if filt.relationship_type is None or filt.relationship_type != 2:
+            return True
+        # Relationship search without explicit partner gender: infer opposite from viewer.
         if viewer.gender == 0:
             return cand.gender == 1
         if viewer.gender == 1:
@@ -35,11 +37,12 @@ class CandidateRules:
         if filt.relationship_type is not None and cand.relationship_type != filt.relationship_type:
             return False
 
-        age = AgeCalculator.from_birthday_unix(cand.birthday)
-        if filt.age_from is not None and age < filt.age_from:
-            return False
-        if filt.age_to is not None and age > filt.age_to:
-            return False
+        age = AgeCalculator.from_birthday_unix_for_filter(cand.birthday)
+        if age is not None:
+            if filt.age_from is not None and age < filt.age_from:
+                return False
+            if filt.age_to is not None and age > filt.age_to:
+                return False
 
         if filt.city and filt.city.lower() not in (cand.city or "").lower():
             return False

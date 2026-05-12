@@ -38,6 +38,7 @@ type ProfileHandler interface {
 type RecommendationsHandler interface {
 	GetRecommendations(w http.ResponseWriter, r *http.Request)
 	Filters(w http.ResponseWriter, r *http.Request)
+	Compatibility(w http.ResponseWriter, r *http.Request)
 }
 
 type SwipesHandler interface {

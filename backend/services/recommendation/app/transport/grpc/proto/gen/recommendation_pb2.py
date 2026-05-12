@@ -22,10 +22,10 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-from . import profile_pb2 as profile__pb2
+from transport.grpc.proto.gen import profile_pb2 as profile__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14recommendation.proto\x12\x11recommendation.v1\x1a\rprofile.proto\"3\n GetRecommendationsForUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xe1\x02\n!GetRecommendationsForUserResponse\x12\x1a\n\x12\x63\x61ndidate_user_ids\x18\x01 \x03(\x03\x12<\n\x11relationship_type\x18\x02 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x03 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x04 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x05 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x06 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x07 \x03(\t\x12/\n\x0epartner_gender\x18\x08 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"$\n\x11GetFiltersRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xb6\x02\n\x12GetFiltersResponse\x12<\n\x11relationship_type\x18\x01 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x02 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x03 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x04 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x05 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12/\n\x0epartner_gender\x18\x07 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"\xc6\x02\n\x11SetFiltersRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12<\n\x11relationship_type\x18\x02 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x03 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x04 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x05 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x06 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x07 \x03(\t\x12/\n\x0epartner_gender\x18\x08 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"%\n\x12SetFiltersResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xd6\x02\n\x15RecommendationService\x12\x86\x01\n\x19GetRecommendationsForUser\x12\x33.recommendation.v1.GetRecommendationsForUserRequest\x1a\x34.recommendation.v1.GetRecommendationsForUserResponse\x12Y\n\nGetFilters\x12$.recommendation.v1.GetFiltersRequest\x1a%.recommendation.v1.GetFiltersResponse\x12Y\n\nSetFilters\x12$.recommendation.v1.SetFiltersRequest\x1a%.recommendation.v1.SetFiltersResponseBwZugithub.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/recommendations/proto/gen;recommendationpbb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x14recommendation.proto\x12\x11recommendation.v1\x1a\rprofile.proto\"3\n GetRecommendationsForUserRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xe1\x02\n!GetRecommendationsForUserResponse\x12\x1a\n\x12\x63\x61ndidate_user_ids\x18\x01 \x03(\x03\x12<\n\x11relationship_type\x18\x02 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x03 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x04 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x05 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x06 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x07 \x03(\t\x12/\n\x0epartner_gender\x18\x08 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"N\n\x1cGetCompatibilityTextsRequest\x12\x16\n\x0eviewer_user_id\x18\x01 \x01(\x03\x12\x16\n\x0eother_user_ids\x18\x02 \x03(\x03\"6\n\x15\x43ompatibilityTextItem\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04text\x18\x02 \x01(\t\"X\n\x1dGetCompatibilityTextsResponse\x12\x37\n\x05items\x18\x01 \x03(\x0b\x32(.recommendation.v1.CompatibilityTextItem\"$\n\x11GetFiltersRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xb6\x02\n\x12GetFiltersResponse\x12<\n\x11relationship_type\x18\x01 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x02 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x03 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x04 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x05 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12/\n\x0epartner_gender\x18\x07 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"\xc6\x02\n\x11SetFiltersRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12<\n\x11relationship_type\x18\x02 \x01(\x0e\x32\x1c.profile.v1.RelationshipTypeH\x00\x88\x01\x01\x12\x15\n\x08\x61ge_from\x18\x03 \x01(\x03H\x01\x88\x01\x01\x12\x13\n\x06\x61ge_to\x18\x04 \x01(\x03H\x02\x88\x01\x01\x12\x11\n\x04\x63ity\x18\x05 \x01(\tH\x03\x88\x01\x01\x12\x11\n\x04sign\x18\x06 \x01(\tH\x04\x88\x01\x01\x12\x0c\n\x04tags\x18\x07 \x03(\t\x12/\n\x0epartner_gender\x18\x08 \x01(\x0e\x32\x12.profile.v1.GenderH\x05\x88\x01\x01\x42\x14\n\x12_relationship_typeB\x0b\n\t_age_fromB\t\n\x07_age_toB\x07\n\x05_cityB\x07\n\x05_signB\x11\n\x0f_partner_gender\"%\n\x12SetFiltersResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x32\xd2\x03\n\x15RecommendationService\x12\x86\x01\n\x19GetRecommendationsForUser\x12\x33.recommendation.v1.GetRecommendationsForUserRequest\x1a\x34.recommendation.v1.GetRecommendationsForUserResponse\x12z\n\x15GetCompatibilityTexts\x12/.recommendation.v1.GetCompatibilityTextsRequest\x1a\x30.recommendation.v1.GetCompatibilityTextsResponse\x12Y\n\nGetFilters\x12$.recommendation.v1.GetFiltersRequest\x1a%.recommendation.v1.GetFiltersResponse\x12Y\n\nSetFilters\x12$.recommendation.v1.SetFiltersRequest\x1a%.recommendation.v1.SetFiltersResponseBwZugithub.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/recommendations/proto/gen;recommendationpbb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -37,14 +37,20 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETRECOMMENDATIONSFORUSERREQUEST']._serialized_end=109
   _globals['_GETRECOMMENDATIONSFORUSERRESPONSE']._serialized_start=112
   _globals['_GETRECOMMENDATIONSFORUSERRESPONSE']._serialized_end=465
-  _globals['_GETFILTERSREQUEST']._serialized_start=467
-  _globals['_GETFILTERSREQUEST']._serialized_end=503
-  _globals['_GETFILTERSRESPONSE']._serialized_start=506
-  _globals['_GETFILTERSRESPONSE']._serialized_end=816
-  _globals['_SETFILTERSREQUEST']._serialized_start=819
-  _globals['_SETFILTERSREQUEST']._serialized_end=1145
-  _globals['_SETFILTERSRESPONSE']._serialized_start=1147
-  _globals['_SETFILTERSRESPONSE']._serialized_end=1184
-  _globals['_RECOMMENDATIONSERVICE']._serialized_start=1187
-  _globals['_RECOMMENDATIONSERVICE']._serialized_end=1529
+  _globals['_GETCOMPATIBILITYTEXTSREQUEST']._serialized_start=467
+  _globals['_GETCOMPATIBILITYTEXTSREQUEST']._serialized_end=545
+  _globals['_COMPATIBILITYTEXTITEM']._serialized_start=547
+  _globals['_COMPATIBILITYTEXTITEM']._serialized_end=601
+  _globals['_GETCOMPATIBILITYTEXTSRESPONSE']._serialized_start=603
+  _globals['_GETCOMPATIBILITYTEXTSRESPONSE']._serialized_end=691
+  _globals['_GETFILTERSREQUEST']._serialized_start=693
+  _globals['_GETFILTERSREQUEST']._serialized_end=729
+  _globals['_GETFILTERSRESPONSE']._serialized_start=732
+  _globals['_GETFILTERSRESPONSE']._serialized_end=1042
+  _globals['_SETFILTERSREQUEST']._serialized_start=1045
+  _globals['_SETFILTERSREQUEST']._serialized_end=1371
+  _globals['_SETFILTERSRESPONSE']._serialized_start=1373
+  _globals['_SETFILTERSRESPONSE']._serialized_end=1410
+  _globals['_RECOMMENDATIONSERVICE']._serialized_start=1413
+  _globals['_RECOMMENDATIONSERVICE']._serialized_end=1879
 # @@protoc_insertion_point(module_scope)

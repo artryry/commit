@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	RecommendationService_GetRecommendationsForUser_FullMethodName = "/recommendation.v1.RecommendationService/GetRecommendationsForUser"
+	RecommendationService_GetCompatibilityTexts_FullMethodName     = "/recommendation.v1.RecommendationService/GetCompatibilityTexts"
 	RecommendationService_GetFilters_FullMethodName                = "/recommendation.v1.RecommendationService/GetFilters"
 	RecommendationService_SetFilters_FullMethodName                = "/recommendation.v1.RecommendationService/SetFilters"
 )
@@ -29,10 +30,11 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
 // RecommendationService is implemented by the recommendations microservice.
-// The API gateway calls it to obtain candidate user ids and filter criteria, then loads profile rows via profiles.GetProfilesWithFilter.
+// The API gateway calls it for candidate user ids; GET /recommendations then loads profile rows via profiles.GetProfiles.
 type RecommendationServiceClient interface {
 	// Returns candidate profile user ids and filter fields to apply when loading profiles.
 	GetRecommendationsForUser(ctx context.Context, in *GetRecommendationsForUserRequest, opts ...grpc.CallOption) (*GetRecommendationsForUserResponse, error)
+	GetCompatibilityTexts(ctx context.Context, in *GetCompatibilityTextsRequest, opts ...grpc.CallOption) (*GetCompatibilityTextsResponse, error)
 	GetFilters(ctx context.Context, in *GetFiltersRequest, opts ...grpc.CallOption) (*GetFiltersResponse, error)
 	SetFilters(ctx context.Context, in *SetFiltersRequest, opts ...grpc.CallOption) (*SetFiltersResponse, error)
 }
@@ -49,6 +51,16 @@ func (c *recommendationServiceClient) GetRecommendationsForUser(ctx context.Cont
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetRecommendationsForUserResponse)
 	err := c.cc.Invoke(ctx, RecommendationService_GetRecommendationsForUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *recommendationServiceClient) GetCompatibilityTexts(ctx context.Context, in *GetCompatibilityTextsRequest, opts ...grpc.CallOption) (*GetCompatibilityTextsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCompatibilityTextsResponse)
+	err := c.cc.Invoke(ctx, RecommendationService_GetCompatibilityTexts_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,10 +92,11 @@ func (c *recommendationServiceClient) SetFilters(ctx context.Context, in *SetFil
 // for forward compatibility.
 //
 // RecommendationService is implemented by the recommendations microservice.
-// The API gateway calls it to obtain candidate user ids and filter criteria, then loads profile rows via profiles.GetProfilesWithFilter.
+// The API gateway calls it for candidate user ids; GET /recommendations then loads profile rows via profiles.GetProfiles.
 type RecommendationServiceServer interface {
 	// Returns candidate profile user ids and filter fields to apply when loading profiles.
 	GetRecommendationsForUser(context.Context, *GetRecommendationsForUserRequest) (*GetRecommendationsForUserResponse, error)
+	GetCompatibilityTexts(context.Context, *GetCompatibilityTextsRequest) (*GetCompatibilityTextsResponse, error)
 	GetFilters(context.Context, *GetFiltersRequest) (*GetFiltersResponse, error)
 	SetFilters(context.Context, *SetFiltersRequest) (*SetFiltersResponse, error)
 	mustEmbedUnimplementedRecommendationServiceServer()
@@ -98,6 +111,9 @@ type UnimplementedRecommendationServiceServer struct{}
 
 func (UnimplementedRecommendationServiceServer) GetRecommendationsForUser(context.Context, *GetRecommendationsForUserRequest) (*GetRecommendationsForUserResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRecommendationsForUser not implemented")
+}
+func (UnimplementedRecommendationServiceServer) GetCompatibilityTexts(context.Context, *GetCompatibilityTextsRequest) (*GetCompatibilityTextsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCompatibilityTexts not implemented")
 }
 func (UnimplementedRecommendationServiceServer) GetFilters(context.Context, *GetFiltersRequest) (*GetFiltersResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetFilters not implemented")
@@ -140,6 +156,24 @@ func _RecommendationService_GetRecommendationsForUser_Handler(srv interface{}, c
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RecommendationServiceServer).GetRecommendationsForUser(ctx, req.(*GetRecommendationsForUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RecommendationService_GetCompatibilityTexts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCompatibilityTextsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RecommendationServiceServer).GetCompatibilityTexts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RecommendationService_GetCompatibilityTexts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RecommendationServiceServer).GetCompatibilityTexts(ctx, req.(*GetCompatibilityTextsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -190,6 +224,10 @@ var RecommendationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRecommendationsForUser",
 			Handler:    _RecommendationService_GetRecommendationsForUser_Handler,
+		},
+		{
+			MethodName: "GetCompatibilityTexts",
+			Handler:    _RecommendationService_GetCompatibilityTexts_Handler,
 		},
 		{
 			MethodName: "GetFilters",

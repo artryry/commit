@@ -50,7 +50,7 @@ func (r *ImageRepository) DeleteImages(
 ) error {
 	_, err := r.db.Exec(
 		ctx,
-		createImageQuery,
+		deleteImageQuery,
 		imageId,
 		userId,
 	)

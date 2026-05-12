@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/artryry/commit/backend/services/profiles/src/internal/domain"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/logger"
 )
 
 type ProfileService struct {
@@ -21,7 +22,13 @@ func (s *ProfileService) CreateProfile(
 	ctx context.Context,
 	userId int64,
 ) error {
-	return s.profileRepository.CreateProfile(ctx, userId)
+	err := s.profileRepository.CreateProfile(ctx, userId)
+	if err != nil {
+		return err
+	}
+	logger.Info("Profile created successfully", "user_id", userId)
+
+	return nil
 }
 
 func (s *ProfileService) GetProfiles(
@@ -55,13 +62,31 @@ func (s *ProfileService) GetProfile(
 }
 
 func (s *ProfileService) FillProfile(ctx context.Context, profile *domain.Profile) error {
-	return s.profileRepository.FillProfile(ctx, profile)
+	err := s.profileRepository.FillProfile(ctx, profile)
+	if err != nil {
+		return err
+	}
+	logger.Info("Profile filled successfully", "user_id", profile.UserId)
+
+	return nil
 }
 
 func (s *ProfileService) UpdateProfile(ctx context.Context, profile *domain.Profile) error {
-	return s.profileRepository.UpdateProfile(ctx, profile)
+	err := s.profileRepository.UpdateProfile(ctx, profile)
+	if err != nil {
+		return err
+	}
+	logger.Info("Profile updated successfully", "user_id", profile.UserId)
+
+	return nil
 }
 
 func (s *ProfileService) DeleteProfile(ctx context.Context, userId int64) error {
-	return s.profileRepository.DeleteProfile(ctx, userId)
+	err := s.profileRepository.DeleteProfile(ctx, userId)
+	if err != nil {
+		return err
+	}
+	logger.Info("Profile deleted successfully", "user_id", userId)
+
+	return nil
 }

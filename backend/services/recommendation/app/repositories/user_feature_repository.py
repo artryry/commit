@@ -13,6 +13,10 @@ class IUserFeatureRepository(ABC):
         pass
 
     @abstractmethod
+    async def get_many(self, user_ids: Sequence[int]) -> dict[int, UserFeature]:
+        pass
+
+    @abstractmethod
     async def add(self, row: UserFeature) -> None:
         pass
 
@@ -39,6 +43,13 @@ class SqlUserFeatureRepository(IUserFeatureRepository):
 
     async def get(self, user_id: int) -> Optional[UserFeature]:
         return await self._session.get(UserFeature, user_id)
+
+    async def get_many(self, user_ids: Sequence[int]) -> dict[int, UserFeature]:
+        if not user_ids:
+            return {}
+        result = await self._session.scalars(select(UserFeature).where(UserFeature.user_id.in_(list(user_ids))))
+        rows = result.all()
+        return {int(r.user_id): r for r in rows}
 
     async def add(self, row: UserFeature) -> None:
         self._session.add(row)

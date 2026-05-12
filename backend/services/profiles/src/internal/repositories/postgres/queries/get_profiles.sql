@@ -4,6 +4,7 @@ SELECT
     p.avatar_image_id,
     p.bio,
     DATE_PART('year', AGE(p.birth_day))::BIGINT AS age,
+    p.birth_day,
     p.sign,
     p.city,
     p.search_for,
@@ -18,7 +19,8 @@ SELECT
         JSON_AGG(
             DISTINCT JSONB_BUILD_OBJECT(
                 'id', i.id,
-                'url', i.storage_key
+                'url', i.storage_key,
+                'created_at', (EXTRACT(EPOCH FROM i.created_at))::bigint
             )
         ) FILTER (WHERE i.id IS NOT NULL),
         '[]'

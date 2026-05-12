@@ -3,14 +3,21 @@ package tests
 import (
 	"context"
 	"errors"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/artryry/commit/backend/services/profiles/src/internal/domain"
+	"github.com/artryry/commit/backend/services/profiles/src/internal/logger"
 	"github.com/artryry/commit/backend/services/profiles/src/internal/services"
 	handlers "github.com/artryry/commit/backend/services/profiles/src/internal/transport/grpc/handlers"
 	pb "github.com/artryry/commit/backend/services/profiles/src/internal/transport/grpc/proto/gen"
 )
+
+func TestMain(m *testing.M) {
+	logger.Init("Debug")
+	os.Exit(m.Run())
+}
 
 type mockProfileRepo struct {
 	createProfileFn           func(ctx context.Context, userID int64) error

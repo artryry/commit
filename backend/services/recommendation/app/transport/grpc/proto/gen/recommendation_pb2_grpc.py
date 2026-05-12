@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from . import recommendation_pb2 as recommendation__pb2
+from transport.grpc.proto.gen import recommendation_pb2 as recommendation__pb2
 
 GRPC_GENERATED_VERSION = '1.80.0'
 GRPC_VERSION = grpc.__version__
@@ -39,6 +39,11 @@ class RecommendationServiceStub(object):
                 request_serializer=recommendation__pb2.GetRecommendationsForUserRequest.SerializeToString,
                 response_deserializer=recommendation__pb2.GetRecommendationsForUserResponse.FromString,
                 _registered_method=True)
+        self.GetCompatibilityTexts = channel.unary_unary(
+                '/recommendation.v1.RecommendationService/GetCompatibilityTexts',
+                request_serializer=recommendation__pb2.GetCompatibilityTextsRequest.SerializeToString,
+                response_deserializer=recommendation__pb2.GetCompatibilityTextsResponse.FromString,
+                _registered_method=True)
         self.GetFilters = channel.unary_unary(
                 '/recommendation.v1.RecommendationService/GetFilters',
                 request_serializer=recommendation__pb2.GetFiltersRequest.SerializeToString,
@@ -55,6 +60,12 @@ class RecommendationServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetRecommendationsForUser(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCompatibilityTexts(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -79,6 +90,11 @@ def add_RecommendationServiceServicer_to_server(servicer, server):
                     servicer.GetRecommendationsForUser,
                     request_deserializer=recommendation__pb2.GetRecommendationsForUserRequest.FromString,
                     response_serializer=recommendation__pb2.GetRecommendationsForUserResponse.SerializeToString,
+            ),
+            'GetCompatibilityTexts': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCompatibilityTexts,
+                    request_deserializer=recommendation__pb2.GetCompatibilityTextsRequest.FromString,
+                    response_serializer=recommendation__pb2.GetCompatibilityTextsResponse.SerializeToString,
             ),
             'GetFilters': grpc.unary_unary_rpc_method_handler(
                     servicer.GetFilters,
@@ -118,6 +134,33 @@ class RecommendationService(object):
             '/recommendation.v1.RecommendationService/GetRecommendationsForUser',
             recommendation__pb2.GetRecommendationsForUserRequest.SerializeToString,
             recommendation__pb2.GetRecommendationsForUserResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCompatibilityTexts(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/recommendation.v1.RecommendationService/GetCompatibilityTexts',
+            recommendation__pb2.GetCompatibilityTextsRequest.SerializeToString,
+            recommendation__pb2.GetCompatibilityTextsResponse.FromString,
             options,
             channel_credentials,
             insecure,

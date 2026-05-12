@@ -7,10 +7,12 @@ option go_package = "github.com/artryry/commit/services/api-gateway/src/internal
 import "profile.proto";
 
 // RecommendationService is implemented by the recommendations microservice.
-// The API gateway calls it to obtain candidate user ids and filter criteria, then loads profile rows via profiles.GetProfilesWithFilter.
+// The API gateway calls it for candidate user ids; GET /recommendations then loads profile rows via profiles.GetProfiles.
 service RecommendationService {
-  // Returns candidate profile user ids and filter fields to apply when loading profiles.
+  // Returns candidate profile user ids (recommendations apply stored filters when selecting ids).
   rpc GetRecommendationsForUser(GetRecommendationsForUserRequest) returns (GetRecommendationsForUserResponse);
+
+  rpc GetCompatibilityTexts(GetCompatibilityTextsRequest) returns (GetCompatibilityTextsResponse);
 
   rpc GetFilters(GetFiltersRequest) returns (GetFiltersResponse);
   rpc SetFilters(SetFiltersRequest) returns (SetFiltersResponse);
@@ -29,6 +31,20 @@ message GetRecommendationsForUserResponse {
   optional string sign = 6;
   repeated string tags = 7;
   optional profile.v1.Gender partner_gender = 8;
+}
+
+message GetCompatibilityTextsRequest {
+  int64 viewer_user_id = 1;
+  repeated int64 other_user_ids = 2;
+}
+
+message CompatibilityTextItem {
+  int64 user_id = 1;
+  string text = 2;
+}
+
+message GetCompatibilityTextsResponse {
+  repeated CompatibilityTextItem items = 1;
 }
 
 message GetFiltersRequest {

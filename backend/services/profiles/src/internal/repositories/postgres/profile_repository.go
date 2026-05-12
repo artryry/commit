@@ -2,7 +2,10 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -93,11 +96,14 @@ func genderToPG(g domain.Gender) string {
 }
 
 func relationshipTypeToPG(rt domain.RelationshipType) string {
-	switch rt {
-	case domain.SearchForFriendship:
+	switch strings.ToUpper(string(rt)) {
+	case "FRIENDSHIP":
 		return "friendship"
-	case domain.SearchForRelationship:
+	case "RELATIONSHIP":
 		return "relationship"
+	case "NETWORKING":
+		// Postgres enum has no networking value; closest allowed label.
+		return "unspecified"
 	default:
 		return "unspecified"
 	}
@@ -152,7 +158,7 @@ func (r *ProfileRepository) GetProfilesWithFilter(
 		sign = *filter.Sign
 	}
 
-	var tags any
+	var tags any = []string{}
 	if len(filter.Tags) > 0 {
 		tags = filter.Tags
 	}
@@ -181,6 +187,32 @@ func (r *ProfileRepository) GetProfilesWithFilter(
 	return scanProfileRows(rows)
 }
 
+// profileImageRow matches JSON from get_profiles*.sql (keys id, url, created_at as Unix seconds).
+type profileImageRow struct {
+	ID        int64  `json:"id"`
+	URL       string `json:"url"`
+	CreatedAt int64  `json:"created_at"`
+}
+
+func parseProfileImagesJSON(imagesJSON []byte) ([]*domain.Image, error) {
+	if len(imagesJSON) == 0 || string(imagesJSON) == "null" {
+		return []*domain.Image{}, nil
+	}
+	var rows []profileImageRow
+	if err := json.Unmarshal(imagesJSON, &rows); err != nil {
+		return nil, err
+	}
+	out := make([]*domain.Image, 0, len(rows))
+	for _, r := range rows {
+		out = append(out, &domain.Image{
+			Id:         r.ID,
+			StorageKey: r.URL,
+			CreatedAt:  time.Unix(r.CreatedAt, 0).UTC(),
+		})
+	}
+	return out, nil
+}
+
 func scanProfileRows(rows pgx.Rows) ([]*domain.Profile, error) {
 	defer rows.Close()
 
@@ -189,13 +221,16 @@ func scanProfileRows(rows pgx.Rows) ([]*domain.Profile, error) {
 	for rows.Next() {
 		var profile domain.Profile
 		var imagesJSON []byte
+		var avatarID sql.NullInt64
+		var birthDay sql.NullTime
 
 		err := rows.Scan(
 			&profile.UserId,
 			&profile.Username,
-			&profile.Avatar.Id,
+			&avatarID,
 			&profile.Bio,
 			&profile.Age,
+			&birthDay,
 			&profile.Sign,
 			&profile.City,
 			&profile.SearchFor,
@@ -207,9 +242,19 @@ func scanProfileRows(rows pgx.Rows) ([]*domain.Profile, error) {
 			return nil, err
 		}
 
+		if birthDay.Valid {
+			t := birthDay.Time.UTC()
+			y, m, d := t.Date()
+			profile.Birthday = time.Date(y, m, d, 0, 0, 0, 0, time.UTC)
+		}
+
+		if avatarID.Valid {
+			profile.Avatar = &domain.Image{Id: avatarID.Int64}
+		}
+
 		var images []*domain.Image
 
-		err = json.Unmarshal(imagesJSON, &images)
+		images, err = parseProfileImagesJSON(imagesJSON)
 		if err != nil {
 			return nil, err
 		}
@@ -217,7 +262,7 @@ func scanProfileRows(rows pgx.Rows) ([]*domain.Profile, error) {
 		profile.Images = images
 
 		for _, image := range images {
-			if image.Id == profile.Avatar.Id {
+			if profile.Avatar != nil && image.Id == profile.Avatar.Id {
 				profile.Avatar = image
 				break
 			}
@@ -237,15 +282,20 @@ func (r *ProfileRepository) UpdateProfile(
 	ctx context.Context,
 	profile *domain.Profile,
 ) error {
+	var avatarID any
+	if profile.Avatar != nil && profile.Avatar.Id != 0 {
+		avatarID = profile.Avatar.Id
+	}
+
 	_, err := r.db.Exec(
 		ctx,
 		updateProfileQuery,
 		profile.Username,
-		profile.Avatar.Id,
+		avatarID,
 		profile.Bio,
 		profile.City,
 		profile.SearchFor,
-		profile.RelationshipType,
+		relationshipTypeToPG(profile.RelationshipType),
 
 		profile.UserId,
 	)

@@ -1,20 +1,7 @@
 # Host ports 18000–18002: Windows often reserves 7916–8015 (Hyper-V/WSL), so binding 8000–8002 on the host fails.
 # Container ports stay 8000/8001/8002; service-to-service URLs (e.g. http://ms-auth:8001) are unchanged.
 services:
-# Nginx
-  # nginx-gateway:
-  #   container_name: nginx-gateway
-  #   build:
-  #     context: ./nginx
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 8000:8000
-  #   depends_on:
-  #     - ms-auth
-  #     - ms-profiles
-  #   restart: always
-
-# API-gateway Эмбер
+# API-gateway
   api-gateway:
     container_name: api-gateway
     build:
@@ -158,11 +145,44 @@ services:
     env_file:
       - ./services/recommendation/.env
     depends_on:
-      - db-recommendations
-      - kafka-init
-      - kafka
-      - redis-recommendations
+      db-recommendations:
+        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
+      kafka:
+        condition: service_started
+      redis-recommendations:
+        condition: service_started
+      ollama:
+        condition: service_started
+      ollama-pull:
+        condition: service_completed_successfully
     restart: always
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    # Models pulled by `ollama-pull` (see ms-recommendations depends_on). Manual: docker exec -it ollama ollama pull llama3.2:1b
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: always
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: ollama-pull
+    restart: "no"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    depends_on:
+      - ollama
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "sleep 8 && (ollama pull llama3.2:1b || true)",
+      ]
 
   db-recommendations:
     image: pgvector/pgvector:pg16
@@ -290,4 +310,6 @@ volumes:
   postgres_data_notifications:
     driver: local
   postgres_data_chats:
+    driver: local
+  ollama_data:
     driver: local

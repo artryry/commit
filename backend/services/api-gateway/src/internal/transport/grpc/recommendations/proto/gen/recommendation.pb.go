@@ -166,6 +166,154 @@ func (x *GetRecommendationsForUserResponse) GetPartnerGender() gen.Gender {
 	return gen.Gender(0)
 }
 
+type GetCompatibilityTextsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ViewerUserId  int64                  `protobuf:"varint,1,opt,name=viewer_user_id,json=viewerUserId,proto3" json:"viewer_user_id,omitempty"`
+	OtherUserIds  []int64                `protobuf:"varint,2,rep,packed,name=other_user_ids,json=otherUserIds,proto3" json:"other_user_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCompatibilityTextsRequest) Reset() {
+	*x = GetCompatibilityTextsRequest{}
+	mi := &file_recommendation_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCompatibilityTextsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCompatibilityTextsRequest) ProtoMessage() {}
+
+func (x *GetCompatibilityTextsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_recommendation_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCompatibilityTextsRequest.ProtoReflect.Descriptor instead.
+func (*GetCompatibilityTextsRequest) Descriptor() ([]byte, []int) {
+	return file_recommendation_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetCompatibilityTextsRequest) GetViewerUserId() int64 {
+	if x != nil {
+		return x.ViewerUserId
+	}
+	return 0
+}
+
+func (x *GetCompatibilityTextsRequest) GetOtherUserIds() []int64 {
+	if x != nil {
+		return x.OtherUserIds
+	}
+	return nil
+}
+
+type CompatibilityTextItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CompatibilityTextItem) Reset() {
+	*x = CompatibilityTextItem{}
+	mi := &file_recommendation_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CompatibilityTextItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CompatibilityTextItem) ProtoMessage() {}
+
+func (x *CompatibilityTextItem) ProtoReflect() protoreflect.Message {
+	mi := &file_recommendation_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CompatibilityTextItem.ProtoReflect.Descriptor instead.
+func (*CompatibilityTextItem) Descriptor() ([]byte, []int) {
+	return file_recommendation_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CompatibilityTextItem) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CompatibilityTextItem) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+type GetCompatibilityTextsResponse struct {
+	state         protoimpl.MessageState   `protogen:"open.v1"`
+	Items         []*CompatibilityTextItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetCompatibilityTextsResponse) Reset() {
+	*x = GetCompatibilityTextsResponse{}
+	mi := &file_recommendation_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetCompatibilityTextsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetCompatibilityTextsResponse) ProtoMessage() {}
+
+func (x *GetCompatibilityTextsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_recommendation_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetCompatibilityTextsResponse.ProtoReflect.Descriptor instead.
+func (*GetCompatibilityTextsResponse) Descriptor() ([]byte, []int) {
+	return file_recommendation_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetCompatibilityTextsResponse) GetItems() []*CompatibilityTextItem {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 type GetFiltersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
@@ -175,7 +323,7 @@ type GetFiltersRequest struct {
 
 func (x *GetFiltersRequest) Reset() {
 	*x = GetFiltersRequest{}
-	mi := &file_recommendation_proto_msgTypes[2]
+	mi := &file_recommendation_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -187,7 +335,7 @@ func (x *GetFiltersRequest) String() string {
 func (*GetFiltersRequest) ProtoMessage() {}
 
 func (x *GetFiltersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recommendation_proto_msgTypes[2]
+	mi := &file_recommendation_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -200,7 +348,7 @@ func (x *GetFiltersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFiltersRequest.ProtoReflect.Descriptor instead.
 func (*GetFiltersRequest) Descriptor() ([]byte, []int) {
-	return file_recommendation_proto_rawDescGZIP(), []int{2}
+	return file_recommendation_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetFiltersRequest) GetUserId() int64 {
@@ -225,7 +373,7 @@ type GetFiltersResponse struct {
 
 func (x *GetFiltersResponse) Reset() {
 	*x = GetFiltersResponse{}
-	mi := &file_recommendation_proto_msgTypes[3]
+	mi := &file_recommendation_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -237,7 +385,7 @@ func (x *GetFiltersResponse) String() string {
 func (*GetFiltersResponse) ProtoMessage() {}
 
 func (x *GetFiltersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recommendation_proto_msgTypes[3]
+	mi := &file_recommendation_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -250,7 +398,7 @@ func (x *GetFiltersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFiltersResponse.ProtoReflect.Descriptor instead.
 func (*GetFiltersResponse) Descriptor() ([]byte, []int) {
-	return file_recommendation_proto_rawDescGZIP(), []int{3}
+	return file_recommendation_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetFiltersResponse) GetRelationshipType() gen.RelationshipType {
@@ -318,7 +466,7 @@ type SetFiltersRequest struct {
 
 func (x *SetFiltersRequest) Reset() {
 	*x = SetFiltersRequest{}
-	mi := &file_recommendation_proto_msgTypes[4]
+	mi := &file_recommendation_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -330,7 +478,7 @@ func (x *SetFiltersRequest) String() string {
 func (*SetFiltersRequest) ProtoMessage() {}
 
 func (x *SetFiltersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_recommendation_proto_msgTypes[4]
+	mi := &file_recommendation_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -343,7 +491,7 @@ func (x *SetFiltersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFiltersRequest.ProtoReflect.Descriptor instead.
 func (*SetFiltersRequest) Descriptor() ([]byte, []int) {
-	return file_recommendation_proto_rawDescGZIP(), []int{4}
+	return file_recommendation_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *SetFiltersRequest) GetUserId() int64 {
@@ -411,7 +559,7 @@ type SetFiltersResponse struct {
 
 func (x *SetFiltersResponse) Reset() {
 	*x = SetFiltersResponse{}
-	mi := &file_recommendation_proto_msgTypes[5]
+	mi := &file_recommendation_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -423,7 +571,7 @@ func (x *SetFiltersResponse) String() string {
 func (*SetFiltersResponse) ProtoMessage() {}
 
 func (x *SetFiltersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_recommendation_proto_msgTypes[5]
+	mi := &file_recommendation_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -436,7 +584,7 @@ func (x *SetFiltersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetFiltersResponse.ProtoReflect.Descriptor instead.
 func (*SetFiltersResponse) Descriptor() ([]byte, []int) {
-	return file_recommendation_proto_rawDescGZIP(), []int{5}
+	return file_recommendation_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SetFiltersResponse) GetSuccess() bool {
@@ -467,7 +615,15 @@ const file_recommendation_proto_rawDesc = "" +
 	"\a_age_toB\a\n" +
 	"\x05_cityB\a\n" +
 	"\x05_signB\x11\n" +
-	"\x0f_partner_gender\",\n" +
+	"\x0f_partner_gender\"j\n" +
+	"\x1cGetCompatibilityTextsRequest\x12$\n" +
+	"\x0eviewer_user_id\x18\x01 \x01(\x03R\fviewerUserId\x12$\n" +
+	"\x0eother_user_ids\x18\x02 \x03(\x03R\fotherUserIds\"D\n" +
+	"\x15CompatibilityTextItem\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\x12\x12\n" +
+	"\x04text\x18\x02 \x01(\tR\x04text\"_\n" +
+	"\x1dGetCompatibilityTextsResponse\x12>\n" +
+	"\x05items\x18\x01 \x03(\v2(.recommendation.v1.CompatibilityTextItemR\x05items\",\n" +
 	"\x11GetFiltersRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"\xf9\x02\n" +
 	"\x12GetFiltersResponse\x12N\n" +
@@ -500,9 +656,10 @@ const file_recommendation_proto_rawDesc = "" +
 	"\x05_signB\x11\n" +
 	"\x0f_partner_gender\".\n" +
 	"\x12SetFiltersResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xd6\x02\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess2\xd2\x03\n" +
 	"\x15RecommendationService\x12\x86\x01\n" +
-	"\x19GetRecommendationsForUser\x123.recommendation.v1.GetRecommendationsForUserRequest\x1a4.recommendation.v1.GetRecommendationsForUserResponse\x12Y\n" +
+	"\x19GetRecommendationsForUser\x123.recommendation.v1.GetRecommendationsForUserRequest\x1a4.recommendation.v1.GetRecommendationsForUserResponse\x12z\n" +
+	"\x15GetCompatibilityTexts\x12/.recommendation.v1.GetCompatibilityTextsRequest\x1a0.recommendation.v1.GetCompatibilityTextsResponse\x12Y\n" +
 	"\n" +
 	"GetFilters\x12$.recommendation.v1.GetFiltersRequest\x1a%.recommendation.v1.GetFiltersResponse\x12Y\n" +
 	"\n" +
@@ -520,35 +677,41 @@ func file_recommendation_proto_rawDescGZIP() []byte {
 	return file_recommendation_proto_rawDescData
 }
 
-var file_recommendation_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_recommendation_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_recommendation_proto_goTypes = []any{
 	(*GetRecommendationsForUserRequest)(nil),  // 0: recommendation.v1.GetRecommendationsForUserRequest
 	(*GetRecommendationsForUserResponse)(nil), // 1: recommendation.v1.GetRecommendationsForUserResponse
-	(*GetFiltersRequest)(nil),                 // 2: recommendation.v1.GetFiltersRequest
-	(*GetFiltersResponse)(nil),                // 3: recommendation.v1.GetFiltersResponse
-	(*SetFiltersRequest)(nil),                 // 4: recommendation.v1.SetFiltersRequest
-	(*SetFiltersResponse)(nil),                // 5: recommendation.v1.SetFiltersResponse
-	(gen.RelationshipType)(0),                 // 6: profile.v1.RelationshipType
-	(gen.Gender)(0),                           // 7: profile.v1.Gender
+	(*GetCompatibilityTextsRequest)(nil),      // 2: recommendation.v1.GetCompatibilityTextsRequest
+	(*CompatibilityTextItem)(nil),             // 3: recommendation.v1.CompatibilityTextItem
+	(*GetCompatibilityTextsResponse)(nil),     // 4: recommendation.v1.GetCompatibilityTextsResponse
+	(*GetFiltersRequest)(nil),                 // 5: recommendation.v1.GetFiltersRequest
+	(*GetFiltersResponse)(nil),                // 6: recommendation.v1.GetFiltersResponse
+	(*SetFiltersRequest)(nil),                 // 7: recommendation.v1.SetFiltersRequest
+	(*SetFiltersResponse)(nil),                // 8: recommendation.v1.SetFiltersResponse
+	(gen.RelationshipType)(0),                 // 9: profile.v1.RelationshipType
+	(gen.Gender)(0),                           // 10: profile.v1.Gender
 }
 var file_recommendation_proto_depIdxs = []int32{
-	6, // 0: recommendation.v1.GetRecommendationsForUserResponse.relationship_type:type_name -> profile.v1.RelationshipType
-	7, // 1: recommendation.v1.GetRecommendationsForUserResponse.partner_gender:type_name -> profile.v1.Gender
-	6, // 2: recommendation.v1.GetFiltersResponse.relationship_type:type_name -> profile.v1.RelationshipType
-	7, // 3: recommendation.v1.GetFiltersResponse.partner_gender:type_name -> profile.v1.Gender
-	6, // 4: recommendation.v1.SetFiltersRequest.relationship_type:type_name -> profile.v1.RelationshipType
-	7, // 5: recommendation.v1.SetFiltersRequest.partner_gender:type_name -> profile.v1.Gender
-	0, // 6: recommendation.v1.RecommendationService.GetRecommendationsForUser:input_type -> recommendation.v1.GetRecommendationsForUserRequest
-	2, // 7: recommendation.v1.RecommendationService.GetFilters:input_type -> recommendation.v1.GetFiltersRequest
-	4, // 8: recommendation.v1.RecommendationService.SetFilters:input_type -> recommendation.v1.SetFiltersRequest
-	1, // 9: recommendation.v1.RecommendationService.GetRecommendationsForUser:output_type -> recommendation.v1.GetRecommendationsForUserResponse
-	3, // 10: recommendation.v1.RecommendationService.GetFilters:output_type -> recommendation.v1.GetFiltersResponse
-	5, // 11: recommendation.v1.RecommendationService.SetFilters:output_type -> recommendation.v1.SetFiltersResponse
-	9, // [9:12] is the sub-list for method output_type
-	6, // [6:9] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	9,  // 0: recommendation.v1.GetRecommendationsForUserResponse.relationship_type:type_name -> profile.v1.RelationshipType
+	10, // 1: recommendation.v1.GetRecommendationsForUserResponse.partner_gender:type_name -> profile.v1.Gender
+	3,  // 2: recommendation.v1.GetCompatibilityTextsResponse.items:type_name -> recommendation.v1.CompatibilityTextItem
+	9,  // 3: recommendation.v1.GetFiltersResponse.relationship_type:type_name -> profile.v1.RelationshipType
+	10, // 4: recommendation.v1.GetFiltersResponse.partner_gender:type_name -> profile.v1.Gender
+	9,  // 5: recommendation.v1.SetFiltersRequest.relationship_type:type_name -> profile.v1.RelationshipType
+	10, // 6: recommendation.v1.SetFiltersRequest.partner_gender:type_name -> profile.v1.Gender
+	0,  // 7: recommendation.v1.RecommendationService.GetRecommendationsForUser:input_type -> recommendation.v1.GetRecommendationsForUserRequest
+	2,  // 8: recommendation.v1.RecommendationService.GetCompatibilityTexts:input_type -> recommendation.v1.GetCompatibilityTextsRequest
+	5,  // 9: recommendation.v1.RecommendationService.GetFilters:input_type -> recommendation.v1.GetFiltersRequest
+	7,  // 10: recommendation.v1.RecommendationService.SetFilters:input_type -> recommendation.v1.SetFiltersRequest
+	1,  // 11: recommendation.v1.RecommendationService.GetRecommendationsForUser:output_type -> recommendation.v1.GetRecommendationsForUserResponse
+	4,  // 12: recommendation.v1.RecommendationService.GetCompatibilityTexts:output_type -> recommendation.v1.GetCompatibilityTextsResponse
+	6,  // 13: recommendation.v1.RecommendationService.GetFilters:output_type -> recommendation.v1.GetFiltersResponse
+	8,  // 14: recommendation.v1.RecommendationService.SetFilters:output_type -> recommendation.v1.SetFiltersResponse
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_recommendation_proto_init() }
@@ -557,15 +720,15 @@ func file_recommendation_proto_init() {
 		return
 	}
 	file_recommendation_proto_msgTypes[1].OneofWrappers = []any{}
-	file_recommendation_proto_msgTypes[3].OneofWrappers = []any{}
-	file_recommendation_proto_msgTypes[4].OneofWrappers = []any{}
+	file_recommendation_proto_msgTypes[6].OneofWrappers = []any{}
+	file_recommendation_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_recommendation_proto_rawDesc), len(file_recommendation_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
 
 	"github.com/artryry/commit/services/api-gateway/src/internal/config"
 	"github.com/artryry/commit/services/api-gateway/src/internal/transport/http/handlers"
@@ -14,7 +15,14 @@ import (
 func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 	router := chi.NewRouter()
 
-	// Global Middleware
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   cfg.CORSAllowedOrigins,
+		AllowedMethods:   []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-Requested-With"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
+
 	router.Use(middleware.LoggingMiddleware)
 
 	// Health check
@@ -58,6 +66,7 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 			// -------- RECOMMENDATIONS --------
 			r.Route("/recommendations", func(r chi.Router) {
 				r.Get("/", handlers.Recommendations.GetRecommendations)
+				r.Post("/compatibility", handlers.Recommendations.Compatibility)
 				r.Get("/filters", handlers.Recommendations.Filters)
 				r.Post("/filters", handlers.Recommendations.Filters)
 			})
