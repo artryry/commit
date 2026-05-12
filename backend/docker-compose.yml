@@ -1,6 +1,18 @@
 # Host ports 18000–18002: Windows often reserves 7916–8015 (Hyper-V/WSL), so binding 8000–8002 on the host fails.
 # Container ports stay 8000/8001/8002; service-to-service URLs (e.g. http://ms-auth:8001) are unchanged.
 services:
+# Frontend (React + Nginx)
+  frontend:
+    container_name: frontend
+    build:
+      context: ../frontend/react-app
+      dockerfile: Dockerfile
+    ports:
+      - 3000:80
+    depends_on:
+      - api-gateway
+    restart: always
+
 # API-gateway
   api-gateway:
     container_name: api-gateway

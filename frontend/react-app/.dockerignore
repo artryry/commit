@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+
+# IDE / OS
+.vscode
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Git
+.git
+.gitignore
+
+# Docker (don't send Dockerfile itself into build context)
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Env (production values injected via --build-arg, not .env)
+.env
+.env.*
+
+# Documentation / misc
+README.md
+LICENSE
+*.md
+
+# Orval (codegen, not needed in build)
+orval.config.ts
