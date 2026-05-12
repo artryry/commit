@@ -43,5 +43,6 @@ type RecommendationsHandler interface {
 
 type SwipesHandler interface {
 	Action(w http.ResponseWriter, r *http.Request)
+	ListIncomingLikes(w http.ResponseWriter, r *http.Request)
 	GetMatches(w http.ResponseWriter, r *http.Request)
 }

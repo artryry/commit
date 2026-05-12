@@ -53,18 +53,18 @@ INSERT INTO swipes (
 	first_answered_at, sec_answered_at,
 	updated_at
 ) VALUES (
-	$1, $2,
-	CASE WHEN $3 = $1 THEN $4 ELSE NULL END,
-	CASE WHEN $3 = $2 THEN $4 ELSE NULL END,
-	CASE WHEN $3 = $1 THEN NOW() ELSE NULL END,
-	CASE WHEN $3 = $2 THEN NOW() ELSE NULL END,
+	$1::bigint, $2::bigint,
+	CASE WHEN $3::bigint = $1::bigint THEN $4::boolean ELSE NULL::boolean END,
+	CASE WHEN $3::bigint = $2::bigint THEN $4::boolean ELSE NULL::boolean END,
+	CASE WHEN $3::bigint = $1::bigint THEN NOW() ELSE NULL::timestamptz END,
+	CASE WHEN $3::bigint = $2::bigint THEN NOW() ELSE NULL::timestamptz END,
 	NOW()
 )
 ON CONFLICT (first_user_id, sec_user_id) DO UPDATE SET
-	first_user_answer = CASE WHEN $3 = swipes.first_user_id THEN $4 ELSE swipes.first_user_answer END,
-	sec_user_answer = CASE WHEN $3 = swipes.sec_user_id THEN $4 ELSE swipes.sec_user_answer END,
-	first_answered_at = CASE WHEN $3 = swipes.first_user_id THEN NOW() ELSE swipes.first_answered_at END,
-	sec_answered_at = CASE WHEN $3 = swipes.sec_user_id THEN NOW() ELSE swipes.sec_answered_at END,
+	first_user_answer = CASE WHEN $3::bigint = swipes.first_user_id THEN $4::boolean ELSE swipes.first_user_answer END,
+	sec_user_answer = CASE WHEN $3::bigint = swipes.sec_user_id THEN $4::boolean ELSE swipes.sec_user_answer END,
+	first_answered_at = CASE WHEN $3::bigint = swipes.first_user_id THEN NOW() ELSE swipes.first_answered_at END,
+	sec_answered_at = CASE WHEN $3::bigint = swipes.sec_user_id THEN NOW() ELSE swipes.sec_answered_at END,
 	updated_at = NOW()
 `, first, sec, viewer, liked)
 	if err != nil {
@@ -75,7 +75,7 @@ ON CONFLICT (first_user_id, sec_user_id) DO UPDATE SET
 	err = tx.QueryRow(ctx, `
 SELECT first_user_answer, sec_user_answer
 FROM swipes
-WHERE first_user_id = $1 AND sec_user_id = $2
+WHERE first_user_id = $1::bigint AND sec_user_id = $2::bigint
 `, first, sec).Scan(&fa, &sa)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ WHERE first_user_id = $1 AND sec_user_id = $2
 		var mid int64
 		err = tx.QueryRow(ctx, `
 INSERT INTO matches (first_user_id, sec_user_id)
-VALUES ($1, $2)
+VALUES ($1::bigint, $2::bigint)
 ON CONFLICT (first_user_id, sec_user_id) DO NOTHING
 RETURNING id
 `, first, sec).Scan(&mid)
@@ -107,11 +107,46 @@ RETURNING id
 
 func (r *Repository) ListMatchedUserIDs(ctx context.Context, userID int64) ([]int64, error) {
 	rows, err := r.db.Query(ctx, `
-SELECT CASE WHEN m.first_user_id = $1 THEN m.sec_user_id ELSE m.first_user_id END
+SELECT CASE WHEN m.first_user_id = $1::bigint THEN m.sec_user_id ELSE m.first_user_id END
 FROM matches m
-WHERE m.first_user_id = $1 OR m.sec_user_id = $1
+WHERE m.first_user_id = $1::bigint OR m.sec_user_id = $1::bigint
 ORDER BY m.created_at DESC
 `, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	if ids == nil {
+		ids = []int64{}
+	}
+	return ids, nil
+}
+
+// ListIncomingLikesUserIDs returns other users who liked viewer (their answer toward the pair is like),
+// excluding rows that are already mutual matches (both users liked).
+func (r *Repository) ListIncomingLikesUserIDs(ctx context.Context, viewer int64) ([]int64, error) {
+	rows, err := r.db.Query(ctx, `
+SELECT CASE WHEN s.first_user_id = $1::bigint THEN s.sec_user_id ELSE s.first_user_id END
+FROM swipes s
+WHERE (
+	(s.first_user_id = $1::bigint AND s.sec_user_answer IS TRUE)
+	OR (s.sec_user_id = $1::bigint AND s.first_user_answer IS TRUE)
+)
+AND NOT (COALESCE(s.first_user_answer, false) AND COALESCE(s.sec_user_answer, false))
+ORDER BY s.updated_at DESC
+`, viewer)
 	if err != nil {
 		return nil, err
 	}

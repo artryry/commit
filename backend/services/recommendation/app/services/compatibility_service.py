@@ -11,12 +11,13 @@ from services.ollama_client import OllamaClient
 
 logger = logging.getLogger(__name__)
 
+# One JSON object per call — works with Ollama `format: "json"` (see OllamaClient.chat_json_array).
 _SYSTEM_PROMPT = (
-    "Развлекательный текст о совместимости по знаку зодиака (солнце) и дате рождения — не полная натальная карта, "
-    "без категоричных предсказаний. На каждую пару из входа напиши **7–10 полноценных предложений** на русском, "
-    "тон тёплый и лёгкий. "
-    'Ответ — только JSON-массив вида [{"user_id":число,"text":"строка"},...] по всем user_id из входа. '
-    "Поле text — только русский; названия знаков по-русски (Овен, Телец, …). Без markdown, кода и текста вне JSON."
+    "Текст о совместимости по знаку зодиака (солнце) и дате рождения — не полная натальная карта, "
+    "без категоричных предсказаний. Напиши **7–10 полноценных предложений** на русском, тон тёплый и лёгкий. "
+    'Верни один JSON-объект строго вида {"user_id": <целое число как во входе>, "text": "<строка>"}. '
+    "Поле text — только русский; названия знаков по-русски (Овен, Телец, Близнецы, …). "
+    "Число user_id должно совпадать с полем user_id во входном JSON."
 )
 
 
@@ -93,6 +94,11 @@ class CompatibilityService:
             return [(uid, default) for uid in ordered]
 
         viewer_snap = _feature_snapshot(viewer)
+        texts_by_id: dict[int, str] = {}
+        for uid in ordered:
+            if uid not in others_map:
+                texts_by_id[uid] = default
+
         pairs_for_model: list[dict] = []
         for uid in ordered:
             other = others_map.get(uid)
@@ -106,35 +112,40 @@ class CompatibilityService:
                 },
             )
 
-        texts_by_id: dict[int, str] = {}
-        for uid in ordered:
-            if uid not in others_map:
-                texts_by_id[uid] = default
-
-        if pairs_for_model:
-            n = len(pairs_for_model)
-            user_msg = (
-                f"Ровно {n} объектов в массиве. Только JSON.\n"
-                + json.dumps(pairs_for_model, ensure_ascii=False)
-            )
+        # One Ollama request per pair: avoids truncation, improves JSON validity (especially with format=json).
+        predict = settings.COMPATIBILITY_NUM_PREDICT
+        timeout = float(settings.OLLAMA_TIMEOUT_SEC)
+        for pair in pairs_for_model:
+            uid = int(pair["user_id"])
+            user_msg = json.dumps(pair, ensure_ascii=False)
             try:
                 rows = await self._ollama.chat_json_array(
                     _SYSTEM_PROMPT,
                     user_msg,
                     options={
-                        "num_predict": 12288,
-                        "temperature": 0.3,
-                        "top_k": 32,
+                        "num_predict": predict,
+                        "temperature": 0.35,
+                        "top_k": 40,
                     },
-                    timeout_sec=float(settings.OLLAMA_TIMEOUT_SEC),
+                    timeout_sec=timeout,
+                    format_json=True,
                 )
+                matched = False
                 for row in rows:
-                    uid = _row_user_id(row.get("user_id"))
+                    got_uid = _row_user_id(row.get("user_id"))
                     text = row.get("text")
-                    if uid is not None and isinstance(text, str) and text.strip():
+                    if got_uid == uid and isinstance(text, str) and text.strip():
                         texts_by_id[uid] = text.strip()
+                        matched = True
+                        break
+                if not matched:
+                    logger.warning(
+                        "compatibility: no valid object for user_id=%s (parsed %s row(s))",
+                        uid,
+                        len(rows),
+                    )
             except Exception:
-                logger.exception("ollama compatibility generation failed")
+                logger.exception("ollama compatibility failed for user_id=%s", uid)
 
         out: list[tuple[int, str]] = []
         for uid in ordered:

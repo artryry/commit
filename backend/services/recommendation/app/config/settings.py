@@ -40,9 +40,12 @@ class Settings(BaseSettings):
     STACK_PREFETCH_LIMIT: int = 500
 
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    # Single model for /recommendations/compatibility (no fallbacks or HTTP retries in code).
-    OLLAMA_MODEL: str = "llama3.2:1b"
+    # Single model for /recommendations/compatibility (follows instructions + JSON better than 1B).
+    OLLAMA_MODEL: str = "qwen2.5:3b"
     OLLAMA_TIMEOUT_SEC: float = 180.0
+
+    # One Ollama call per peer id; token budget for ~7–10 Russian sentences + JSON wrapper.
+    COMPATIBILITY_NUM_PREDICT: int = 4096
 
     COMPATIBILITY_MAX_IDS: int = 20
     COMPATIBILITY_DEFAULT_TEXT: str = (

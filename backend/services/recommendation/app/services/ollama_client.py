@@ -178,6 +178,7 @@ class OllamaClient:
         *,
         options: dict[str, Any] | None = None,
         timeout_sec: float | None = None,
+        format_json: bool = False,
     ) -> list[dict[str, Any]]:
         url = f"{self._base}/api/chat"
         model = (self._model or "").strip()
@@ -192,6 +193,9 @@ class OllamaClient:
         payload: dict[str, Any] = {"model": model, "stream": False, "messages": messages}
         if options:
             payload["options"] = options
+        if format_json:
+            # Ollama: constrain decoder to JSON (much more reliable than prompt-only JSON).
+            payload["format"] = "json"
 
         async with httpx.AsyncClient(timeout=timeout, trust_env=False) as client:
             resp = await client.post(url, json=payload)

@@ -67,7 +67,6 @@ class RecommendationService:
                     break
             if cid == viewer_id:
                 continue
-            await self._seen.insert_ignore(viewer_id, cid, now)
             out.append(cid)
 
         filt = await self._filters.get(viewer_id)
@@ -162,10 +161,9 @@ class RecommendationService:
         await self.rebuild_stack(user_id)
 
     async def record_swipe_pair(self, viewer_id: int, target_id: int) -> None:
-        """Persist swipe as seen so future rebuilds exclude this pair.
+        """Mark (viewer, target) as seen — only called from swipe.created consumer.
 
-        No stack rebuild: recommendations were already popped from Redis when shown;
-        marking seen is enough for scoring/filter consistency without recomputing the stack.
+        GET /recommendations does not write seen_pairs; swipes do.
         """
         if viewer_id == target_id:
             return

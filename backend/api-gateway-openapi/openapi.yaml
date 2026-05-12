@@ -6,7 +6,7 @@ info:
 
     - **Auth** paths under `/api/v1/auth/*` are reverse-proxied to the authentication service (FastAPI).
       Request/response bodies match that service unless noted.
-    - **Profiles**, **recommendations**, **swipes**, and **matches** are routed through the gateway to the backing gRPC services.
+    - **Profiles**, **recommendations**, **swipes**, and **matches** are routed through the gateway to the backing gRPC services. **GET /swipes** and **GET /recommendations** both resolve user ids from their backing service, then load rows via **profiles** `GetProfiles`.
     - **Chats** (`/api/v1/chats/*`) are reverse-proxied to the **chats** FastAPI service. The gateway validates JWT and forwards **`X-User-Id`** (numeric user id); the chats service does not verify JWT itself.
     - **Recommendations** HTTP routes call the **recommendations** gRPC service for candidate ids (and filter CRUD on `/recommendations/filters`); **GET /recommendations** loads profile rows via **profiles** `GetProfiles` by those ids (except **compatibility**, which stays inside the recommendations service and uses **Ollama** for text generation).
     - Protected routes require `Authorization: Bearer <JWT>`. The gateway validates the token and expects a numeric `sub` claim (user id).
@@ -442,7 +442,7 @@ paths:
       description: |
         Proxies to recommendations gRPC `GetCompatibilityTexts`. The service loads **viewer** and **candidates**
         from its own Postgres `user_features` (**sign**, **birthday** as Unix seconds). It calls a **local Ollama**
-        model (`OLLAMA_MODEL`, default `llama3.2:1b`) and returns one text per requested id (longer Russian blurbs; see recommendations service prompts).
+        model (`OLLAMA_MODEL`, default `qwen2.5:3b`) calls **one Ollama generation per requested user id** with JSON mode for structured output; returns longer Russian blurbs (see recommendations service).
 
         - Request body lists **`user_ids`** to compare with the JWT user. The viewer’s own id is ignored if present.
         - Unknown user ids (no `user_features` row) still appear in the response with a **default** placeholder text (Russian).
@@ -520,6 +520,28 @@ paths:
           description: Bad gateway
 
   /api/v1/swipes:
+    get:
+      tags: [Swipes]
+      summary: Profiles of users who liked you (incoming likes)
+      description: |
+        The gateway calls **swipes** gRPC `ListIncomingLikes` with the JWT user id to obtain candidate user ids
+        (people who swiped **like** on you, excluding pairs that are already **mutual matches**), then calls
+        **profiles** `GetProfiles` with those ids and returns that result — same pattern as **GET /api/v1/recommendations**.
+        Ordered by most recently updated swipe row. Use **GET /api/v1/matches** for mutual matches (different selection).
+      operationId: swipesListIncomingLikes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK — same shape as profiles `GetProfiles` (camelCase protobuf JSON, `profilesData`)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetProfilesWithFilterResponseProtoJson'
+        '401':
+          description: Unauthorized
+        '502':
+          description: Bad gateway
     post:
       tags: [Swipes]
       summary: Record swipe (like or dislike) on a profile
@@ -647,9 +669,15 @@ paths:
           format: int64
     post:
       tags: [Chats]
-      summary: Send a text message
+      summary: Send a chat message (text and/or image)
       description: |
         Proxied to `POST /api/v1/chats/{peer_user_id}/messages` on the chats service (`201 Created`).
+
+        Use **`application/json`** with `{"body":"..."}` for a plain text message, or **`multipart/form-data`**
+        with optional part **`body`** (caption) and/or **`file`** (image). At least one of `body` or `file` is required
+        for multipart. Images must be **JPEG, PNG, or WebP** (max **10 MiB**); the service stores the object in MinIO
+        and returns `image_storage_key` on the created message. Kafka `chat.message` preview uses the caption when
+        present, otherwise `"[image]"` for image-only messages.
       operationId: chatsSendMessage
       security:
         - bearerAuth: []
@@ -659,6 +687,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SendChatTextMessageBody'
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                body:
+                  type: string
+                  maxLength: 10000
+                  description: Optional caption when sending an image, or text-only content when `file` is omitted.
+                file:
+                  type: string
+                  format: binary
+                  description: Optional image (jpeg, png, webp); max 10 MiB.
+              description: |
+                Send at least one of `body` or `file`. Both may be set (image with caption).
       responses:
         '201':
           description: Created — message object (**snake_case**)
@@ -667,11 +709,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ChatMessageItem'
         '400':
-          description: Invalid body (e.g. empty `body`)
+          description: |
+            Invalid request (e.g. neither `body` nor `file`, empty JSON `body`, unsupported image type, image too large,
+            or invalid peer).
         '401':
           description: Unauthorized
+        '404':
+          description: Chat not found for this pair
+        '422':
+          description: Invalid JSON body
         '502':
-          description: Bad gateway
+          description: Bad gateway (upstream chats service or object storage failure)
 
 components:
   securitySchemes:

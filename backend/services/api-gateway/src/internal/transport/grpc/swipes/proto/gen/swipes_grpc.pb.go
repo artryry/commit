@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SwipesService_RecordSwipe_FullMethodName = "/swipes.v1.SwipesService/RecordSwipe"
-	SwipesService_ListMatches_FullMethodName = "/swipes.v1.SwipesService/ListMatches"
+	SwipesService_RecordSwipe_FullMethodName       = "/swipes.v1.SwipesService/RecordSwipe"
+	SwipesService_ListMatches_FullMethodName       = "/swipes.v1.SwipesService/ListMatches"
+	SwipesService_ListIncomingLikes_FullMethodName = "/swipes.v1.SwipesService/ListIncomingLikes"
 )
 
 // SwipesServiceClient is the client API for SwipesService service.
@@ -29,6 +30,7 @@ const (
 type SwipesServiceClient interface {
 	RecordSwipe(ctx context.Context, in *RecordSwipeRequest, opts ...grpc.CallOption) (*RecordSwipeResponse, error)
 	ListMatches(ctx context.Context, in *ListMatchesRequest, opts ...grpc.CallOption) (*ListMatchesResponse, error)
+	ListIncomingLikes(ctx context.Context, in *ListIncomingLikesRequest, opts ...grpc.CallOption) (*ListIncomingLikesResponse, error)
 }
 
 type swipesServiceClient struct {
@@ -59,12 +61,23 @@ func (c *swipesServiceClient) ListMatches(ctx context.Context, in *ListMatchesRe
 	return out, nil
 }
 
+func (c *swipesServiceClient) ListIncomingLikes(ctx context.Context, in *ListIncomingLikesRequest, opts ...grpc.CallOption) (*ListIncomingLikesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListIncomingLikesResponse)
+	err := c.cc.Invoke(ctx, SwipesService_ListIncomingLikes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SwipesServiceServer is the server API for SwipesService service.
 // All implementations must embed UnimplementedSwipesServiceServer
 // for forward compatibility.
 type SwipesServiceServer interface {
 	RecordSwipe(context.Context, *RecordSwipeRequest) (*RecordSwipeResponse, error)
 	ListMatches(context.Context, *ListMatchesRequest) (*ListMatchesResponse, error)
+	ListIncomingLikes(context.Context, *ListIncomingLikesRequest) (*ListIncomingLikesResponse, error)
 	mustEmbedUnimplementedSwipesServiceServer()
 }
 
@@ -80,6 +93,9 @@ func (UnimplementedSwipesServiceServer) RecordSwipe(context.Context, *RecordSwip
 }
 func (UnimplementedSwipesServiceServer) ListMatches(context.Context, *ListMatchesRequest) (*ListMatchesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMatches not implemented")
+}
+func (UnimplementedSwipesServiceServer) ListIncomingLikes(context.Context, *ListIncomingLikesRequest) (*ListIncomingLikesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListIncomingLikes not implemented")
 }
 func (UnimplementedSwipesServiceServer) mustEmbedUnimplementedSwipesServiceServer() {}
 func (UnimplementedSwipesServiceServer) testEmbeddedByValue()                       {}
@@ -138,6 +154,24 @@ func _SwipesService_ListMatches_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SwipesService_ListIncomingLikes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListIncomingLikesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SwipesServiceServer).ListIncomingLikes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SwipesService_ListIncomingLikes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SwipesServiceServer).ListIncomingLikes(ctx, req.(*ListIncomingLikesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SwipesService_ServiceDesc is the grpc.ServiceDesc for SwipesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +186,10 @@ var SwipesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMatches",
 			Handler:    _SwipesService_ListMatches_Handler,
+		},
+		{
+			MethodName: "ListIncomingLikes",
+			Handler:    _SwipesService_ListIncomingLikes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

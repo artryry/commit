@@ -36,3 +36,11 @@ func (h *SwipesHandler) ListMatches(ctx context.Context, req *pb.ListMatchesRequ
 	}
 	return &pb.ListMatchesResponse{MatchedUserIds: ids}, nil
 }
+
+func (h *SwipesHandler) ListIncomingLikes(ctx context.Context, req *pb.ListIncomingLikesRequest) (*pb.ListIncomingLikesResponse, error) {
+	ids, err := h.svc.ListIncomingLikesUserIDs(ctx, req.GetUserId())
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ListIncomingLikesResponse{UserIds: ids}, nil
+}

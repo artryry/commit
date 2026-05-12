@@ -73,6 +73,7 @@ func NewRouter(handlers *handlers.Handlers, cfg *config.Config) *chi.Mux {
 
 			// -------- SWIPES --------
 			r.Route("/swipes", func(r chi.Router) {
+				r.Get("/", handlers.Swipes.ListIncomingLikes)
 				r.Post("/", handlers.Swipes.Action)
 			})
 

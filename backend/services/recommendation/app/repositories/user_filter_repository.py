@@ -59,7 +59,11 @@ class SqlUserFilterRepository(IUserFilterRepository):
         partner_gender: Optional[int],
         now: datetime,
     ) -> None:
-        row.relationship_type = relationship_type
+        # Align with profile.v1: SEARCH_FOR_UNSPECIFIED (0) means no constraint — store NULL.
+        rt = relationship_type
+        if rt == 0:
+            rt = None
+        row.relationship_type = rt
         row.age_from = age_from
         row.age_to = age_to
         row.city = city

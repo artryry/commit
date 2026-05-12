@@ -47,3 +47,7 @@ func normalizePair(a, b int64) (first, sec int64) {
 func (s *Service) ListMatchedUserIDs(ctx context.Context, userID int64) ([]int64, error) {
 	return s.repo.ListMatchedUserIDs(ctx, userID)
 }
+
+func (s *Service) ListIncomingLikesUserIDs(ctx context.Context, userID int64) ([]int64, error) {
+	return s.repo.ListIncomingLikesUserIDs(ctx, userID)
+}

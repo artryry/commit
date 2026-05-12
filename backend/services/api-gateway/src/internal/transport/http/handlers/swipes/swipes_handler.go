@@ -2,7 +2,10 @@ package swipes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/artryry/commit/services/api-gateway/src/clients/profiles"
 	"github.com/artryry/commit/services/api-gateway/src/clients/swipes"
@@ -11,6 +14,7 @@ import (
 	swipespb "github.com/artryry/commit/services/api-gateway/src/internal/transport/grpc/swipes/proto/gen"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type Handler struct {
@@ -23,8 +27,91 @@ func NewHandler(swipesClient *swipes.Client, profilesClient *profiles.ProfileCli
 }
 
 type swipeBody struct {
-	TargetUserID int64 `json:"target_user_id"`
-	Liked        bool  `json:"liked"`
+	TargetUserID int64
+	Liked          bool
+}
+
+// UnmarshalJSON accepts strict JSON and common client quirks (string ids, string booleans).
+func (b *swipeBody) UnmarshalJSON(data []byte) error {
+	var raw map[string]json.RawMessage
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+	tid, ok := raw["target_user_id"]
+	if !ok {
+		return fmt.Errorf("missing target_user_id")
+	}
+	var n float64
+	if err := json.Unmarshal(tid, &n); err == nil {
+		b.TargetUserID = int64(n)
+	} else {
+		var s string
+		if err := json.Unmarshal(tid, &s); err != nil {
+			return err
+		}
+		id, err := strconv.ParseInt(strings.TrimSpace(s), 10, 64)
+		if err != nil {
+			return err
+		}
+		b.TargetUserID = id
+	}
+	lk, ok := raw["liked"]
+	if !ok {
+		return fmt.Errorf("missing liked")
+	}
+	if err := json.Unmarshal(lk, &b.Liked); err == nil {
+		return nil
+	}
+	var s string
+	if err := json.Unmarshal(lk, &s); err != nil {
+		return err
+	}
+	switch strings.ToLower(strings.TrimSpace(s)) {
+	case "true", "1", "yes":
+		b.Liked = true
+	case "false", "0", "no":
+		b.Liked = false
+	default:
+		return fmt.Errorf("invalid liked")
+	}
+	return nil
+}
+
+// ListIncomingLikes handles GET /api/v1/swipes: incoming-like user ids from swipes gRPC, then profiles GetProfiles
+// (same aggregation pattern as GET /api/v1/recommendations).
+func (h *Handler) ListIncomingLikes(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "missing user id in token")
+		return
+	}
+
+	likes, err := h.swipes.ListIncomingLikes(r.Context(), &swipespb.ListIncomingLikesRequest{UserId: userID})
+	if err != nil {
+		writeError(w, http.StatusBadGateway, err.Error())
+		return
+	}
+
+	ids := likes.GetUserIds()
+	var profResp *profilepb.GetProfilesResponse
+	if len(ids) == 0 {
+		profResp = &profilepb.GetProfilesResponse{}
+	} else {
+		profResp, err = h.profiles.GetProfiles(r.Context(), &profilepb.GetProfilesRequest{UserIds: ids})
+		if err != nil {
+			writeError(w, http.StatusBadGateway, err.Error())
+			return
+		}
+	}
+
+	out, err := protojson.Marshal(profResp)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to encode response")
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(out)
 }
 
 func (h *Handler) Action(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +145,7 @@ func (h *Handler) Action(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, resp)
+	writeJSON(w, http.StatusOK, map[string]bool{"success": resp.GetSuccess()})
 }
 
 func (h *Handler) GetMatches(w http.ResponseWriter, r *http.Request) {

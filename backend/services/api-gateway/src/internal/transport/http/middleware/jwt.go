@@ -44,21 +44,11 @@ func JWT(publicKey *rsa.PublicKey) func(http.Handler) http.Handler {
 				return
 			}
 
-			// Extract user ID from "sub" claim
-			userIDInterface, exists := claims["sub"]
-			if !exists {
-				http.Error(w, "missing sub claim", http.StatusUnauthorized)
+			userID, err := common.SubFromMapClaims(claims)
+			if err != nil {
+				http.Error(w, "invalid sub claim", http.StatusUnauthorized)
 				return
 			}
-
-			// JWT numbers are float64
-			userIDFloat, ok := userIDInterface.(float64)
-			if !ok {
-				http.Error(w, "invalid sub claim type", http.StatusUnauthorized)
-				return
-			}
-
-			userID := int(userIDFloat)
 			log.Printf("Verified JWT token: %v", userID)
 
 			ctx := context.WithValue(r.Context(), common.UserIDKey, userID)

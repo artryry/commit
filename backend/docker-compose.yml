@@ -162,7 +162,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
-    # Models pulled by `ollama-pull` (see ms-recommendations depends_on). Manual: docker exec -it ollama ollama pull llama3.2:1b
+    # Models pulled by `ollama-pull` (see ms-recommendations depends_on). Manual: docker exec -it ollama ollama pull qwen2.5:3b
     ports:
       - "11434:11434"
     volumes:
@@ -181,7 +181,7 @@ services:
       [
         "/bin/sh",
         "-c",
-        "sleep 8 && (ollama pull llama3.2:1b || true)",
+        "sleep 8 && (ollama pull qwen2.5:3b || true)",
       ]
 
   db-recommendations:

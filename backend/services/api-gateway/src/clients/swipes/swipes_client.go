@@ -41,3 +41,7 @@ func (c *Client) RecordSwipe(ctx context.Context, req *swipespb.RecordSwipeReque
 func (c *Client) ListMatches(ctx context.Context, req *swipespb.ListMatchesRequest) (*swipespb.ListMatchesResponse, error) {
 	return c.client.ListMatches(ctx, req)
 }
+
+func (c *Client) ListIncomingLikes(ctx context.Context, req *swipespb.ListIncomingLikesRequest) (*swipespb.ListIncomingLikesResponse, error) {
+	return c.client.ListIncomingLikes(ctx, req)
+}

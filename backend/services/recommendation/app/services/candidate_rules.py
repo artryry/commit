@@ -5,6 +5,9 @@ from repositories import ITagRepository
 from utils.age import AgeCalculator
 from utils.vectors import VectorMath
 
+# profile.v1.RelationshipType SEARCH_FOR_UNSPECIFIED — treat as "no relationship filter" (same as NULL).
+_RELATIONSHIP_UNSPECIFIED = 0
+
 
 class CandidateRules:
     @staticmethod
@@ -14,7 +17,8 @@ class CandidateRules:
         # Partner gender from filters applies whenever set (not only for relationship-type search).
         if filt.partner_gender is not None:
             return cand.gender == filt.partner_gender
-        if filt.relationship_type is None or filt.relationship_type != 2:
+        rt = filt.relationship_type
+        if rt is None or rt == _RELATIONSHIP_UNSPECIFIED or rt != 2:
             return True
         # Relationship search without explicit partner gender: infer opposite from viewer.
         if viewer.gender == 0:
@@ -34,7 +38,12 @@ class CandidateRules:
         if filt is None:
             return True
 
-        if filt.relationship_type is not None and cand.relationship_type != filt.relationship_type:
+        want_rt = filt.relationship_type
+        if (
+            want_rt is not None
+            and want_rt != _RELATIONSHIP_UNSPECIFIED
+            and cand.relationship_type != want_rt
+        ):
             return False
 
         age = AgeCalculator.from_birthday_unix_for_filter(cand.birthday)

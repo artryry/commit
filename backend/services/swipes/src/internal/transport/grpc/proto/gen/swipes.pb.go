@@ -213,6 +213,95 @@ func (x *ListMatchesResponse) GetMatchedUserIds() []int64 {
 	return nil
 }
 
+type ListIncomingLikesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListIncomingLikesRequest) Reset() {
+	*x = ListIncomingLikesRequest{}
+	mi := &file_swipes_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListIncomingLikesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListIncomingLikesRequest) ProtoMessage() {}
+
+func (x *ListIncomingLikesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_swipes_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListIncomingLikesRequest.ProtoReflect.Descriptor instead.
+func (*ListIncomingLikesRequest) Descriptor() ([]byte, []int) {
+	return file_swipes_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *ListIncomingLikesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type ListIncomingLikesResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Other users who swiped like on user_id, excluding pairs that are already mutual matches.
+	UserIds       []int64 `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListIncomingLikesResponse) Reset() {
+	*x = ListIncomingLikesResponse{}
+	mi := &file_swipes_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListIncomingLikesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListIncomingLikesResponse) ProtoMessage() {}
+
+func (x *ListIncomingLikesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_swipes_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListIncomingLikesResponse.ProtoReflect.Descriptor instead.
+func (*ListIncomingLikesResponse) Descriptor() ([]byte, []int) {
+	return file_swipes_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ListIncomingLikesResponse) GetUserIds() []int64 {
+	if x != nil {
+		return x.UserIds
+	}
+	return nil
+}
+
 var File_swipes_proto protoreflect.FileDescriptor
 
 const file_swipes_proto_rawDesc = "" +
@@ -227,10 +316,15 @@ const file_swipes_proto_rawDesc = "" +
 	"\x12ListMatchesRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"?\n" +
 	"\x13ListMatchesResponse\x12(\n" +
-	"\x10matched_user_ids\x18\x01 \x03(\x03R\x0ematchedUserIds2\xab\x01\n" +
+	"\x10matched_user_ids\x18\x01 \x03(\x03R\x0ematchedUserIds\"3\n" +
+	"\x18ListIncomingLikesRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\x03R\x06userId\"6\n" +
+	"\x19ListIncomingLikesResponse\x12\x19\n" +
+	"\buser_ids\x18\x01 \x03(\x03R\auserIds2\x8b\x02\n" +
 	"\rSwipesService\x12L\n" +
 	"\vRecordSwipe\x12\x1d.swipes.v1.RecordSwipeRequest\x1a\x1e.swipes.v1.RecordSwipeResponse\x12L\n" +
-	"\vListMatches\x12\x1d.swipes.v1.ListMatchesRequest\x1a\x1e.swipes.v1.ListMatchesResponseBbZ`github.com/artryry/commit/backend/services/swipes/src/internal/transport/grpc/proto/gen;swipespbb\x06proto3"
+	"\vListMatches\x12\x1d.swipes.v1.ListMatchesRequest\x1a\x1e.swipes.v1.ListMatchesResponse\x12^\n" +
+	"\x11ListIncomingLikes\x12#.swipes.v1.ListIncomingLikesRequest\x1a$.swipes.v1.ListIncomingLikesResponseBbZ`github.com/artryry/commit/backend/services/swipes/src/internal/transport/grpc/proto/gen;swipespbb\x06proto3"
 
 var (
 	file_swipes_proto_rawDescOnce sync.Once
@@ -244,20 +338,24 @@ func file_swipes_proto_rawDescGZIP() []byte {
 	return file_swipes_proto_rawDescData
 }
 
-var file_swipes_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_swipes_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_swipes_proto_goTypes = []any{
-	(*RecordSwipeRequest)(nil),  // 0: swipes.v1.RecordSwipeRequest
-	(*RecordSwipeResponse)(nil), // 1: swipes.v1.RecordSwipeResponse
-	(*ListMatchesRequest)(nil),  // 2: swipes.v1.ListMatchesRequest
-	(*ListMatchesResponse)(nil), // 3: swipes.v1.ListMatchesResponse
+	(*RecordSwipeRequest)(nil),        // 0: swipes.v1.RecordSwipeRequest
+	(*RecordSwipeResponse)(nil),       // 1: swipes.v1.RecordSwipeResponse
+	(*ListMatchesRequest)(nil),        // 2: swipes.v1.ListMatchesRequest
+	(*ListMatchesResponse)(nil),       // 3: swipes.v1.ListMatchesResponse
+	(*ListIncomingLikesRequest)(nil),  // 4: swipes.v1.ListIncomingLikesRequest
+	(*ListIncomingLikesResponse)(nil), // 5: swipes.v1.ListIncomingLikesResponse
 }
 var file_swipes_proto_depIdxs = []int32{
 	0, // 0: swipes.v1.SwipesService.RecordSwipe:input_type -> swipes.v1.RecordSwipeRequest
 	2, // 1: swipes.v1.SwipesService.ListMatches:input_type -> swipes.v1.ListMatchesRequest
-	1, // 2: swipes.v1.SwipesService.RecordSwipe:output_type -> swipes.v1.RecordSwipeResponse
-	3, // 3: swipes.v1.SwipesService.ListMatches:output_type -> swipes.v1.ListMatchesResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: swipes.v1.SwipesService.ListIncomingLikes:input_type -> swipes.v1.ListIncomingLikesRequest
+	1, // 3: swipes.v1.SwipesService.RecordSwipe:output_type -> swipes.v1.RecordSwipeResponse
+	3, // 4: swipes.v1.SwipesService.ListMatches:output_type -> swipes.v1.ListMatchesResponse
+	5, // 5: swipes.v1.SwipesService.ListIncomingLikes:output_type -> swipes.v1.ListIncomingLikesResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -274,7 +372,7 @@ func file_swipes_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_swipes_proto_rawDesc), len(file_swipes_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

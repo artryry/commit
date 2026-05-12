@@ -13,6 +13,9 @@ from services.minio_storage import ChatImageStorage
 
 logger = logging.getLogger(__name__)
 
+_MAX_IMAGE_BYTES = 10 * 1024 * 1024
+_ALLOWED_IMAGE_CT = frozenset({"image/jpeg", "image/png", "image/webp"})
+
 
 class ChatAppService:
     def __init__(
@@ -27,22 +30,67 @@ class ChatAppService:
         self._chats = ChatRepository(session)
         self._messages = MessageRepository(session)
 
-    async def send_text_message(self, sender_id: int, peer_user_id: int, body: str) -> Message:
+    @staticmethod
+    def _preview_for_kafka(body: str | None, has_image: bool) -> str:
+        if body:
+            return body if len(body) <= 200 else body[:197] + "..."
+        if has_image:
+            return "[image]"
+        return ""
+
+    async def send_chat_message(
+        self,
+        sender_id: int,
+        peer_user_id: int,
+        *,
+        body: str | None,
+        image_bytes: bytes | None,
+        image_content_type: str | None,
+    ) -> Message:
         if peer_user_id == sender_id:
             raise HTTPException(status_code=400, detail="invalid peer")
-        body = body.strip()
-        if not body:
-            raise HTTPException(status_code=400, detail="body required")
+
+        body_clean = body.strip() if body else None
+        has_raw_file = bool(image_bytes)
+
+        if has_raw_file and len(image_bytes) > _MAX_IMAGE_BYTES:
+            raise HTTPException(status_code=400, detail="image too large")
+
+        image_key: str | None = None
+        if has_raw_file:
+            if not image_content_type or image_content_type not in _ALLOWED_IMAGE_CT:
+                raise HTTPException(
+                    status_code=400,
+                    detail="unsupported or missing image content type",
+                )
+            try:
+                image_key = await asyncio.to_thread(
+                    self._storage.upload_chat_image,
+                    image_bytes,
+                    image_content_type,
+                )
+            except ValueError as e:
+                raise HTTPException(status_code=400, detail=str(e)) from e
+            except RuntimeError as e:
+                raise HTTPException(status_code=502, detail="storage error") from e
+
+        if not body_clean and not image_key:
+            raise HTTPException(status_code=400, detail="body or file required")
 
         chat = await self._chats.get_chat_between(sender_id, peer_user_id)
         if chat is None:
             raise HTTPException(status_code=404, detail="chat not found")
 
-        msg = await self._messages.create_text_message(chat.id, sender_id, body)
+        msg = await self._messages.create_message(
+            chat_id=chat.id,
+            sender_id=sender_id,
+            body=body_clean,
+            image_storage_key=image_key,
+        )
         await self._session.commit()
 
         recipient_id = peer_user_id
-        preview = body if len(body) <= 200 else body[:197] + "..."
+        preview = self._preview_for_kafka(body_clean, bool(image_key))
 
         try:
             await publish_chat_message(
@@ -60,6 +108,18 @@ class ChatAppService:
                 msg.id,
             )
         return msg
+
+    async def send_text_message(self, sender_id: int, peer_user_id: int, body: str) -> Message:
+        body = body.strip()
+        if not body:
+            raise HTTPException(status_code=400, detail="body required")
+        return await self.send_chat_message(
+            sender_id,
+            peer_user_id,
+            body=body,
+            image_bytes=None,
+            image_content_type=None,
+        )
 
     async def delete_chat_for_both_users(self, current_user_id: int, peer_user_id: int) -> None:
         if peer_user_id == current_user_id:

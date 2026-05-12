@@ -7,6 +7,7 @@ option go_package = "github.com/artryry/commit/services/api-gateway/src/internal
 service SwipesService {
   rpc RecordSwipe(RecordSwipeRequest) returns (RecordSwipeResponse);
   rpc ListMatches(ListMatchesRequest) returns (ListMatchesResponse);
+  rpc ListIncomingLikes(ListIncomingLikesRequest) returns (ListIncomingLikesResponse);
 }
 
 message RecordSwipeRequest {
@@ -25,4 +26,12 @@ message ListMatchesRequest {
 
 message ListMatchesResponse {
   repeated int64 matched_user_ids = 1;
+}
+
+message ListIncomingLikesRequest {
+  int64 user_id = 1;
+}
+
+message ListIncomingLikesResponse {
+  repeated int64 user_ids = 1;
 }
