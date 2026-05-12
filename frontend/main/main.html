@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/frontend/poster/icons/Logo.png">
+    <link rel="stylesheet" href="/frontend/poster/styles.css">
+    <link rel="stylesheet" href="styles-main.css">
+    <title>Commit — Профиль</title>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-left">
+            <!-- CT Logo -->
+            <a href="#" class="header-logo" aria-label="Commit">
+                <img src="../poster/icons/Logo.png" alt="Логотип-Commit">
+            </a>
+            <!-- Nav Icons -->
+            <nav class="header-nav">
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Уведомления">
+                    <span class="nav-notification-dot">2</span>
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M24.9998 28.3333H33.3332L30.9916 25.9918C30.3566 25.3568 29.9998 24.4955 29.9998 23.5974V18.3333C29.9998 13.9793 27.2171 10.2751 23.3332 8.90236V8.33333C23.3332 6.49238 21.8408 5 19.9998 5C18.1589 5 16.6665 6.49238 16.6665 8.33333V8.90236C12.7825 10.2751 9.99984 13.9793 9.99984 18.3333V23.5974C9.99984 24.4955 9.64308 25.3568 9.00806 25.9918L6.6665 28.3333H14.9998M24.9998 28.3333V30C24.9998 32.7614 22.7613 35 19.9998 35C17.2384 35 14.9998 32.7614 14.9998 30V28.3333M24.9998 28.3333H14.9998"
+                            stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Сообщения"
+                    onclick="this.classList.toggle('active')">
+                    <span class="nav-notification-dot">3</span>
+                    <div class="open-button">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M30 15.2222C30.0053 17.2754 29.5256 19.3007 28.6 21.1333C27.5024 23.3294 25.8151 25.1765 23.7271 26.4678C21.6391 27.7591 19.2328 28.4435 16.7778 28.4444C14.7246 28.4498 12.6993 27.9701 10.8667 27.0444L2 30L4.95555 21.1333C4.02989 19.3007 3.5502 17.2754 3.55555 15.2222C3.5565 12.7672 4.24095 10.3609 5.53222 8.27289C6.8235 6.18487 8.67061 4.49759 10.8667 3.40004C12.6993 2.47438 14.7246 1.99469 16.7778 2.00004H17.5555C20.7978 2.17892 23.8603 3.54745 26.1564 5.8436C28.4526 8.13974 29.8211 11.2022 30 14.4445V15.2222Z"
+                                stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="nav-btn-text">Сообщения</span>
+                    </div>
+
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--pink" aria-label="Коммиты"
+                    onclick="this.classList.toggle('active')">
+                    <div class="open-button">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M3.25383 5.83802C0.337916 8.64418 0.337916 13.1939 3.25383 16L16.0003 28.2667L28.7466 16C31.6625 13.1939 31.6625 8.64418 28.7466 5.83802C25.8307 3.03186 21.1031 3.03186 18.1872 5.83802L16.0003 7.94272L13.8133 5.83802C10.8974 3.03186 6.16975 3.03186 3.25383 5.83802Z"
+                                stroke="#F8F4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="nav-btn-text">Коммиты</span>
+                    </div>
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Знакомства"
+                    onclick="this.classList.toggle('active')">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_665_2916)">
+                            <path
+                                d="M13 32.0001C12.7812 32.0001 12.5687 31.9564 12.3687 31.8626C11.9875 31.6939 11.6937 31.3876 11.5437 30.9939L8.89372 24.1063L1.99996 21.4563C1.58746 21.3001 1.26246 20.9688 1.09996 20.5563C0.79371 19.7501 1.19371 18.8438 1.99996 18.5376L8.88747 15.8876L11.5437 9.00008C11.7 8.58757 12.0312 8.26257 12.4437 8.10007C12.8312 7.95007 13.2562 7.96257 13.6375 8.13132C14.0187 8.30007 14.3125 8.60632 14.4625 9.00008L17.1125 15.8876L24 18.5438C24.4125 18.7001 24.7375 19.0313 24.9 19.4438C25.2125 20.2501 24.8062 21.1563 24 21.4626L17.1125 24.1126L14.4562 31.0001C14.3 31.4126 13.9687 31.7376 13.5562 31.9001C13.3812 31.9689 13.1875 32.0001 13 32.0001ZM3.78121 20.0001L9.79372 22.3126C10.2062 22.4688 10.5312 22.8001 10.6937 23.2126L13.0062 29.2251L15.3187 23.2126C15.475 22.8001 15.8062 22.4751 16.2187 22.3126L22.2312 20.0001L16.2187 17.6876C15.8062 17.5313 15.4812 17.2001 15.3187 16.7876L13.0062 10.7751L10.6937 16.7876C10.5375 17.2001 10.2062 17.5251 9.79372 17.6876L3.78121 20.0001ZM17.175 16.0751C17.1812 16.0751 17.1812 16.0751 17.175 16.0751V16.0751Z"
+                                fill="#3C344B" />
+                            <path
+                                d="M5.50001 11C5.08751 11 4.71251 10.7438 4.56876 10.3563L3.48126 7.51876L0.643751 6.43126C0.25625 6.28751 0 5.91251 0 5.50001C0 5.08751 0.25625 4.71251 0.643751 4.56876L3.48126 3.48126L4.56876 0.643751C4.71251 0.25625 5.08751 0 5.50001 0C5.91251 0 6.28751 0.25625 6.43126 0.643751L7.51876 3.48126L10.3563 4.56876C10.7438 4.71876 11 5.08751 11 5.50001C11 5.91251 10.7438 6.28751 10.3563 6.43126L7.51876 7.51876L6.43126 10.3563C6.28751 10.7438 5.91251 11 5.50001 11ZM3.78751 5.50001L4.61251 5.81876C4.87501 5.91876 5.08751 6.13126 5.18751 6.39376L5.50626 7.21876L5.82501 6.39376C5.92501 6.13126 6.13751 5.91876 6.40001 5.81876L7.22501 5.50001L6.40001 5.18126C6.13751 5.08126 5.92501 4.86876 5.82501 4.60626L5.50001 3.78751L5.18126 4.61251C5.08126 4.87501 4.86876 5.08751 4.60626 5.18751L3.78751 5.50001Z"
+                                fill="#3C344B" />
+                            <path
+                                d="M25 16C24.5875 16 24.2125 15.7438 24.0688 15.3563L22.5625 11.4375L18.6438 9.93126C18.2562 9.78126 18 9.41251 18 9.00001C18 8.58751 18.2562 8.21251 18.6438 8.06876L22.5625 6.56251L24.0688 2.64375C24.2188 2.25625 24.5875 2 25 2C25.4125 2 25.7875 2.25625 25.9313 2.64375L27.4375 6.56251L31.3563 8.06876C31.7438 8.21876 32 8.58751 32 9.00001C32 9.41251 31.7438 9.78751 31.3563 9.93126L27.4375 11.4375L25.9313 15.3563C25.7875 15.7438 25.4125 16 25 16ZM21.7875 9.00001L23.6938 9.73126C23.9563 9.83126 24.1688 10.0438 24.2688 10.3063L25 12.2125L25.7313 10.3063C25.8313 10.0438 26.0438 9.83126 26.3063 9.73126L28.2125 9.00001L26.3063 8.26876C26.0438 8.16876 25.8313 7.95626 25.7313 7.69376L25 5.78751L24.2688 7.69376C24.1688 7.95626 23.9563 8.16876 23.6938 8.26876L21.7875 9.00001Z"
+                                fill="#3C344B" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_665_2916">
+                                <rect width="32" height="32" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                    <span class="nav-btn-text">Знакомства</span>
+
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Фильтр">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M19.9998 9.99984V6.6665M19.9998 9.99984C18.1589 9.99984 16.6665 11.4922 16.6665 13.3332C16.6665 15.1741 18.1589 16.6665 19.9998 16.6665M19.9998 9.99984C21.8408 9.99984 23.3332 11.4922 23.3332 13.3332C23.3332 15.1741 21.8408 16.6665 19.9998 16.6665M9.99984 29.9998C11.8408 29.9998 13.3332 28.5075 13.3332 26.6665C13.3332 24.8256 11.8408 23.3332 9.99984 23.3332M9.99984 29.9998C8.15889 29.9998 6.6665 28.5075 6.6665 26.6665C6.6665 24.8256 8.15889 23.3332 9.99984 23.3332M9.99984 29.9998V33.3332M9.99984 23.3332V6.6665M19.9998 16.6665V33.3332M29.9998 29.9998C31.8408 29.9998 33.3332 28.5075 33.3332 26.6665C33.3332 24.8256 31.8408 23.3332 29.9998 23.3332M29.9998 29.9998C28.1589 29.9998 26.6665 28.5075 26.6665 26.6665C26.6665 24.8256 28.1589 23.3332 29.9998 23.3332M29.9998 29.9998V33.3332M29.9998 23.3332V6.6665"
+                            stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="header-user">
+                <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Уведомления">
+                    <span class="nav-notification-dot">2</span>
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M24.9998 28.3333H33.3332L30.9916 25.9918C30.3566 25.3568 29.9998 24.4955 29.9998 23.5974V18.3333C29.9998 13.9793 27.2171 10.2751 23.3332 8.90236V8.33333C23.3332 6.49238 21.8408 5 19.9998 5C18.1589 5 16.6665 6.49238 16.6665 8.33333V8.90236C12.7825 10.2751 9.99984 13.9793 9.99984 18.3333V23.5974C9.99984 24.4955 9.64308 25.3568 9.00806 25.9918L6.6665 28.3333H14.9998M24.9998 28.3333V30C24.9998 32.7614 22.7613 35 19.9998 35C17.2384 35 14.9998 32.7614 14.9998 30V28.3333M24.9998 28.3333H14.9998"
+                            stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div class="header-profile-menu-container"
+                    style="position: relative; display: flex; align-items: center; gap: inherit; cursor: pointer;"
+                    id="profileMenuBtn">
+                    <img src="photos/man_portret (3).png" alt="Аватар" class="header-user-avatar">
+                    <span class="header-user-name">Иван</span>
+                    <div class="chat-dropdown-menu hidden" id="profileMenuDropdown">
+                        <button class="chat-dropdown-item">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Профиль
+                        </button>
+                        <button class="chat-dropdown-item danger" id="logoutBtn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Выйти из профиля
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="background-elements">
+
+        <img id="black-eclipse" src="/frontend/poster/background/Ellipse 14.png" alt="">
+        <img id="ellipse-3" src="/frontend/poster/background/Ellipse 3.png" alt="">
+        <img id="ellipse-15" src="/frontend/poster/background/Ellipse 15.png" alt="">
+        <img id="ellipse-16" src="/frontend/poster/background/Ellipse 16.png" alt="">
+        <img id="ellipse-19" src="/frontend/poster/background/Ellipse 19.png" alt="">
+        <img id="ellipse-17" src="/frontend/poster/background/Ellipse 17.png" alt="">
+        <img id="ellipse-18" src="/frontend/poster/background/Ellipse 18.png" alt="">
+
+        <img id="ellipse-12" src="/frontend/poster/background/Ellipse 12.svg" alt="">
+        <img id="ellipse-13" src="/frontend/poster/background/Ellipse 13.svg" alt="">
+    </div>
+
+    <!-- Main Profile Content -->
+    <main class="profile-layout">
+
+        <section class="commit-page" id="my-profile">
+
+            <!-- Left: Photo Gallery Card -->
+            <section class="photo-gallery-card glass-card">
+                <div class="photo-grid">
+                    <!-- Slot 1: Add photo placeholder -->
+                    <div class="photo-slot photo-slot--add">
+                        <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                            <path d="M40 0V40M40 40V80M40 40H80M40 40H0" stroke="#FF5777" stroke-width="4"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                    <!-- Slot 2 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (1).png" alt="Фото 2">
+                    </div>
+                    <!-- Slot 3 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (2).png" alt="Фото 3">
+                    </div>
+                    <!-- Slot 4 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Profile Info Card -->
+            <section class="profile-info-card glass-card">
+
+                <!-- Header row: avatar + name -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <img src="photos/man_portret (4).png" alt="Аватар" class="avatar-img">
+                        <button class="btn-edit avatar-edit" aria-label="Редактировать аватар">
+                            <img src="icons/edit.png" alt="">
+                        </button>
+                    </div>
+
+                    <div class="profile-name-group">
+                        <h1 class="profile-name">Иван, 28</h1>
+                        <span class="profile-name-decoration">
+                            <img src="icons/zodiac-aquarius.png" alt="">
+                            <p class="profile-zodiak-mobile">Водолей</p>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Ваше описание -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Ваше описание</span>
+                    </div>
+
+                    <!-- Description card -->
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Я люблю все, начиная с настольных игр, комиксов, книг, фильмов,
+                                заканчивая
+                                технологиями, наукой и различными франшизами.</p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Локация -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Локация</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Москва</p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Вы ищите -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Вы ищите</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Партнера</p>
+                        </div>
+                        <button class="btn-edit field-edit field-dropdown" aria-label="Раскрыть">
+                            <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                                <path
+                                    d="M7 5.314L11.95 0.364C12.14 0.177 12.4 0.071 12.67 0.071C12.93 0.071 13.19 0.177 13.38 0.364C13.57 0.551 13.67 0.814 13.67 1.084C13.67 1.355 13.57 1.617 13.38 1.804L7.71 7.435C7.52 7.622 7.27 7.728 7 7.728C6.73 7.728 6.48 7.622 6.29 7.435L0.64 1.804C0.45 1.617 0.34 1.355 0.34 1.084C0.34 0.814 0.45 0.551 0.64 0.364C0.83 0.177 1.09 0.071 1.36 0.071C1.63 0.071 1.89 0.177 2.08 0.364L7 5.314Z"
+                                    fill="#3C344B" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Какого человека вы ищите? -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Какого человека вы ищите?</span>
+                    </div>
+
+                    <div class="profile-field-card glass-card-inner">
+                        <div class="field-content">
+                            <p class="field-text">Любовь всей своей жизни с двумя кошками и страстью к настольным играм
+                            </p>
+                        </div>
+                        <button class="btn-edit field-edit" aria-label="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path
+                                    d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z"
+                                    stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Интересы -->
+                <div class="profile-item-frame">
+                    <div class="profile-bio-labels">
+                        <span class="bio-label">Интересы</span>
+                    </div>
+
+                    <div class="interests-container">
+                        <span class="interest-tag">#Спорт</span>
+                        <span class="interest-tag">#Кино</span>
+                        <span class="interest-tag">#Гарри Потер</span>
+                        <span class="interest-tag">#Lady GaGa</span>
+                        <span class="interest-tag">#Программирование</span>
+                        <span class="interest-tag">#Пингвины</span>
+                        <span class="interest-tag">#Аниме</span>
+                        <span class="interest-tag">#Imagine Dragons</span>
+                        <span class="interest-tag">#WoW</span>
+                        <span class="interest-tag">#ДнД</span>
+                        <button class="interest-add-btn" aria-label="Добавить интерес">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M8 1V8M8 8V15M8 8H15M8 8H1" stroke="#FF5777" stroke-width="2.5"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+        </section>
+
+        <!--Message Page-->
+        <section class="message-page-container hidden" id="chat-page">
+            <!--Message List-->
+            <section class="message-list glass-card" id="chat-list">
+
+                <div class="chat-option">
+
+                    <div class="chat-profile-line"
+                        onclick="document.querySelector('.message-page-container').classList.add('chat-active')">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                    <div class="chat-profile-line"
+                        onclick="document.querySelector('.message-page-container').classList.add('chat-active')">
+                        <div class="chat-profile-avatar">
+                            <img src="photos/man_portret (2).png" alt="Фото профиля">
+                        </div>
+                        <div class="chat-profile-info">
+                            <div class="chat-profile-name">
+                                <span class="chat-profile-name-text">Иван Иванов</span>
+                                <span class="chat-profile-date">Фев 28, 2026</span>
+                            </div>
+                            <div class="chat-profile-last-message">Привет, как дела?</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!--Message Chat-->
+            <section class="message-chat glass-card">
+
+                <div class="chat">
+
+                    <div class="profile-line">
+                        <button class="back-to-chats-btn" aria-label="Назад к чатам"
+                            onclick="document.querySelector('.message-page-container').classList.remove('chat-active')">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="15 18 9 12 15 6"></polyline>
+                            </svg>
+                        </button>
+                        <div class="profile-line-img">
+                            <img src="photos/man_portret (4).png" alt="Фото профиля">
+                        </div>
+                        <div class="profile-line-info">
+                            <h2 class="chat-name">Иван Иванов</h2>
+                            <div class="second-line">
+                                <span class="chat-status">Фев 28, 2026</span>
+                            </div>
+                        </div>
+                        <div class="profile-line-menu">
+                            <div class="profile-line-menu-btn" id="chatMenuBtn">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="chat-dropdown-menu hidden" id="chatMenuDropdown">
+                                <button class="chat-dropdown-item">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="5" y="5" width="10" height="14" rx="2" ry="2"
+                                            transform="rotate(-12 10 12)"></rect>
+                                        <rect x="9" y="5" width="10" height="14" rx="2" ry="2"
+                                            transform="rotate(12 14 12)"></rect>
+                                    </svg>
+                                    Карточки
+                                </button>
+                                <button class="chat-dropdown-item">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path
+                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                        </path>
+                                    </svg>
+                                    Очистить чат
+                                </button>
+                                <button class="chat-dropdown-item danger">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+                                    </svg>
+                                    Заблокировать
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message-area">
+
+                        <!-- Текстовое сообщение от собеседника (входящее) -->
+                        <div class="message incoming">
+                            <div class="message-content">
+                                <p>Привет! Как дела? Чем планируешь заняться на выходных?</p>
+                                <span class="message-time">14:20</span>
+                            </div>
+                        </div>
+
+                        <!-- Текстовое сообщение от пользователя (исходящее) -->
+                        <div class="message outgoing">
+                            <div class="message-content">
+                                <p>Привет! Всё отлично, думаю сходить в кино. А ты?</p>
+                                <span class="message-time">14:25</span>
+                            </div>
+                        </div>
+
+                        <!-- Фото-сообщение без подписи от собеседника -->
+                        <div class="message incoming">
+                            <div class="message-content message-photo">
+                                <img src="photos/man_portret (1).png" alt="Фото">
+                                <span class="message-time time-overlay">14:30</span>
+                            </div>
+                        </div>
+
+
+                        <!-- Фото-сообщение с подписью от пользователя -->
+                        <div class="message outgoing">
+                            <div class="message-content message-photo-caption">
+                                <img src="photos/man_portret (2).png" alt="Фото">
+                                <p>Смотри, какую классную штуку нашел!</p>
+                                <span class="message-time">14:35</span>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="field">
+
+                        <div class="text-field">
+
+                            <div class="text-field-left-part">
+                                <div class="emoji" title="Выбор эмодзи">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="var(--dark-color)" stroke-width="1" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                                        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                                        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                                    </svg>
+                                </div>
+
+                                <div class="text-field-input">
+                                    <textarea rows="1" placeholder="Сообщение" maxlength="255"></textarea>
+                                </div>
+
+                            </div>
+
+                            <div class="text-field-right-part">
+                                <div class="add-file" title="Вложения">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        stroke="var(--dark-color)" stroke-width="1" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path
+                                            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="send-btn-container" title="Отправить сообщение">
+                            <div class="send-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--dark-color)"
+                                    stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- Another user page -->
+        <section class="another-user-page-container hidden">
+            <!-- Left: Photo Gallery Card -->
+            <section class="photo-gallery-card glass-card">
+                <div class="photo-grid">
+                    <!-- Slot 1 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (4).png" alt="Фото 2">
+                    </div>
+                    <!-- Slot 2 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (1).png" alt="Фото 2">
+                    </div>
+                    <!-- Slot 3 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (2).png" alt="Фото 3">
+                    </div>
+                    <!-- Slot 4 -->
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                    <div class="photo-slot">
+                        <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Profile Info Card -->
+            <section class="another-profile-info-card glass-card">
+                <div class="scroll-container">
+                    <!-- Header row: avatar + name -->
+                    <div class="profile-main-info">
+                        <div class="profile-name-group">
+                            <h1 class="profile-name">Иван, 28</h1>
+                        </div>
+
+                        <div class="sec-line">
+                            <h2 class="city">Москва</h2>
+                            <div class="zodiak">
+                                <img src="icons/zodiac-aquarius.png" alt="Водолей">
+                            </div>
+                        </div>
+                        <div class="description">
+                            <p>Я люблю все, начиная с настольных игр, комиксов, книг, фильмов, заканчивая технологиями,
+                                наукой и различными франшизами.</p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="match-data">
+                        <div class="funny-phrase">
+                            <p>Совместимость</p>
+                        </div>
+                        <div class="chart">
+                            <div class="line">
+                                <div class="line-fill"></div>
+                            </div>
+                            <p id="percent">75%</p>
+                        </div>
+                    </div> -->
+
+
+                    <!-- Интересы -->
+                    <div class="profile-item-frame">
+                        <div class="profile-bio-labels">
+                            <span class="bio-label">Интересы</span>
+                        </div>
+
+                        <div class="interests-container">
+                            <span class="interest-tag">#Спорт</span>
+                            <span class="interest-tag">#Кино</span>
+                            <span class="interest-tag">#Гарри Потер</span>
+                            <span class="interest-tag">#Lady GaGa</span>
+                            <span class="interest-tag">#Программирование</span>
+                            <span class="interest-tag">#Пингвины</span>
+                            <span class="interest-tag">#Аниме</span>
+                            <span class="interest-tag">#Imagine Dragons</span>
+                            <span class="interest-tag">#WoW</span>
+                            <span class="interest-tag">#ДнД</span>
+                        </div>
+                    </div>
+
+                    <div class="astrology-container">
+                        <h2 class="text-field-astrology">Натльная карта</h2>
+                        <div class="general-match">
+                            <h3>Общая совместимость</h3>
+                            <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
+                                Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы приносите
+                                идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
+                                Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
+                                вдохновляющий.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </section>
+        </section>
+
+        <!-- Acquaintance page -->
+        <section class="acquaintance-page-container hidden" id="acquaintance-page">
+
+            <!-- Left: Photo Gallery Card -->
+            <section class="photo-gallery-card-x-scroll glass-card">
+
+                <div class="photo-scroll-wrapper">
+                    <div class="photo-scroll-x">
+                        <!-- Slot 1 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (4).png" alt="Фото 2">
+                        </div>
+                        <!-- Slot 2 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (1).png" alt="Фото 2">
+                        </div>
+                        <!-- Slot 3 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (2).png" alt="Фото 3">
+                        </div>
+                        <!-- Slot 4 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                    </div>
+
+                    <div class="scroll-buttons">
+                        <div class="left-btn">
+                            <img src="icons/Field-left.png" alt="">
+                        </div>
+                        <div class="right-btn">
+                            <img src="icons/Field-right.png" alt="">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="buttons-container">
+                    <div id="button-like" class="button-like">
+                        <img src="icons/aprove.png" alt="">
+                    </div>
+                    <div id="button-dislike" class="button-dislike">
+                        <img src="icons/disslike.png" alt="">
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Right: Profile Info Card -->
+            <section class="another-profile-info-card glass-card">
+                <div class="scroll-container">
+                    <!-- Header row: avatar + name -->
+                    <div class="profile-main-info">
+                        <div class="profile-name-group">
+                            <h1 class="profile-name">Иван, 28</h1>
+                        </div>
+
+                        <div class="sec-line">
+                            <h2 class="city">Москва</h2>
+                            <div class="zodiak">
+                                <img src="icons/zodiac-aquarius.png" alt="Водолей">
+                            </div>
+                        </div>
+                        <div class="description">
+                            <p>Я люблю все, начиная с настольных игр, комиксов, книг, фильмов, заканчивая технологиями,
+                                наукой и различными франшизами.</p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="match-data">
+                        <div class="funny-phrase">
+                            <p>Совместимость</p>
+                        </div>
+                        <div class="chart">
+                            <div class="line">
+                                <div class="line-fill"></div>
+                            </div>
+                            <p id="percent">75%</p>
+                        </div>
+                    </div> -->
+
+
+                    <!-- Интересы -->
+                    <div class="profile-item-frame">
+                        <div class="profile-bio-labels">
+                            <span class="bio-label">Интересы</span>
+                        </div>
+
+                        <div class="interests-container">
+                            <span class="interest-tag">#Спорт</span>
+                            <span class="interest-tag">#Кино</span>
+                            <span class="interest-tag">#Гарри Потер</span>
+                            <span class="interest-tag">#Lady GaGa</span>
+                            <span class="interest-tag">#Программирование</span>
+                            <span class="interest-tag">#Пингвины</span>
+                            <span class="interest-tag">#Аниме</span>
+                            <span class="interest-tag">#Imagine Dragons</span>
+                            <span class="interest-tag">#WoW</span>
+                            <span class="interest-tag">#ДнД</span>
+                        </div>
+                    </div>
+
+                    <details class="astrology-container-commit">
+                        <summary class="text-field-astrology">
+                            Натальная карта
+                            <img src="icons/arrow-bottom.png" alt="">
+                        </summary>
+                        <div class="astrology-content-wrapper">
+                            <div class="general-match">
+                                <h3>Общая совместимость</h3>
+                                <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
+                                    Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы
+                                    приносите
+                                    идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
+                                    Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
+                                    вдохновляющий.</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+
+            </section>
+
+        </section>
+
+        <section class="acquaintance-page-container hidden" id="commit-page">
+
+            <!-- Left: Photo Gallery Card -->
+            <section class="photo-gallery-card-x-scroll glass-card">
+
+                <div class="photo-scroll-wrapper">
+                    <div class="photo-scroll-x">
+                        <!-- Slot 1 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (4).png" alt="Фото 2">
+                        </div>
+                        <!-- Slot 2 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (1).png" alt="Фото 2">
+                        </div>
+                        <!-- Slot 3 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (2).png" alt="Фото 3">
+                        </div>
+                        <!-- Slot 4 -->
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                        <div class="photo-slot-x">
+                            <img src="photos/man_middle_body (3).png" alt="Фото 4">
+                        </div>
+                    </div>
+
+                    <div class="scroll-buttons">
+                        <div class="left-btn">
+                            <img src="icons/Field-left.png" alt="">
+                        </div>
+                        <div class="right-btn">
+                            <img src="icons/Field-right.png" alt="">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="buttons-container">
+                    <div id="button-like" class="button-like">
+                        <img src="icons/aprove.png" alt="">
+                    </div>
+                    <div id="button-dislike" class="button-dislike">
+                        <img src="icons/disslike.png" alt="">
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Right: Profile Info Card -->
+            <section class="another-profile-info-card glass-card">
+                <div class="scroll-container">
+                    <!-- Header row: avatar + name -->
+                    <div class="profile-main-info">
+                        <div class="profile-name-group">
+                            <h1 class="profile-name">Иван, 28</h1>
+                        </div>
+
+                        <div class="sec-line">
+                            <h2 class="city">Москва</h2>
+                            <div class="zodiak">
+                                <img src="icons/zodiac-aquarius.png" alt="Водолей">
+                            </div>
+                        </div>
+                        <div class="description">
+                            <p>Я люблю все, начиная с настольных игр, комиксов, книг, фильмов, заканчивая технологиями,
+                                наукой и различными франшизами.</p>
+                        </div>
+                    </div>
+
+                    <!-- <div class="match-data">
+                        <div class="funny-phrase">
+                            <p>Совместимость</p>
+                        </div>
+                        <div class="chart">
+                            <div class="line">
+                                <div class="line-fill"></div>
+                            </div>
+                            <p id="percent">75%</p>
+                        </div>
+                    </div> -->
+
+
+                    <!-- Интересы -->
+                    <div class="profile-item-frame">
+                        <div class="profile-bio-labels">
+                            <span class="bio-label">Интересы</span>
+                        </div>
+
+                        <div class="interests-container">
+                            <span class="interest-tag">#Спорт</span>
+                            <span class="interest-tag">#Кино</span>
+                            <span class="interest-tag">#Гарри Потер</span>
+                            <span class="interest-tag">#Lady GaGa</span>
+                            <span class="interest-tag">#Программирование</span>
+                            <span class="interest-tag">#Пингвины</span>
+                            <span class="interest-tag">#Аниме</span>
+                            <span class="interest-tag">#Imagine Dragons</span>
+                            <span class="interest-tag">#WoW</span>
+                            <span class="interest-tag">#ДнД</span>
+                        </div>
+                    </div>
+
+                    <details class="astrology-container-commit">
+                        <summary class="text-field-astrology">
+                            Натальная карта
+                            <img src="icons/arrow-bottom.png" alt="">
+                        </summary>
+                        <div class="astrology-content-wrapper">
+                            <div class="general-match">
+                                <h3>Общая совместимость</h3>
+                                <p class="astrology-description">Сочетание воздуха и огня даёт живую, динамичную связь.
+                                    Взаимодействие строится на интересе, движении вперёд и взаимной стимуляции. Вы
+                                    приносите
+                                    идеи, нестандартность и широту взглядов, друг — импульс, решительность и инициативу.
+                                    Возможны споры из-за упрямства и разного темпа, но в целом союз энергичный и
+                                    вдохновляющий.</p>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+
+
+            </section>
+
+        </section>
+
+
+
+    </main>
+
+    <div class="filter-menu hidden">
+        <div class="filters">
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label for="age">Возраст</label>
+                    <span class="age-value">40</span>
+                </div>
+
+                <div class="filter-item-bottom">
+                    <input type="range" id="age" class="custom-range" value="40" min="18" max="99">
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Партнер</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="custom-dropdown" id="customLookingFor">
+                        <div class="custom-dropdown-selected">Выберите
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="arrow-down-icon">
+                                <path d="M6 9L12 15L18 9" stroke="#3C344B" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="custom-dropdown-options hidden">
+                            <div class="custom-dropdown-option" data-value="">Выберите</div>
+                            <div class="custom-dropdown-option" data-value="1">Партнёра</div>
+                            <div class="custom-dropdown-option" data-value="2">Друга</div>
+                        </div>
+                        <input type="hidden" name="looking_for" id="looking_for" value="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Пол</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="custom-dropdown" id="customGender">
+                        <div class="custom-dropdown-selected">Выберите пол
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="arrow-down-icon">
+                                <path d="M6 9L12 15L18 9" stroke="#3C344B" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <div class="custom-dropdown-options hidden">
+                            <div class="custom-dropdown-option" data-value="">Выберите пол</div>
+                            <div class="custom-dropdown-option" data-value="male">Мужской</div>
+                            <div class="custom-dropdown-option" data-value="female">Женский</div>
+                        </div>
+                        <input type="hidden" name="gender" id="gender" value="">
+                    </div>
+                </div>
+            </div>
+
+            <div class="filter-item">
+                <div class="filter-item-top">
+                    <label>Интересы</label>
+                </div>
+                <div class="filter-item-bottom">
+                    <div class="input-with-icon">
+                        <input type="text" placeholder="Спорт" style="color: rgba(60, 52, 75, 0.5);">
+                    </div>
+                    <div class="filter-tags">
+                        <span class="interest-tag">#Спорт</span>
+                        <span class="interest-tag">#Кино</span>
+                        <span class="interest-tag">#Гарри Потер</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification-menu hidden">
+        <h2 class="notification-header">Уведомления</h2>
+        <div class="notification-list">
+
+            <div class="chat-profile-line">
+                <div class="chat-profile-avatar">
+                    <img src="photos/man_portret (2).png" alt="Фото профиля">
+                </div>
+                <div class="chat-profile-info">
+                    <div class="chat-profile-name">
+                        <span class="chat-profile-name-text">Иван Иванов</span>
+                        <span class="chat-profile-date">Фев 28, 2026</span>
+                    </div>
+                    <div class="chat-profile-last-message">Оценил ваш профиль!</div>
+                </div>
+            </div>
+
+            <div class="chat-profile-line">
+                <div class="chat-profile-avatar">
+                    <img src="photos/man_portret (2).png" alt="Фото профиля">
+                </div>
+                <div class="chat-profile-info">
+                    <div class="chat-profile-name">
+                        <span class="chat-profile-name-text">Иван Иванов</span>
+                        <span class="chat-profile-date">Фев 28, 2026</span>
+                    </div>
+                    <div class="chat-profile-last-message">Оценил ваш профиль!</div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+    <!-- Модальное окно удалено: карточки теперь отправляются в чат -->
+
+    <!-- Logout Modal -->
+    <div class="modal-overlay hidden" id="logoutModal">
+        <div class="modal-content glass-card-inner">
+            <h2 class="modal-title">Вы точно хотите выйти?</h2>
+            <div class="modal-buttons">
+                <button class="btn-modal btn-modal--yes" id="confirmLogoutBtn">Да</button>
+                <button class="btn-modal btn-modal--no" id="cancelLogoutBtn">Нет</button>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <div class="btm-btn-container">
+            <div class="btn-list">
+                <button class="nav-icon-btn nav-icon-btn--yellow">
+                    <span class="nav-notification-dot">2</span>
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M30 15.2222C30.0053 17.2754 29.5256 19.3007 28.6 21.1333C27.5024 23.3294 25.8151 25.1765 23.7271 26.4678C21.6391 27.7591 19.2328 28.4435 16.7778 28.4444C14.7246 28.4498 12.6993 27.9701 10.8667 27.0444L2 30L4.95555 21.1333C4.02989 19.3007 3.5502 17.2754 3.55555 15.2222C3.5565 12.7672 4.24095 10.3609 5.53222 8.27289C6.8235 6.18487 8.67061 4.49759 10.8667 3.40004C12.6993 2.47438 14.7246 1.99469 16.7778 2.00004H17.5555C20.7978 2.17892 23.8603 3.54745 26.1564 5.8436C28.4526 8.13974 29.8211 11.2022 30 14.4445V15.2222Z"
+                            stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--pink">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M3.25383 5.83802C0.337916 8.64418 0.337916 13.1939 3.25383 16L16.0003 28.2667L28.7466 16C31.6625 13.1939 31.6625 8.64418 28.7466 5.83802C25.8307 3.03186 21.1031 3.03186 18.1872 5.83802L16.0003 7.94272L13.8133 5.83802C10.8974 3.03186 6.16975 3.03186 3.25383 5.83802Z"
+                            stroke="#F8F4FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button class="nav-icon-btn nav-icon-btn--yellow">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_665_2916)">
+                            <path
+                                d="M13 32.0001C12.7812 32.0001 12.5687 31.9564 12.3687 31.8626C11.9875 31.6939 11.6937 31.3876 11.5437 30.9939L8.89372 24.1063L1.99996 21.4563C1.58746 21.3001 1.26246 20.9688 1.09996 20.5563C0.79371 19.7501 1.19371 18.8438 1.99996 18.5376L8.88747 15.8876L11.5437 9.00008C11.7 8.58757 12.0312 8.26257 12.4437 8.10007C12.8312 7.95007 13.2562 7.96257 13.6375 8.13132C14.0187 8.30007 14.3125 8.60632 14.4625 9.00008L17.1125 15.8876L24 18.5438C24.4125 18.7001 24.7375 19.0313 24.9 19.4438C25.2125 20.2501 24.8062 21.1563 24 21.4626L17.1125 24.1126L14.4562 31.0001C14.3 31.4126 13.9687 31.7376 13.5562 31.9001C13.3812 31.9689 13.1875 32.0001 13 32.0001ZM3.78121 20.0001L9.79372 22.3126C10.2062 22.4688 10.5312 22.8001 10.6937 23.2126L13.0062 29.2251L15.3187 23.2126C15.475 22.8001 15.8062 22.4751 16.2187 22.3126L22.2312 20.0001L16.2187 17.6876C15.8062 17.5313 15.4812 17.2001 15.3187 16.7876L13.0062 10.7751L10.6937 16.7876C10.5375 17.2001 10.2062 17.5251 9.79372 17.6876L3.78121 20.0001ZM17.175 16.0751C17.1812 16.0751 17.1812 16.0751 17.175 16.0751V16.0751Z"
+                                fill="#3C344B" />
+                            <path
+                                d="M5.50001 11C5.08751 11 4.71251 10.7438 4.56876 10.3563L3.48126 7.51876L0.643751 6.43126C0.25625 6.28751 0 5.91251 0 5.50001C0 5.08751 0.25625 4.71251 0.643751 4.56876L3.48126 3.48126L4.56876 0.643751C4.71251 0.25625 5.08751 0 5.50001 0C5.91251 0 6.28751 0.25625 6.43126 0.643751L7.51876 3.48126L10.3563 4.56876C10.7438 4.71876 11 5.08751 11 5.50001C11 5.91251 10.7438 6.28751 10.3563 6.43126L7.51876 7.51876L6.43126 10.3563C6.28751 10.7438 5.91251 11 5.50001 11ZM3.78751 5.50001L4.61251 5.81876C4.87501 5.91876 5.08751 6.13126 5.18751 6.39376L5.50626 7.21876L5.82501 6.39376C5.92501 6.13126 6.13751 5.91876 6.40001 5.81876L7.22501 5.50001L6.40001 5.18126C6.13751 5.08126 5.92501 4.86876 5.82501 4.60626L5.50001 3.78751L5.18126 4.61251C5.08126 4.87501 4.86876 5.08751 4.60626 5.18751L3.78751 5.50001Z"
+                                fill="#3C344B" />
+                            <path
+                                d="M25 16C24.5875 16 24.2125 15.7438 24.0688 15.3563L22.5625 11.4375L18.6438 9.93126C18.2562 9.78126 18 9.41251 18 9.00001C18 8.58751 18.2562 8.21251 18.6438 8.06876L22.5625 6.56251L24.0688 2.64375C24.2188 2.25625 24.5875 2 25 2C25.4125 2 25.7875 2.25625 25.9313 2.64375L27.4375 6.56251L31.3563 8.06876C31.7438 8.21876 32 8.58751 32 9.00001C32 9.41251 31.7438 9.78751 31.3563 9.93126L27.4375 11.4375L25.9313 15.3563C25.7875 15.7438 25.4125 16 25 16ZM21.7875 9.00001L23.6938 9.73126C23.9563 9.83126 24.1688 10.0438 24.2688 10.3063L25 12.2125L25.7313 10.3063C25.8313 10.0438 26.0438 9.83126 26.3063 9.73126L28.2125 9.00001L26.3063 8.26876C26.0438 8.16876 25.8313 7.95626 25.7313 7.69376L25 5.78751L24.2688 7.69376C24.1688 7.95626 23.9563 8.16876 23.6938 8.26876L21.7875 9.00001Z"
+                                fill="#3C344B" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_665_2916">
+                                <rect width="32" height="32" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </button>
+                 <button class="nav-icon-btn nav-icon-btn--yellow" aria-label="Фильтр">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M19.9998 9.99984V6.6665M19.9998 9.99984C18.1589 9.99984 16.6665 11.4922 16.6665 13.3332C16.6665 15.1741 18.1589 16.6665 19.9998 16.6665M19.9998 9.99984C21.8408 9.99984 23.3332 11.4922 23.3332 13.3332C23.3332 15.1741 21.8408 16.6665 19.9998 16.6665M9.99984 29.9998C11.8408 29.9998 13.3332 28.5075 13.3332 26.6665C13.3332 24.8256 11.8408 23.3332 9.99984 23.3332M9.99984 29.9998C8.15889 29.9998 6.6665 28.5075 6.6665 26.6665C6.6665 24.8256 8.15889 23.3332 9.99984 23.3332M9.99984 29.9998V33.3332M9.99984 23.3332V6.6665M19.9998 16.6665V33.3332M29.9998 29.9998C31.8408 29.9998 33.3332 28.5075 33.3332 26.6665C33.3332 24.8256 31.8408 23.3332 29.9998 23.3332M29.9998 29.9998C28.1589 29.9998 26.6665 28.5075 26.6665 26.6665C26.6665 24.8256 28.1589 23.3332 29.9998 23.3332M29.9998 29.9998V33.3332M29.9998 23.3332V6.6665"
+                            stroke="#3C344B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function setupDropdown(dropdownId, inputId) {
+                const dropdown = document.getElementById(dropdownId);
+                if (dropdown) {
+                    const selected = dropdown.querySelector('.custom-dropdown-selected');
+                    const optionsContainer = dropdown.querySelector('.custom-dropdown-options');
+                    const options = dropdown.querySelectorAll('.custom-dropdown-option');
+                    const hiddenInput = document.getElementById(inputId);
+
+                    selected.addEventListener('click', (e) => {
+                        optionsContainer.classList.toggle('hidden');
+                    });
+
+                    options.forEach(option => {
+                        option.addEventListener('click', () => {
+                            selected.innerHTML = option.textContent + `<svg 
+                                        width="24" 
+                                        height="24" 
+                                        viewBox="0 0 24 24" 
+                                        fill="none" 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        aria-hidden="true"
+                                        class="arrow-down-icon">
+                                        <path 
+                                            d="M6 9L12 15L18 9" 
+                                            stroke="#3C344B" 
+                                            stroke-width="2.5" 
+                                            stroke-linecap="round" 
+                                            stroke-linejoin="round"/>
+                                        </svg>`;
+                            if (hiddenInput) {
+                                hiddenInput.value = option.getAttribute('data-value');
+                            }
+                            optionsContainer.classList.add('hidden');
+                        });
+                    });
+
+                    document.addEventListener('click', (e) => {
+                        if (!dropdown.contains(e.target)) {
+                            optionsContainer.classList.add('hidden');
+                        }
+                    });
+                }
+            }
+
+            // Инициализируем оба дропдауна
+            setupDropdown('customLookingFor', 'looking_for');
+            setupDropdown('customGender', 'gender');
+
+            // Логика для меню профиля в хедере
+            const profileMenuBtn = document.getElementById('profileMenuBtn');
+            const profileMenuDropdown = document.getElementById('profileMenuDropdown');
+
+            if (profileMenuBtn && profileMenuDropdown) {
+                profileMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileMenuDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!profileMenuBtn.contains(e.target) && !profileMenuDropdown.contains(e.target)) {
+                        profileMenuDropdown.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Логика для модального окна выхода (React-ready)
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutModal = document.getElementById('logoutModal');
+            const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+            const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+
+            if (logoutBtn && logoutModal) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    profileMenuDropdown.classList.add('hidden');
+                    logoutModal.classList.remove('hidden');
+                });
+
+                cancelLogoutBtn.addEventListener('click', () => {
+                    logoutModal.classList.add('hidden');
+                });
+
+                confirmLogoutBtn.addEventListener('click', () => {
+                    // Здесь будет логика выхода в React (например, вызов API, очистка токена, редирект)
+                    console.log("Выход из профиля...");
+                    logoutModal.classList.add('hidden');
+                });
+
+                logoutModal.addEventListener('click', (e) => {
+                    if (e.target === logoutModal) {
+                        logoutModal.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Логика для меню чата (три точки)
+            const chatMenuBtn = document.getElementById('chatMenuBtn');
+            const chatMenuDropdown = document.getElementById('chatMenuDropdown');
+
+            if (chatMenuBtn && chatMenuDropdown) {
+                chatMenuBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    chatMenuDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!chatMenuBtn.contains(e.target) && !chatMenuDropdown.contains(e.target)) {
+                        chatMenuDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Обработчик для отправки "Карточки" в чат
+                const cardsBtn = chatMenuDropdown.querySelector('.chat-dropdown-item:first-child');
+                const messageArea = document.querySelector('.message-area');
+
+                if (cardsBtn && messageArea) {
+                    cardsBtn.addEventListener('click', () => {
+                        chatMenuDropdown.classList.add('hidden'); // закрываем дропдаун
+
+                        const dummyQuestions = [
+                            "Ты любишь спонтанные поездки в другие города на выходные?",
+                            "Часто ли ты слушаешь музыку по пути на работу?",
+                            "Предпочитаешь ли ты активный отдых на природе вместо кино?",
+                            "Любишь ли ты пробовать экзотическую еду?"
+                        ];
+
+                        // Выбираем случайный вопрос
+                        const randomQuestion = dummyQuestions[Math.floor(Math.random() * dummyQuestions.length)];
+
+                        const now = new Date();
+                        const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message outgoing';
+                        messageDiv.innerHTML = `
+                            <div class="message-content" style="background-color: transparent; box-shadow: none; padding: 0; max-width: 80%;">
+                                <div style="background-color: #EAE1FA; padding: 12px 16px; border-radius: 20px; border-bottom-right-radius: 4px; box-shadow: var(--shadow);">
+                                    <div class="cards-message-question" style="margin-bottom: 4px;">
+                                        <p>${randomQuestion}</p>
+                                    </div>
+                                    <span class="message-time" style="display: block; text-align: right;">${timeString}</span>
+                                </div>
+                            </div>
+                        `;
+
+                        messageArea.appendChild(messageDiv);
+                        // Прокручиваем чат вниз
+                        setTimeout(() => {
+                            messageArea.scrollTop = messageArea.scrollHeight;
+                        }, 50);
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
