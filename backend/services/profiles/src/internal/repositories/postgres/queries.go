@@ -20,6 +20,7 @@ var (
 
 	attachTagsQuery        string
 	createImageQuery       string
+	listImageStorageKeysQuery string
 	deleteImageQuery       string
 	createTagsQuery        string
 	detachProfileTagsQuery string
@@ -35,6 +36,7 @@ const (
 
 	attachTagsQueryName        = "attach_tags.sql"
 	createImageQueryName       = "create_image.sql"
+	listImageStorageKeysQueryName = "list_image_storage_keys.sql"
 	deleteImageQueryName       = "delete_image.sql"
 	createTagsQueryName        = "create_tags.sql"
 	detachProfileTagsQueryName = "detach_profile_tags.sql"
@@ -65,6 +67,9 @@ func initQueries(cfg *config.Config) {
 	)
 	createImageQuery = loadQuery(
 		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, createImageQueryName),
+	)
+	listImageStorageKeysQuery = loadQuery(
+		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, listImageStorageKeysQueryName),
 	)
 	deleteImageQuery = loadQuery(
 		fmt.Sprintf("%s/%s", cfg.Postgres.QueriesPathPrefix, deleteImageQueryName),

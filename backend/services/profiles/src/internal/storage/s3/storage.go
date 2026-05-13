@@ -118,6 +118,12 @@ func (s *Storage) Delete(
 		storageKey,
 		minio.RemoveObjectOptions{},
 	)
-
-	return err
+	if err != nil {
+		resp := minio.ToErrorResponse(err)
+		if resp.Code == "NoSuchKey" {
+			return nil
+		}
+		return err
+	}
+	return nil
 }

@@ -111,6 +111,7 @@ message UpdateProfileResponse {
 
 message DeleteProfileImagesRequest {
     repeated int64 image_ids = 1;
+    int64 user_id = 2;
 }
 
 message DeleteProfileImagesResponse {

@@ -13,6 +13,7 @@ type ProfileRepository interface {
 
 type ImageRepository interface {
 	CreateImage(ctx context.Context, userID int64, storageKey string) (*Image, error)
+	ListStorageKeysByImageIDs(ctx context.Context, userID int64, imageIDs []int64) ([]string, error)
 	DeleteImages(ctx context.Context, imageIds []int64, userId int64) error
 }
 
