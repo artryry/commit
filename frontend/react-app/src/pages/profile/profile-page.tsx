@@ -1,4 +1,4 @@
-import { useGetMyProfile, useUpdateProfile, useUploadImages, useAttachTags, useDetachTags } from '@/api/hooks';
+import { useGetMyProfile, useUpdateProfile, useUploadImages, useDeleteImages, useAttachTags, useDetachTags, type GetProfileResponse } from '@/api/hooks';
 import { useState, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -26,6 +26,7 @@ export const ProfilePage = () => {
   const { data, isLoading } = useGetMyProfile();
   const updateMutation = useUpdateProfile();
   const uploadImagesMutation = useUploadImages();
+  const deleteImagesMutation = useDeleteImages();
   const attachTagsMutation = useAttachTags();
   const detachTagsMutation = useDetachTags();
   const profile = data?.profile_data;
@@ -77,6 +78,24 @@ export const ProfilePage = () => {
       }
     } catch { /* silent */ }
   }, [uploadImagesMutation, updateMutation]);
+
+  const handleDeleteImage = useCallback(async (imageId: number) => {
+    // Optimistic update: remove image from cache immediately
+    queryClient.setQueryData<GetProfileResponse | undefined>(['profile', 'me'], (old) => {
+      if (!old?.profile_data) return old;
+      return {
+        ...old,
+        profile_data: {
+          ...old.profile_data,
+          images: (old.profile_data.images || []).filter((img) => img.id !== imageId),
+        },
+      };
+    });
+    try {
+      await deleteImagesMutation.mutateAsync({ image_ids: [imageId] });
+      refetchProfile();
+    } catch { /* silent */ }
+  }, [deleteImagesMutation, queryClient]);
 
   const handleAddTag = useCallback(async () => {
     const val = tagInput.trim();
@@ -141,6 +160,15 @@ export const ProfilePage = () => {
           {(profile.images || []).map((img) => (
             <div className="photo-slot" key={img.id}>
               <img src={profileImageUrl(img.url)} alt="Фото профиля" />
+              <button
+                className="photo-slot-delete"
+                aria-label="Удалить фото"
+                onClick={() => handleDeleteImage(img.id)}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M12 4L4 12M4 4L12 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
             </div>
           ))}
         </div>

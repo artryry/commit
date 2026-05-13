@@ -81,7 +81,7 @@ export const PosterPage = () => {
 
   const aboutForm = useForm<AboutYourselfFormData>({
     resolver: zodResolver(aboutYourselfSchema),
-    defaultValues: { username: '', city: '', bio: '' },
+    defaultValues: { username: '', city: '', bio: '', birthday: undefined, gender: '', sign: '' },
   });
 
   const lookingForForm = useForm<LookingForFormData>({
@@ -161,8 +161,9 @@ export const PosterPage = () => {
       await createProfileMutation.mutateAsync({
         username: about.username,
         bio: about.bio,
-        birthday: Math.floor(Date.now() / 1000) - 25 * 365.25 * 24 * 3600,
-        gender: 'MALE',
+        birthday: about.birthday,
+        gender: about.gender,
+        sign: about.sign,
         relationship_type: lookingFor.relationship_type,
         city: about.city,
         search_for: lookingFor.search_for || '',
@@ -355,53 +356,105 @@ export const PosterPage = () => {
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">Расскажите о себе</h1>
+                <form
+                  className="form"
+                  onSubmit={aboutForm.handleSubmit(() => setStep(4))}
+                >
+                  <div className="data-area">
+                    <div className="input-area">
+                      <label htmlFor="name">Ваше имя</label>
+                      <input
+                        type="text"
+                        id="name"
+                        placeholder="Введите ваше имя"
+                        {...aboutForm.register('username')}
+                      />
+                      <p className="p-text">Ваше имя будет видно всем пользователям</p>
+                      {aboutForm.formState.errors.username && (
+                        <p className="error">{aboutForm.formState.errors.username.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label htmlFor="location">Локация</label>
+                      <input
+                        type="text"
+                        id="location"
+                        placeholder="Введите ваш город"
+                        {...aboutForm.register('city')}
+                      />
+                      {aboutForm.formState.errors.city && (
+                        <p className="error">{aboutForm.formState.errors.city.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label htmlFor="describe">Опишите себя</label>
+                      <textarea
+                        id="describe"
+                        placeholder="Расскажите о себе"
+                        {...aboutForm.register('bio')}
+                      />
+                      {aboutForm.formState.errors.bio && (
+                        <p className="error">{aboutForm.formState.errors.bio.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label htmlFor="birthday">День рождения (Unix)</label>
+                      <input
+                        type="number"
+                        id="birthday"
+                        placeholder="Например, 946684800"
+                        {...aboutForm.register('birthday', { valueAsNumber: true })}
+                      />
+                      {aboutForm.formState.errors.birthday && (
+                        <p className="error">{aboutForm.formState.errors.birthday.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label>Пол</label>
+                      <CustomDropdown
+                        options={[
+                          { value: '', label: 'Выберите' },
+                          { value: 'MALE', label: 'Мужской' },
+                          { value: 'FEMALE', label: 'Женский' },
+                        ]}
+                        value={aboutForm.watch('gender') || ''}
+                        onChange={(val) => aboutForm.setValue('gender', val, { shouldValidate: true })}
+                      />
+                      {aboutForm.formState.errors.gender && (
+                        <p className="error">{aboutForm.formState.errors.gender.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label>Знак зодиака</label>
+                      <CustomDropdown
+                        options={[
+                          { value: '', label: 'Выберите' },
+                          { value: 'ARIES', label: 'Овен' },
+                          { value: 'TAURUS', label: 'Телец' },
+                          { value: 'GEMINI', label: 'Близнецы' },
+                          { value: 'CANCER', label: 'Рак' },
+                          { value: 'LEO', label: 'Лев' },
+                          { value: 'VIRGO', label: 'Дева' },
+                          { value: 'LIBRA', label: 'Весы' },
+                          { value: 'SCORPIO', label: 'Скорпион' },
+                          { value: 'SAGITTARIUS', label: 'Стрелец' },
+                          { value: 'CAPRICORN', label: 'Козерог' },
+                          { value: 'AQUARIUS', label: 'Водолей' },
+                          { value: 'PISCES', label: 'Рыбы' },
+                        ]}
+                        value={aboutForm.watch('sign') || ''}
+                        onChange={(val) => aboutForm.setValue('sign', val, { shouldValidate: true })}
+                      />
+                      {aboutForm.formState.errors.sign && (
+                        <p className="error">{aboutForm.formState.errors.sign.message}</p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="poster-buttons second">
+                    <button type="submit" className="poster-button">Продолжить</button>
+                  </div>
+                </form>
               </div>
-              <form
-                className="form"
-                onSubmit={aboutForm.handleSubmit(() => setStep(4))}
-              >
-                <div className="data-area">
-                  <div className="input-area">
-                    <label htmlFor="name">Ваше имя</label>
-                    <input
-                      type="text"
-                      id="name"
-                      placeholder="Введите ваше имя"
-                      {...aboutForm.register('username')}
-                    />
-                    <p className="p-text">Ваше имя будет видно всем пользователям</p>
-                    {aboutForm.formState.errors.username && (
-                      <p className="error">{aboutForm.formState.errors.username.message}</p>
-                    )}
-                  </div>
-                  <div className="input-area">
-                    <label htmlFor="location">Локация</label>
-                    <input
-                      type="text"
-                      id="location"
-                      placeholder="Введите ваш город"
-                      {...aboutForm.register('city')}
-                    />
-                    {aboutForm.formState.errors.city && (
-                      <p className="error">{aboutForm.formState.errors.city.message}</p>
-                    )}
-                  </div>
-                  <div className="input-area">
-                    <label htmlFor="describe">Опишите себя</label>
-                    <textarea
-                      id="describe"
-                      placeholder="Расскажите о себе"
-                      {...aboutForm.register('bio')}
-                    />
-                    {aboutForm.formState.errors.bio && (
-                      <p className="error">{aboutForm.formState.errors.bio.message}</p>
-                    )}
-                  </div>
-                </div>
-                <div className="poster-buttons second">
-                  <button type="submit" className="poster-button">Продолжить</button>
-                </div>
-              </form>
             </div>
           </div>
         )}
@@ -413,48 +466,48 @@ export const PosterPage = () => {
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">Добавьте ваши интересы</h1>
-              </div>
-              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(5); }}>
-                <div className="data-area-tags">
-                  <div className="tags-container">
-                    <div className="add-tags">
-                      {tags.map((tag, i) => (
-                        <div className="tag" key={i} onClick={() => setTags(tags.filter((_, j) => j !== i))} style={{ cursor: 'pointer' }}>
-                          <p>#{tag}</p>
-                        </div>
-                      ))}
-                      {showTagInput ? (
-                        <div className="tag-input-container">
-                          <span>#</span>
-                          <input
-                            type="text"
-                            className="tag-input"
-                            placeholder="тэг"
-                            value={tagInput}
-                            onChange={(e) => setTagInput(e.target.value)}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }
-                              if (e.key === 'Escape') setShowTagInput(false);
-                            }}
-                            onBlur={handleAddTag}
-                            autoFocus
-                          />
-                        </div>
-                      ) : (
-                        <div className="tag-add" onClick={() => setShowTagInput(true)}>
-                          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                            <path d="M20 9V33" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                            <path d="M8 21H32" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                          </svg>
-                        </div>
-                      )}
+                <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(5); }}>
+                  <div className="data-area-tags">
+                    <div className="tags-container">
+                      <div className="add-tags">
+                        {tags.map((tag, i) => (
+                          <div className="tag" key={i} onClick={() => setTags(tags.filter((_, j) => j !== i))} style={{ cursor: 'pointer' }}>
+                            <p>#{tag}</p>
+                          </div>
+                        ))}
+                        {showTagInput ? (
+                          <div className="tag-input-container">
+                            <span>#</span>
+                            <input
+                              type="text"
+                              className="tag-input"
+                              placeholder="тэг"
+                              value={tagInput}
+                              onChange={(e) => setTagInput(e.target.value)}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') { e.preventDefault(); handleAddTag(); }
+                                if (e.key === 'Escape') setShowTagInput(false);
+                              }}
+                              onBlur={handleAddTag}
+                              autoFocus
+                            />
+                          </div>
+                        ) : (
+                          <div className="tag-add" onClick={() => setShowTagInput(true)}>
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                              <path d="M20 9V33" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M8 21H32" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="poster-buttons second">
-                  <button type="submit" className="poster-button">Продолжить</button>
-                </div>
-              </form>
+                  <div className="poster-buttons second">
+                    <button type="submit" className="poster-button">Продолжить</button>
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
         )}
@@ -466,8 +519,42 @@ export const PosterPage = () => {
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">Добавьте ваше фото</h1>
+                <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(6); }}>
+                  <div className="photo-add-conatiner">
+                    <label className="photo-background" style={{ cursor: 'pointer' }}>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        style={{ display: 'none' }}
+                        onChange={handleFileSelect}
+                      />
+                      <div className="photo">
+                        {previewUrl ? (
+                          <img
+                            src={previewUrl}
+                            alt="Превью"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              borderRadius: '12px',
+                            }}
+                          />
+                        ) : (
+                          <svg width="100" height="100" viewBox="0 0 40 40" fill="none">
+                            <path d="M20 9V33" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            <path d="M8 21H32" stroke="#BB8DFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                      </div>
+                    </label>
+                  </div>
+                  <div className="poster-buttons second">
+                    <button type="submit" className="poster-button">Продолжить</button>
+                  </div>
+                </form>
               </div>
-              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(6); }}>
+              {/* <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(6); }}>
                 <div className="photo-add-conatiner">
                   <label className="photo-background" style={{ cursor: 'pointer' }}>
                     <input
@@ -500,7 +587,7 @@ export const PosterPage = () => {
                 <div className="poster-buttons second">
                   <button type="submit" className="poster-button">Продолжить</button>
                 </div>
-              </form>
+              </form> */}
             </div>
           </div>
         )}
@@ -512,8 +599,39 @@ export const PosterPage = () => {
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">С кем вы хотите познакомиться?</h1>
+                <form className="form" onSubmit={lookingForForm.handleSubmit(handleFinishLookingFor)}>
+                  <div className="data-area">
+                    <div className="input-area">
+                      <label>Вы ищите</label>
+                      <CustomDropdown
+                        options={[
+                          { value: '', label: 'Выберите' },
+                          { value: 'RELATIONSHIP', label: 'Партнёра' },
+                          { value: 'FRIENDSHIP', label: 'Друга' },
+                          { value: 'NETWORKING', label: 'Нетворкинг' },
+                        ]}
+                        value={lookingForForm.watch('relationship_type')}
+                        onChange={(val) => lookingForForm.setValue('relationship_type', val, { shouldValidate: true })}
+                      />
+                      {lookingForForm.formState.errors.relationship_type && (
+                        <p className="error">{lookingForForm.formState.errors.relationship_type.message}</p>
+                      )}
+                    </div>
+                    <div className="input-area">
+                      <label htmlFor="search-for">Опишите, какого человека вы ищете</label>
+                      <textarea
+                        id="search-for"
+                        placeholder="Любовь всей своей жизни с двумя кошками и страстью к настольным играм"
+                        {...lookingForForm.register('search_for')}
+                      />
+                    </div>
+                  </div>
+                  <div className="poster-buttons second">
+                    <button type="submit" className="poster-button">Завершить</button>
+                  </div>
+                </form>
               </div>
-              <form className="form" onSubmit={lookingForForm.handleSubmit(handleFinishLookingFor)}>
+              {/* <form className="form" onSubmit={lookingForForm.handleSubmit(handleFinishLookingFor)}>
                 <div className="data-area">
                   <div className="input-area">
                     <label>Вы ищите</label>
@@ -543,7 +661,7 @@ export const PosterPage = () => {
                 <div className="poster-buttons second">
                   <button type="submit" className="poster-button">Завершить</button>
                 </div>
-              </form>
+              </form> */}
             </div>
           </div>
         )}

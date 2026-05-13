@@ -464,6 +464,7 @@ main {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    height: fit-content;
 }
 
 .message-area h1 {

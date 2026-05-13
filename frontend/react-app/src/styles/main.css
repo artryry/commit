@@ -280,6 +280,7 @@
 .photo-slot {
     position: relative;
     border-radius: 12px;
+    overflow: hidden;
 }
 
 .photo-slot--add {
@@ -320,6 +321,44 @@
 
 .photo-slot:hover img {
     transform: scale(1.05);
+}
+
+/* Delete button on gallery photos */
+.photo-slot-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 5;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(60, 52, 75, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
+    padding: 0;
+}
+
+.photo-slot:hover .photo-slot-delete {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.photo-slot-delete:hover {
+    background: var(--supper-accent-color);
+    transform: scale(1.15);
+}
+
+.photo-slot-delete svg {
+    width: 14px;
+    height: 14px;
+    display: block;
 }
 
 /* ===========================

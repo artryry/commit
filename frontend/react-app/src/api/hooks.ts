@@ -233,6 +233,7 @@ export const useDeleteImages = () =>
         url: '/profiles/images',
         method: 'DELETE',
         data,
+        headers: { 'Content-Type': 'application/json' },
       }),
   });
 

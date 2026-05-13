@@ -44,6 +44,9 @@ export const aboutYourselfSchema = z.object({
     .string()
     .min(10, 'Опишите себя хотя бы в 10 символах')
     .max(500, 'Описание слишком длинное'),
+  birthday: z.number({ message: 'Введите дату рождения (Unix timestamp)' }).min(1, 'Введите дату рождения (Unix timestamp)'),
+  gender: z.string().min(1, 'Выберите пол'),
+  sign: z.string().min(1, 'Выберите знак зодиака'),
 });
 
 /** Схема для шага «Кого ищете» */
