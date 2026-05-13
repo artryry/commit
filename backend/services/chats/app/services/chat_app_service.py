@@ -9,12 +9,24 @@ from kafka.publisher import publish_chat_deleted, publish_chat_message
 from models.message import Message
 from repositories.chat_repository import ChatRepository
 from repositories.message_repository import MessageRepository
+from services.chat_room_registry import ChatRoomRegistry
 from services.minio_storage import ChatImageStorage
+from utils.message_serialization import message_to_public_dict
 
 logger = logging.getLogger(__name__)
 
 _MAX_IMAGE_BYTES = 10 * 1024 * 1024
 _ALLOWED_IMAGE_CT = frozenset({"image/jpeg", "image/png", "image/webp"})
+
+
+def _sniff_image_content_type(data: bytes) -> str | None:
+    if len(data) >= 3 and data[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if len(data) >= 8 and data[:8] == b"\x89PNG\r\n\x1a\n":
+        return "image/png"
+    if len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return "image/webp"
+    return None
 
 
 class ChatAppService:
@@ -23,10 +35,12 @@ class ChatAppService:
         session: AsyncSession,
         kafka_producer: AIOKafkaProducer,
         storage: ChatImageStorage,
+        chat_rooms: ChatRoomRegistry,
     ):
         self._session = session
         self._kafka_producer = kafka_producer
         self._storage = storage
+        self._chat_rooms = chat_rooms
         self._chats = ChatRepository(session)
         self._messages = MessageRepository(session)
 
@@ -58,6 +72,11 @@ class ChatAppService:
 
         image_key: str | None = None
         if has_raw_file:
+            ct = (image_content_type or "").strip().lower()
+            if not ct or ct == "application/octet-stream":
+                sniffed = _sniff_image_content_type(image_bytes)
+                if sniffed:
+                    image_content_type = sniffed
             if not image_content_type or image_content_type not in _ALLOWED_IMAGE_CT:
                 raise HTTPException(
                     status_code=400,
@@ -91,22 +110,33 @@ class ChatAppService:
 
         recipient_id = peer_user_id
         preview = self._preview_for_kafka(body_clean, bool(image_key))
+        ws_payload = {
+            "type": "chat.new_message",
+            "chat_id": str(chat.id),
+            "message": message_to_public_dict(msg),
+        }
 
-        try:
-            await publish_chat_message(
-                self._kafka_producer,
-                chat_id=str(chat.id),
-                message_id=str(msg.id),
-                sender_id=sender_id,
-                recipient_id=recipient_id,
-                preview=preview,
-            )
-        except Exception:
-            logger.exception(
-                "kafka publish chat.message failed chat_id=%s message_id=%s",
-                chat.id,
-                msg.id,
-            )
+        recipient_in_room = await self._chat_rooms.recipient_in_room(recipient_id, sender_id)
+        await self._chat_rooms.broadcast(sender_id, recipient_id, ws_payload)
+        if recipient_in_room:
+            await self._chat_rooms.broadcast(recipient_id, sender_id, ws_payload)
+
+        if not recipient_in_room:
+            try:
+                await publish_chat_message(
+                    self._kafka_producer,
+                    chat_id=str(chat.id),
+                    message_id=str(msg.id),
+                    sender_id=sender_id,
+                    recipient_id=recipient_id,
+                    preview=preview,
+                )
+            except Exception:
+                logger.exception(
+                    "kafka publish chat.message failed chat_id=%s message_id=%s",
+                    chat.id,
+                    msg.id,
+                )
         return msg
 
     async def send_text_message(self, sender_id: int, peer_user_id: int, body: str) -> Message:

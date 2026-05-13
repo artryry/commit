@@ -2,7 +2,7 @@
 
 import logging
 
-from fastapi import APIRouter, BackgroundTasks, Depends, WebSocket
+from fastapi import APIRouter, Depends, WebSocket
 from api.deps.state import get_connection_manager
 from db.session import AsyncSessionLocal
 from repositories.notification_repository import NotificationRepository
@@ -14,8 +14,13 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def flush_pending_background(cm: ConnectionManager, user_id: int) -> None:
-    """Runs after WS accept via BackgroundTasks — separate DB session."""
+async def flush_pending_on_connect(cm: ConnectionManager, user_id: int) -> None:
+    """Deliver queued rows while the socket is registered (separate DB session).
+
+    **Do not** use Starlette ``BackgroundTasks`` here: for WebSocket handlers those tasks run only
+    after the handler returns (i.e. on disconnect), when the client is no longer connected — so
+    pending notifications would never flush during a normal session.
+    """
     async with AsyncSessionLocal() as session:
         try:
             repo = NotificationRepository(session)
@@ -30,7 +35,6 @@ async def flush_pending_background(cm: ConnectionManager, user_id: int) -> None:
 @router.websocket("/ws")
 async def notifications_websocket(
     websocket: WebSocket,
-    background_tasks: BackgroundTasks,
     cm: ConnectionManager = Depends(get_connection_manager),
 ) -> None:
     # Identity comes from api-gateway after JWT verification (X-User-Id).
@@ -47,8 +51,8 @@ async def notifications_websocket(
     await websocket.accept()
     await cm.connect(user_id, websocket)
 
-    # Non-blocking flush of rows stored while offline (Postgres `delivered_at` IS NULL).
-    background_tasks.add_task(flush_pending_background, cm, user_id)
+    # Rows with `delivered_at` IS NULL (user was offline). Must run while this socket is registered.
+    await flush_pending_on_connect(cm, user_id)
 
     try:
         while True:

@@ -53,11 +53,12 @@ func newEnvelope(eventType string, payload map[string]any) (Event, error) {
 	}, nil
 }
 
-func (p *Producer) PublishSwipeCreated(ctx context.Context, viewerID, targetID int64, liked bool) error {
+func (p *Producer) PublishSwipeCreated(ctx context.Context, viewerID, targetID int64, liked, mutualMatch bool) error {
 	ev, err := newEnvelope(p.cfg.SwipeCreatedTopic, map[string]any{
 		"viewer_id":      viewerID,
 		"target_user_id": targetID,
 		"liked":          liked,
+		"mutual_match":   mutualMatch,
 	})
 	if err != nil {
 		return err
@@ -74,9 +75,9 @@ func (p *Producer) PublishSwipeCreated(ctx context.Context, viewerID, targetID i
 
 func (p *Producer) PublishMatchCreated(ctx context.Context, matchID, firstUserID, secUserID int64) error {
 	ev, err := newEnvelope(p.cfg.MatchCreatedTopic, map[string]any{
-		"match_id":       matchID,
-		"first_user_id":  firstUserID,
-		"sec_user_id":    secUserID,
+		"match_id":      matchID,
+		"first_user_id": firstUserID,
+		"sec_user_id":   secUserID,
 	})
 	if err != nil {
 		return err

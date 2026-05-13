@@ -3,6 +3,8 @@ package s3
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -50,10 +52,41 @@ func NewImageStorage(cfg *config.Config) (*Storage, error) {
 		}
 	}
 
+	if cfg.Storage.AnonymousRead {
+		if err := setAnonymousGetObjectPolicy(context.Background(), client, cfg.Storage.Bucket); err != nil {
+			return nil, err
+		}
+	}
+
 	return &Storage{
 		client: client,
 		bucket: cfg.Storage.Bucket,
 	}, nil
+}
+
+// setAnonymousGetObjectPolicy allows browser GETs on https://minio-host/bucket/object paths without signing.
+func setAnonymousGetObjectPolicy(ctx context.Context, client *minio.Client, bucket string) error {
+	policy := struct {
+		Version   string `json:"Version"`
+		Statement []any  `json:"Statement"`
+	}{
+		Version: "2012-10-17",
+		Statement: []any{
+			map[string]any{
+				"Effect": "Allow",
+				"Principal": map[string]any{
+					"AWS": []string{"*"},
+				},
+				"Action":   []string{"s3:GetObject"},
+				"Resource": []string{fmt.Sprintf("arn:aws:s3:::%s/*", bucket)},
+			},
+		},
+	}
+	raw, err := json.Marshal(policy)
+	if err != nil {
+		return err
+	}
+	return client.SetBucketPolicy(ctx, bucket, string(raw))
 }
 
 func (s *Storage) Upload(

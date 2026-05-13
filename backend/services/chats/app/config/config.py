@@ -29,8 +29,10 @@ class Config(BaseSettings):
     STORAGE_ENDPOINT: str = "http://localhost:9000"
     STORAGE_ACCESS_KEY: str = "admin"
     STORAGE_SECRET_KEY: str = "password"
-    STORAGE_BUCKET: str = "profiles"
+    STORAGE_BUCKET: str = "chats"
     STORAGE_USE_SSL: bool = False
+    # Allow browser GET on http://host:9000/<bucket>/<key> without presigned URLs (turn off in prod).
+    STORAGE_ANONYMOUS_READ: bool = True
 
     @cached_property
     def DATABASE_URL(self) -> str:

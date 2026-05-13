@@ -1,5 +1,7 @@
 """Create notifications, push when possible, persist `delivered_at` when sent."""
 
+from typing import Any
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.notification_repository import NotificationRepository
@@ -17,10 +19,21 @@ class DeliveryService:
         self._cm = cm
         self._session = session
 
-    async def enqueue_and_try_deliver(self, user_id: int, type_: str, message: str) -> None:
+    async def enqueue_and_try_deliver(
+        self,
+        user_id: int,
+        type_: str,
+        message: str,
+        *,
+        websocket_payload: dict[str, Any] | None = None,
+    ) -> None:
         row = await self._repo.create_pending(user_id, type_, message)
         await self._session.flush()
-        body = {"type": type_, "message": message}
+        body = (
+            websocket_payload
+            if websocket_payload is not None
+            else {"type": type_, "message": message}
+        )
         if await self._cm.send_json_to_user(user_id, body):
             await self._repo.mark_delivered(row.id)
 

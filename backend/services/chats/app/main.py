@@ -10,6 +10,7 @@ from api.routes import chats_router
 from config import cfg
 from db import Base, async_engine
 from kafka.match_consumer import run_match_consumer
+from services.chat_room_registry import ChatRoomRegistry
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -30,6 +31,7 @@ async def lifespan(app: FastAPI):
     producer = AIOKafkaProducer(bootstrap_servers=_kafka_bootstrap_list())
     await producer.start()
     app.state.kafka_producer = producer
+    app.state.chat_room_registry = ChatRoomRegistry()
 
     match_task = asyncio.create_task(run_match_consumer())
     try:

@@ -23,7 +23,8 @@ func (s *Service) RecordSwipe(ctx context.Context, viewer, target int64, liked b
 		return err
 	}
 
-	if err := s.pub.PublishSwipeCreated(ctx, viewer, target, liked); err != nil {
+	mutual := res != nil && res.NewMatchID != nil
+	if err := s.pub.PublishSwipeCreated(ctx, viewer, target, liked, mutual); err != nil {
 		logger.Error("publish swipe.created", "err", err)
 	}
 
