@@ -67,6 +67,22 @@ async def handle_chat_message_envelope(
         return
 
     line = (preview or "New message").strip() or "New message"
+    chat_id = payload.get("chat_id")
+    message_id = payload.get("message_id")
+    sender_id = payload.get("sender_id")
+    ws_payload: dict = {"type": "chat.message", "message": line}
+    if chat_id is not None:
+        ws_payload["chat_id"] = chat_id
+    if message_id is not None:
+        ws_payload["message_id"] = message_id
+    if sender_id is not None:
+        ws_payload["sender_id"] = sender_id
+
     repo = NotificationRepository(session)
     delivery = DeliveryService(repo, connection_manager, session)
-    await delivery.enqueue_and_try_deliver(int(recipient), "chat.message", line)
+    await delivery.enqueue_and_try_deliver(
+        int(recipient),
+        "chat.message",
+        line,
+        websocket_payload=ws_payload,
+    )

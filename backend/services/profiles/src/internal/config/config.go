@@ -37,6 +37,9 @@ type Storage struct {
 	SecretKey string
 	Bucket    string
 	UseSSL    bool
+	// AnonymousRead allows unauthenticated HTTP GET on object URLs (browser loads MinIO directly).
+	// Disable in production if you use presigned URLs or a private CDN instead.
+	AnonymousRead bool
 }
 
 type KafkaConfig struct {
@@ -98,11 +101,12 @@ func Load() *Config {
 		},
 
 		Storage: Storage{
-			Endpoint:  getEnv("STORAGE_ENDPOINT", "http://localhost:9000"),
-			AccessKey: getEnv("STORAGE_ACCESS_KEY", "minio"),
-			SecretKey: getEnv("STORAGE_SECRET_KEY", "minio"),
-			Bucket:    getEnv("STORAGE_BUCKET", "profiles"),
-			UseSSL:    getEnv("STORAGE_USE_SSL", "false") == "true",
+			Endpoint:      getEnv("STORAGE_ENDPOINT", "http://localhost:9000"),
+			AccessKey:     getEnv("STORAGE_ACCESS_KEY", "minio"),
+			SecretKey:     getEnv("STORAGE_SECRET_KEY", "minio"),
+			Bucket:        getEnv("STORAGE_BUCKET", "profiles"),
+			UseSSL:        getEnv("STORAGE_USE_SSL", "false") == "true",
+			AnonymousRead: getEnv("STORAGE_ANONYMOUS_READ", "true") == "true",
 		},
 	}
 }

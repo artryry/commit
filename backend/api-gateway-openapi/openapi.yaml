@@ -7,7 +7,8 @@ info:
     - **Auth** paths under `/api/v1/auth/*` are reverse-proxied to the authentication service (FastAPI).
       Request/response bodies match that service unless noted.
     - **Profiles**, **recommendations**, **swipes**, and **matches** are routed through the gateway to the backing gRPC services. **GET /swipes** and **GET /recommendations** both resolve user ids from their backing service, then load rows via **profiles** `GetProfiles`.
-    - **Chats** (`/api/v1/chats/*`) are reverse-proxied to the **chats** FastAPI service. The gateway validates JWT and forwards **`X-User-Id`** (numeric user id); the chats service does not verify JWT itself.
+    - **Chats** (`/api/v1/chats/*`) are reverse-proxied to the **chats** FastAPI service. **`/api/v1/chats/{peer_user_id}/ws`** is a **bidirectional** WebSocket: clients send JSON **text** / **image** frames; the server broadcasts **`chat.new_message`** to both participants' open room sockets. If the **recipient** has an active room with the **sender**, **`chat.message`** Kafka is **not** published (no duplicate notification — they already saw the message on the chat WS). **`POST .../messages`** remains for REST/multipart (e.g. large images).
+    - **Notifications** (`/api/v1/notifications/*`) are reverse-proxied to the **notifications** FastAPI service (including **`/api/v1/notifications/ws`** WebSocket upgrades). Use query param **`token=<JWT>`** for the WebSocket handshake; the gateway validates JWT and forwards **`X-User-Id`**.
     - **Recommendations** HTTP routes call the **recommendations** gRPC service for candidate ids (and filter CRUD on `/recommendations/filters`); **GET /recommendations** loads profile rows via **profiles** `GetProfiles` by those ids (except **compatibility**, which stays inside the recommendations service and uses **Ollama** for text generation).
     - Protected routes require `Authorization: Bearer <JWT>`. The gateway validates the token and expects a numeric `sub` claim (user id).
 
@@ -32,8 +33,18 @@ tags:
   - name: Recommendations
   - name: Swipes
   - name: Matches
+  - name: Notifications
+    description: |
+      Real-time user events via WebSocket (`/api/v1/notifications/ws`); Kafka-fed from other services.
+      **`chat.message`** appears here only when the **recipient is not** in an active **chat room** WebSocket
+      (`/api/v1/chats/{peer}/ws`) with the sender — otherwise they already received **`chat.new_message`** on the chat socket.
+      Proxied to the notifications service; gateway validates JWT → `X-User-Id` (use `?token=` for WS).
   - name: Chats
-    description: Reverse-proxied to the chats service (FastAPI); requires JWT at gateway
+    description: |
+      Direct messages: REST for listing chats, loading history, and optional **multipart** sends; **WebSocket**
+      `/api/v1/chats/{peer_user_id}/ws` for live **send/receive** while in the thread. Gateway JWT → `X-User-Id`;
+      WebSockets use **`?token=<JWT>`** like notifications. See **`#/components/schemas/ChatWebSocketServerNewMessage`**
+      and related schemas under **Components → Schemas**.
 
 paths:
   /health:
@@ -143,6 +154,9 @@ paths:
           description: Bad gateway
 
   /api/v1/auth/me:
+    description: |
+      **Account deletion only** (`DELETE`). There is **no** `GET /api/v1/auth/me` on the gateway — use
+      **`GET /api/v1/profiles/me`** for the current user’s profile payload.
     delete:
       tags: [Auth]
       summary: Delete account
@@ -590,6 +604,52 @@ paths:
         '502':
           description: Bad gateway
 
+  /api/v1/notifications/ws:
+    get:
+      tags: [Notifications]
+      summary: WebSocket — live notifications (read docs; not a normal GET)
+      description: |
+        **OpenAPI models HTTP only; this path is upgraded to a WebSocket.** Do not use “Try it out” here — use a WebSocket client in the browser or a tool such as `websocat`.
+
+        **Connect (browser):** after the user signs in and you have an access token, open:
+
+        `new WebSocket(wsUrl)` where `wsUrl` is built from the **same origin** as your REST base URL, path **`/api/v1/notifications/ws`**, and query **`token=<URL-encoded access_token>`**.
+
+        Examples (replace `<JWT>` with the real access token):
+
+        - Local gateway (docker-compose host mapping): `ws://localhost:18000/api/v1/notifications/ws?token=<JWT>`
+        - HTTPS site: `wss://<your-api-host>/api/v1/notifications/ws?token=<JWT>`
+
+        **Why `token` in the query:** browser WebSocket API does not support custom headers; the gateway JWT middleware accepts **`Authorization: Bearer …`** for HTTP and **`?token=`** for WebSocket upgrades (see `services/api-gateway` JWT middleware).
+
+        **After connect:** the server may push JSON objects (schema **`#/components/schemas/NotificationWebSocketMessage`**).
+        The service **immediately** replays any notifications stored while the user was offline (`delivered_at` null)
+        over this socket after the handshake (then continues with live Kafka-driven events).
+
+        For **`chat.message`**, the chats service publishes to Kafka **only** when the recipient is **not** in an active
+        **chat room** WebSocket with the sender (see **`/api/v1/chats/{peer_user_id}/ws`**); otherwise the user already
+        saw **`chat.new_message`** on the chat socket. Use `chat_id` / `sender_id` / `message_id` to sync UI when you
+        do receive **`chat.message`**. Offline notifications are replayed once when the socket is accepted.
+
+        **Headers on the wire:** the gateway adds **`X-User-Id`** when proxying to the notifications service; the client does not set that header.
+      operationId: notificationsWebSocket
+      security: []
+      parameters:
+        - name: token
+          in: query
+          required: true
+          description: 'Same JWT as `Authorization: Bearer` for REST (access token).'
+          schema:
+            type: string
+      responses:
+        '101':
+          description: |
+            Switching Protocols — WebSocket established. Subsequent frames are JSON text from server (and client may send ignored ping text).
+        '401':
+          description: Missing or invalid `token` query parameter (gateway JWT validation failed)
+        '502':
+          description: Bad gateway (notifications service unavailable)
+
   /api/v1/chats:
     get:
       tags: [Chats]
@@ -627,6 +687,9 @@ paths:
       summary: Open chat — list messages with a user
       description: |
         Proxied to `GET /api/v1/chats/{peer_user_id}`. Returns all messages if a chat exists between the JWT user and `peer_user_id`.
+
+        **Typical client flow:** call this first to render history, then open **WebSocket** `/api/v1/chats/{peer_user_id}/ws?token=<JWT>`
+        for live messages and optional WS-based sends (see that path’s description and chat WebSocket schemas).
       operationId: chatsGetWithPeer
       security:
         - bearerAuth: []
@@ -659,6 +722,49 @@ paths:
         '502':
           description: Bad gateway
 
+  /api/v1/chats/{peer_user_id}/ws:
+    parameters:
+      - name: peer_user_id
+        in: path
+        required: true
+        description: Chat partner user id (same as in `GET /api/v1/chats/{peer_user_id}`).
+        schema:
+          type: integer
+          format: int64
+      - name: token
+        in: query
+        required: true
+        description: 'Same JWT as `Authorization: Bearer` for REST (access token).'
+        schema:
+          type: string
+    get:
+      tags: [Chats]
+      summary: WebSocket — chat room (send + receive)
+      description: |
+        **WebSocket upgrade** (`ws://` / `wss://`). Same **`?token=<JWT>`** rule as **`/api/v1/notifications/ws`**.
+
+        **Receive:** JSON text frames (server → client) matching **`#/components/schemas/ChatWebSocketServerNewMessage`**.
+
+        **Send (client → server):** JSON text frames — **`#/components/schemas/ChatWebSocketClientText`** or **`#/components/schemas/ChatWebSocketClientImage`**.
+        Malformed sends may yield **`#/components/schemas/ChatWebSocketClientError`**.
+
+        **REST alternative:** `POST /api/v1/chats/{peer_user_id}/messages` (JSON or multipart file) triggers the same persistence + broadcast + Kafka rules.
+
+        **Kafka `chat.message`:** published **only** when the **recipient** does **not** have an active room with the sender (offline / not in thread). No buffering on disconnect.
+
+        URL example: `ws://localhost:18000/api/v1/chats/9/ws?token=<JWT>`
+      operationId: chatsRoomWebSocket
+      security: []
+      responses:
+        '101':
+          description: Switching Protocols — WebSocket established
+        '401':
+          description: Missing or invalid `token` (gateway)
+        '404':
+          description: Chat not found for this pair (chats service closes before accept)
+        '502':
+          description: Bad gateway
+
   /api/v1/chats/{peer_user_id}/messages:
     parameters:
       - name: peer_user_id
@@ -678,6 +784,11 @@ paths:
         for multipart. Images must be **JPEG, PNG, or WebP** (max **10 MiB**); the service stores the object in MinIO
         and returns `image_storage_key` on the created message. Kafka `chat.message` preview uses the caption when
         present, otherwise `"[image]"` for image-only messages.
+
+        **Live delivery:** after a successful create, the chats service broadcasts **`chat.new_message`** on open
+        **chat room** WebSockets for this pair (see **`/api/v1/chats/{peer_user_id}/ws`**). **`chat.message`** Kafka
+        (and thus **notifications** WebSocket) is emitted **only** if the recipient is **not** in an active chat room
+        with the sender.
       operationId: chatsSendMessage
       security:
         - bearerAuth: []
@@ -730,6 +841,102 @@ components:
       description: RSA-signed JWT; `sub` claim must be numeric user id.
 
   schemas:
+    NotificationWebSocketMessage:
+      type: object
+      description: |
+        One JSON object per WebSocket **text** frame from server → client (`JSON.parse(event.data)`).
+        Persisted offline replays may only include **`type`** and **`message`**.
+
+        **`chat.message`:** the chats service publishes this to Kafka only when the recipient is **not** in an active
+        chat room (`/api/v1/chats/{peer_user_id}/ws`) with the sender; otherwise the user already received
+        **`chat.new_message`** on the chat WebSocket.
+
+        **`swipe.created`:** emitted when another user **likes** you (not on mutual match — you get **`match.created`** instead).
+        Includes **`viewer_id`** on live delivery when the user is online; offline replay may omit it.
+      required: [type, message]
+      properties:
+        type:
+          type: string
+          description: Event name (e.g. `chat.message`, `chat.deleted`, `match.created`, `swipe.created`).
+        message:
+          type: string
+          description: Human-readable body (e.g. chat preview text).
+        chat_id:
+          type: string
+          description: Optional. Chat UUID string; included on live **`chat.message`** deliveries when available.
+        message_id:
+          type: string
+          description: Optional. Message UUID string; included on live **`chat.message`** when available.
+        sender_id:
+          type: integer
+          format: int64
+          description: Optional. Included on live **`chat.message`** when available (who sent).
+        viewer_id:
+          type: integer
+          format: int64
+          description: Optional. Who liked you; included on live **`swipe.created`** when available.
+
+    ChatWebSocketServerNewMessage:
+      type: object
+      description: Server → client frame after a message is persisted (REST or chat WS send).
+      required: [type, chat_id, message]
+      properties:
+        type:
+          type: string
+          enum: [chat.new_message]
+        chat_id:
+          type: string
+          description: Chat UUID string
+        message:
+          $ref: '#/components/schemas/ChatMessageItem'
+
+    ChatWebSocketClientText:
+      type: object
+      description: Client → server frame to send a text message (same rules as JSON `POST .../messages` body).
+      required: [type, body]
+      properties:
+        type:
+          type: string
+          enum: [text]
+        body:
+          type: string
+          minLength: 1
+          maxLength: 10000
+
+    ChatWebSocketClientImage:
+      type: object
+      description: |
+        Client → server frame to send an image. **Base64** payload (standard encoding; whitespace allowed).
+        Server may infer `image/jpeg` / `image/png` / `image/webp` from magic bytes if `content_type` is missing or `application/octet-stream`.
+      required: [type, image_base64]
+      properties:
+        type:
+          type: string
+          enum: [image]
+        body:
+          type: string
+          maxLength: 10000
+          nullable: true
+          description: Optional caption
+        image_base64:
+          type: string
+          description: Base64-encoded raw image bytes (max decoded size 10 MiB on server)
+        content_type:
+          type: string
+          nullable: true
+          description: Optional; e.g. `image/jpeg`
+
+    ChatWebSocketClientError:
+      type: object
+      description: Server → client when a client-sent frame failed validation or persistence.
+      required: [type, detail]
+      properties:
+        type:
+          type: string
+          enum: [error]
+        detail:
+          type: string
+
     RegisterRequest:
       type: object
       required: [email, password]

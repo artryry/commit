@@ -23,6 +23,7 @@ class Config(BaseSettings):
     KAFKA_BOOTSTRAP_SERVERS: str = "localhost:9092"
     KAFKA_GROUP_ID: str = "notifications-service"
     KAFKA_TOPIC_MATCH_CREATED: str = "match.created"
+    KAFKA_TOPIC_SWIPE_CREATED: str = "swipe.created"
     KAFKA_TOPIC_CHAT_DELETED: str = "chat.deleted"
     KAFKA_TOPIC_CHAT_MESSAGE: str = "chat.message"
 

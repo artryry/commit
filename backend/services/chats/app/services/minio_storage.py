@@ -1,3 +1,4 @@
+import json
 import logging
 import uuid
 from io import BytesIO
@@ -17,6 +18,24 @@ _CONTENT_TYPE_EXT = {
 }
 
 
+def _anonymous_get_object_policy(bucket: str) -> str:
+    """S3/MinIO policy: allow unauthenticated HTTP GET on object URLs."""
+    return json.dumps(
+        {
+            "Version": "2012-10-17",
+            "Statement": [
+                {
+                    "Effect": "Allow",
+                    "Principal": {"AWS": ["*"]},
+                    "Action": ["s3:GetObject"],
+                    "Resource": [f"arn:aws:s3:::{bucket}/*"],
+                },
+            ],
+        },
+        separators=(",", ":"),
+    )
+
+
 def _minio_netloc(endpoint: str) -> str:
     parsed = urlparse(endpoint)
     if parsed.netloc:
@@ -33,6 +52,27 @@ class ChatImageStorage:
             secure=cfg.STORAGE_USE_SSL,
         )
         self._bucket = cfg.STORAGE_BUCKET
+        self._ensure_bucket()
+        self._ensure_anonymous_read_policy()
+
+    def _ensure_anonymous_read_policy(self) -> None:
+        if not cfg.STORAGE_ANONYMOUS_READ:
+            return
+        try:
+            self._client.set_bucket_policy(self._bucket, _anonymous_get_object_policy(self._bucket))
+            logger.info("minio anonymous GetObject policy set bucket=%s", self._bucket)
+        except S3Error:
+            logger.exception("minio set_bucket_policy failed bucket=%s", self._bucket)
+            raise
+
+    def _ensure_bucket(self) -> None:
+        try:
+            if not self._client.bucket_exists(self._bucket):
+                self._client.make_bucket(self._bucket)
+                logger.info("minio created bucket=%s", self._bucket)
+        except S3Error:
+            logger.exception("minio bucket_exists/make_bucket failed bucket=%s", self._bucket)
+            raise
 
     def upload_chat_image(self, data: bytes, content_type: str) -> str:
         ext = _CONTENT_TYPE_EXT.get(content_type)
