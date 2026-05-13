@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 
 # Wait for Kafka to be ready
 for i in {1..30}; do

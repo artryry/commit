@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,20 +24,33 @@ import '@/styles/poster.css';
  * 0 = Landing (Вход / Регистрация)
  * 1 = Вход
  * 2 = Регистрация
- * 3 = Поздравляем
- * 4 = Расскажите о себе
- * 5 = Добавьте интересы
- * 6 = Добавьте фото
- * 7 = С кем хотите познакомиться
+ * 3 = Расскажите о себе
+ * 4 = Добавьте интересы
+ * 5 = Добавьте фото
+ * 6 = С кем хотите познакомиться
+ * 7 = Поздравляем! (после полного заполнения)
  */
 type PosterStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-const ONBOARDING_TOTAL_STEPS = 4; // шаги 4-7
+const ONBOARDING_TOTAL_STEPS = 4; // шаги 3–6
+
+// ---- MinIO URL builder ----
+const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
+const MINIO_BUCKET = 'profile';
+
+function profileImageUrl(storageKey: string): string {
+  const path = `${MINIO_BUCKET}/${storageKey}`
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/');
+  return `${MINIO_PUBLIC_BASE.replace(/\/$/, '')}/${path}`;
+}
 
 export const PosterPage = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<PosterStep>(0);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [tags, setTags] = useState<string[]>(['Imagine Dragons', 'Спорт', 'Сериалы']);
   const [tagInput, setTagInput] = useState('');
   const [showTagInput, setShowTagInput] = useState(false);
@@ -85,31 +98,55 @@ export const PosterPage = () => {
         password: data.password,
       });
       setTokens(res.access_token, res.refresh_token);
-      navigate('/profile');
+      navigate('/discover');
     } catch (e: any) {
       setError(e.response?.data?.detail || 'Ошибка входа. Проверьте данные.');
     }
   }, [loginMutation, navigate, setTokens]);
 
-  const handleRegister = useCallback(async (data: RegisterFormData) => {
+  /**
+   * handleRegister — НЕ вызывает API.
+   * Только валидирует email/пароль и переходит к заполнению профиля.
+   * Реальный POST /auth/register будет на шаге 7.
+   */
+  const handleRegister = useCallback((_data: RegisterFormData) => {
     setError(null);
-    try {
-      const res = await registerMutation.mutateAsync({
-        email: data.email,
-        password: data.password,
-      });
-      setTokens(res.access_token, res.refresh_token);
-      setStep(3); // Поздравляем!
-    } catch (e: any) {
-      setError(e.response?.data?.detail || 'Ошибка регистрации.');
-    }
-  }, [registerMutation, setTokens]);
+    // Данные сохранены в форме registerForm — отправим на шаге 7
+    setStep(3);
+  }, []);
 
-  const handleCreateProfile = useCallback(async (data: LookingForFormData) => {
+  /**
+   * handleFinishLookingFor — вызывается на шаге 6 ("Завершить").
+   * НЕ вызывает API — только валидирует и переходит на шаг 7.
+   */
+  const handleFinishLookingFor = useCallback((_data: LookingForFormData) => {
     setError(null);
+    setStep(7);
+  }, []);
+
+  /**
+   * handleFinalSubmit — вызывается на шаге 7 ("Продолжить").
+   * Отправляет ВСЕ данные в БД в правильном порядке:
+   * 1. POST /auth/register — получаем токены
+   * 2. POST /profiles/images — загружаем аватарку, получаем image id
+   * 3. POST /profiles — создаём профиль с avatar_image_id
+   */
+  const handleFinalSubmit = useCallback(async () => {
+    setError(null);
+    setIsSubmitting(true);
+    const regData = registerForm.getValues();
     const about = aboutForm.getValues();
+    const lookingFor = lookingForForm.getValues();
+
     try {
-      // Загружаем фото, если есть
+      // 1) Регистрация — POST /auth/register
+      const authRes = await registerMutation.mutateAsync({
+        email: regData.email,
+        password: regData.password,
+      });
+      setTokens(authRes.access_token, authRes.refresh_token);
+
+      // 2) Загружаем аватарку — POST /profiles/images
       let avatarImageId: number | undefined;
       if (selectedFiles.length > 0) {
         const formData = new FormData();
@@ -120,30 +157,32 @@ export const PosterPage = () => {
         }
       }
 
-      // Добавляем теги
-      if (tags.length > 0) {
-        await attachTagsMutation.mutateAsync({ tags });
-      }
-
-      // Создаём профиль
+      // 3) Создаём профиль — POST /profiles (с id аватарки)
       await createProfileMutation.mutateAsync({
         username: about.username,
         bio: about.bio,
-        birthday: Math.floor(Date.now() / 1000) - 25 * 365.25 * 24 * 3600, // default ~25 лет
-        gender: 'MALE', // TODO: добавить выбор пола
-        relationship_type: data.relationship_type,
+        birthday: Math.floor(Date.now() / 1000) - 25 * 365.25 * 24 * 3600,
+        gender: 'MALE',
+        relationship_type: lookingFor.relationship_type,
         city: about.city,
-        search_for: data.search_for || '',
+        search_for: lookingFor.search_for || '',
         avatar_image_id: avatarImageId,
         tags,
       });
 
+      // 4) Прикрепляем теги
+      if (tags.length > 0) {
+        await attachTagsMutation.mutateAsync({ tags });
+      }
+
       setHasProfile(true);
-      navigate('/profile');
+      navigate('/discover');
     } catch (e: any) {
-      setError(e.response?.data?.error || 'Ошибка создания профиля.');
+      setError(e.response?.data?.error || e.response?.data?.detail || 'Ошибка создания профиля.');
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [aboutForm, tags, selectedFiles, createProfileMutation, attachTagsMutation, uploadImagesMutation, setHasProfile, navigate]);
+  }, [registerForm, aboutForm, lookingForForm, tags, selectedFiles, registerMutation, createProfileMutation, attachTagsMutation, uploadImagesMutation, setTokens, setHasProfile, navigate]);
 
   const handleAddTag = useCallback(() => {
     const val = tagInput.trim();
@@ -163,7 +202,7 @@ export const PosterPage = () => {
     }
   }, []);
 
-  const currentOnboardingStep = step >= 4 ? step - 4 : 0;
+  const currentOnboardingStep = step >= 3 && step <= 6 ? step - 3 : 0;
 
   // ---- Render ----
   return (
@@ -271,6 +310,7 @@ export const PosterPage = () => {
                     placeholder="Введите пароль"
                     {...registerForm.register('password')}
                   />
+                  <p className="error">Пароль должен содержать не менее 8 символов</p>
                   {registerForm.formState.errors.password && (
                     <p className="error">{registerForm.formState.errors.password.message}</p>
                   )}
@@ -294,9 +334,8 @@ export const PosterPage = () => {
                 <button
                   type="submit"
                   className="poster-button"
-                  disabled={registerMutation.isPending}
                 >
-                  {registerMutation.isPending ? 'Регистрируем...' : 'Зарегистрироваться'}
+                  Зарегистрироваться
                 </button>
                 <p className="poster-button-text">
                   Уже есть аккаунт?{' '}
@@ -309,25 +348,8 @@ export const PosterPage = () => {
           </div>
         )}
 
-        {/* Step 3: Success */}
+        {/* Step 3: About Yourself */}
         {step === 3 && (
-          <div className="poster-success animate-scale-in" style={{ display: 'flex' }}>
-            <Logo />
-            <div className="action-name">
-              <div className="message-area">
-                <h1 className="action-text">Поздравляем!</h1>
-                <p>Вы успешно зарегистрировались!</p>
-              </div>
-              <p>Давайте перейдём к вашему первому знакомству!</p>
-              <button type="button" className="poster-button" onClick={() => setStep(4)}>
-                Продолжить
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: About Yourself */}
-        {step === 4 && (
           <div className="poster-yourself animate-slide-up" style={{ display: 'flex' }}>
             <ProgressIndicator currentStep={currentOnboardingStep} totalSteps={ONBOARDING_TOTAL_STEPS} />
             <div className="action-name">
@@ -336,7 +358,7 @@ export const PosterPage = () => {
               </div>
               <form
                 className="form"
-                onSubmit={aboutForm.handleSubmit(() => setStep(5))}
+                onSubmit={aboutForm.handleSubmit(() => setStep(4))}
               >
                 <div className="data-area">
                   <div className="input-area">
@@ -384,15 +406,15 @@ export const PosterPage = () => {
           </div>
         )}
 
-        {/* Step 5: Tags */}
-        {step === 5 && (
+        {/* Step 4: Tags */}
+        {step === 4 && (
           <div className="poster-tags animate-slide-up" style={{ display: 'flex' }}>
             <ProgressIndicator currentStep={currentOnboardingStep} totalSteps={ONBOARDING_TOTAL_STEPS} />
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">Добавьте ваши интересы</h1>
               </div>
-              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(6); }}>
+              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(5); }}>
                 <div className="data-area-tags">
                   <div className="tags-container">
                     <div className="add-tags">
@@ -437,20 +459,20 @@ export const PosterPage = () => {
           </div>
         )}
 
-        {/* Step 6: Photo Upload */}
-        {step === 6 && (
+        {/* Step 5: Photo Upload */}
+        {step === 5 && (
           <div className="poster-photo-add animate-slide-up" style={{ display: 'flex' }}>
             <ProgressIndicator currentStep={currentOnboardingStep} totalSteps={ONBOARDING_TOTAL_STEPS} />
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">Добавьте ваше фото</h1>
               </div>
-              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(7); }}>
+              <form className="form" onSubmit={(e) => { e.preventDefault(); setStep(6); }}>
                 <div className="photo-add-conatiner">
                   <label className="photo-background" style={{ cursor: 'pointer' }}>
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/webp"
                       style={{ display: 'none' }}
                       onChange={handleFileSelect}
                     />
@@ -483,23 +505,24 @@ export const PosterPage = () => {
           </div>
         )}
 
-        {/* Step 7: Looking For */}
-        {step === 7 && (
+        {/* Step 6: Looking For — только валидация, без API */}
+        {step === 6 && (
           <div className="poster-looking-for animate-slide-up" style={{ display: 'flex' }}>
             <ProgressIndicator currentStep={currentOnboardingStep} totalSteps={ONBOARDING_TOTAL_STEPS} />
             <div className="action-name">
               <div className="message-area">
                 <h1 className="action-text">С кем вы хотите познакомиться?</h1>
               </div>
-              <form className="form" onSubmit={lookingForForm.handleSubmit(handleCreateProfile)}>
+              <form className="form" onSubmit={lookingForForm.handleSubmit(handleFinishLookingFor)}>
                 <div className="data-area">
                   <div className="input-area">
                     <label>Вы ищите</label>
                     <CustomDropdown
                       options={[
                         { value: '', label: 'Выберите' },
-                        { value: 'SEARCH_FOR_RELATIONSHIP', label: 'Партнёра' },
-                        { value: 'SEARCH_FOR_FRIENDSHIP', label: 'Друга' },
+                        { value: 'RELATIONSHIP', label: 'Партнёра' },
+                        { value: 'FRIENDSHIP', label: 'Друга' },
+                        { value: 'NETWORKING', label: 'Нетворкинг' },
                       ]}
                       value={lookingForForm.watch('relationship_type')}
                       onChange={(val) => lookingForForm.setValue('relationship_type', val, { shouldValidate: true })}
@@ -517,17 +540,33 @@ export const PosterPage = () => {
                     />
                   </div>
                 </div>
-                {error && <p className="error" style={{ textAlign: 'center', width: '100%' }}>{error}</p>}
                 <div className="poster-buttons second">
-                  <button
-                    type="submit"
-                    className="poster-button"
-                    disabled={createProfileMutation.isPending}
-                  >
-                    {createProfileMutation.isPending ? 'Создаём...' : 'Завершить'}
-                  </button>
+                  <button type="submit" className="poster-button">Завершить</button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Step 7: Поздравляем — кнопка «Продолжить» отправляет ВСЕ данные */}
+        {step === 7 && (
+          <div className="poster-success animate-scale-in" style={{ display: 'flex' }}>
+            <Logo />
+            <div className="action-name">
+              <div className="message-area">
+                <h1 className="action-text">Поздравляем!</h1>
+                <p>Вы успешно зарегистрировались!</p>
+              </div>
+              <p>Давайте перейдём к вашему первому знакомству!</p>
+              {error && <p className="error" style={{ textAlign: 'center', width: '100%' }}>{error}</p>}
+              <button
+                type="button"
+                className="poster-button"
+                disabled={isSubmitting}
+                onClick={handleFinalSubmit}
+              >
+                {isSubmitting ? 'Отправляем...' : 'Продолжить'}
+              </button>
             </div>
           </div>
         )}
@@ -553,10 +592,22 @@ const CustomDropdown = ({
   onChange: (val: string) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const selectedLabel = options.find((o) => o.value === value)?.label || 'Выберите';
 
+  // Закрываем при клике вне dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   return (
-    <div className="custom-dropdown" style={{ position: 'relative' }}>
+    <div className="custom-dropdown" ref={dropdownRef} style={{ position: 'relative' }}>
       <div
         className="custom-dropdown-selected"
         onClick={() => setIsOpen(!isOpen)}

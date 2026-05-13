@@ -93,7 +93,7 @@ services:
     restart: always
 
   db-auth:
-    image: postgres:latest
+    image: postgres:16
     container_name: db-auth
     environment:
       POSTGRES_USER: postgres
@@ -123,7 +123,7 @@ services:
     restart: always
 
   db-profiles:
-    image: postgres:latest
+    image: postgres:16
     container_name: db-profiles
     environment:
       POSTGRES_USER: postgres
@@ -232,7 +232,7 @@ services:
     restart: always
 
   db-swipes:
-    image: postgres:latest
+    image: postgres:16
     container_name: db-swipes
     environment:
       POSTGRES_USER: postgres
@@ -265,7 +265,7 @@ services:
     restart: always
 
   db-chats:
-    image: postgres:latest
+    image: postgres:16
     container_name: db-chats
     environment:
       POSTGRES_USER: postgres
@@ -296,7 +296,7 @@ services:
     restart: always
 
   db-notifications:
-    image: postgres:latest
+    image: postgres:16
     container_name: db-notifications
     environment:
       POSTGRES_USER: postgres

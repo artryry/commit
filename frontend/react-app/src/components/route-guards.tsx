@@ -17,15 +17,21 @@ export const ProtectedRoute = () => {
 };
 
 /**
- * PublicRoute — оборачивает маршруты, доступные только неавторизованным.
- * Если пользователь уже авторизован, перенаправляет на /profile.
+ * PublicRoute — оборачивает маршруты, доступные только неавторизованным
+ * ИЛИ авторизованным без профиля (онбординг).
+ *
+ * Редирект на /discover происходит ТОЛЬКО когда пользователь
+ * авторизован И профиль уже заполнен (hasProfile === true).
  */
 export const PublicRoute = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const hasProfile = useAuthStore((s) => s.hasProfile);
 
-  if (isAuthenticated) {
-    return <Navigate to="/profile" replace />;
+  // Авторизован + профиль заполнен → уходим на main
+  if (isAuthenticated && hasProfile) {
+    return <Navigate to="/discover" replace />;
   }
 
+  // Либо не авторизован, либо авторизован но без профиля (онбординг) → остаёмся
   return <Outlet />;
 };

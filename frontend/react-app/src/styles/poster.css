@@ -1,5 +1,47 @@
-/* poster.css — styles specific to the Poster/Auth/Onboarding flow */
-/* Global vars, reset, and body are defined in global.css */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    /* Colors */
+    --main-color: #BB8DFF;
+    --accent-color: #FFF282;
+    --supper-accent-color: #FF5777;
+    --dark-color: #3C344B;
+    --light-color: #F8F4FF;
+
+    /* Typography */
+    --fs-80: clamp(2.5rem, 6.25vw, 3rem);
+    --fs-40: clamp(1.25rem, 2.5vw, 2rem);
+    --fs-24: clamp(1rem, 1.875vw, 1.5rem);
+    --fs-32: clamp(1.25rem, 2.5vw, 2rem);
+    --lh-140: 1.4;
+    --fs-24: clamp(1rem, 1.875vw, 1.5rem);
+    --lh-110: 1.1;
+    --fs-20: clamp(0.875rem, 1.5625vw, 1.25rem);
+    --fs-18: clamp(0.8125rem, 1.40625vw, 1.125rem);
+    --fs-12: clamp(0.625rem, 0.9375vw, 0.75rem);
+
+    --shadow: 10px 20px 18px -7px rgba(0, 0, 0, 0.35);
+}
+
+*,
+::before,
+::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: 'Montserrat Alternates', sans-serif;
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-color: var(--main-color);
+    z-index: 0;
+    padding: 10px;
+}
 
 main {
     position: relative;
