@@ -1,7 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth-store';
-import { useLogout, useGetMyProfile } from '@/api/hooks';
+import { useNotificationStore } from '@/stores/notification-store';
+import { useLogout, useGetMyProfile, useGetFilters, useSetFilters } from '@/api/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import type { RecommendationFilters } from '@/api/hooks';
 
 const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
 function profileImageUrl(storageKey: string): string {
@@ -16,7 +19,56 @@ export const SiteHeader = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const { items: notifications, unreadCount, markAllRead } = useNotificationStore();
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  // Filters
+  const { data: savedFilters } = useGetFilters();
+  const setFiltersMutation = useSetFilters();
+  const [filterAgeFrom, setFilterAgeFrom] = useState(18);
+  const [filterAgeTo, setFilterAgeTo] = useState(99);
+  const [filterRelType, setFilterRelType] = useState('');
+  const [filterGender, setFilterGender] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+  const [filterSign, setFilterSign] = useState('');
+  const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterTagInput, setFilterTagInput] = useState('');
+  const [showFilterTagInput, setShowFilterTagInput] = useState(false);
+
+  // Load saved filters into local state
+  useEffect(() => {
+    if (savedFilters) {
+      setFilterAgeFrom(savedFilters.ageFrom ? Number(savedFilters.ageFrom) : 18);
+      setFilterAgeTo(savedFilters.ageTo ? Number(savedFilters.ageTo) : 99);
+      setFilterRelType(savedFilters.relationshipType || '');
+      setFilterGender(savedFilters.partnerGender || '');
+      setFilterCity(savedFilters.city || '');
+      setFilterSign(savedFilters.sign || '');
+      setFilterTags(savedFilters.tags || []);
+    }
+  }, [savedFilters]);
+
+  const handleSaveFilters = useCallback(async () => {
+    const body: RecommendationFilters = {
+      ageFrom: String(filterAgeFrom),
+      ageTo: String(filterAgeTo),
+      relationshipType: filterRelType || undefined,
+      partnerGender: filterGender || undefined,
+      city: filterCity || undefined,
+      sign: filterSign || undefined,
+      tags: filterTags.length > 0 ? filterTags : undefined,
+    };
+    try {
+      await setFiltersMutation.mutateAsync(body);
+      queryClient.invalidateQueries({ queryKey: ['recommendations'] });
+      setShowFilters(false);
+    } catch { /* ignore */ }
+  }, [filterAgeFrom, filterAgeTo, filterRelType, filterGender, filterCity, filterSign, filterTags, setFiltersMutation, queryClient]);
+
+  // Compute age slider percentage for background gradient
+  const ageFromPct = ((filterAgeFrom - 18) / (99 - 18)) * 100;
+  const ageToPct = ((filterAgeTo - 18) / (99 - 18)) * 100;
 
   const { refreshToken, logout: storeLogout } = useAuthStore();
   const logoutMutation = useLogout();
@@ -59,13 +111,12 @@ export const SiteHeader = () => {
           </a>
           <nav className="header-nav">
             {/* Уведомления */}
-            <button className={`nav-icon-btn ${showNotifications ? 'nav-icon-btn--pink' : 'nav-icon-btn--yellow'}`} aria-label="Уведомления" onClick={() => { setShowNotifications(!showNotifications); setShowFilters(false); }}>
-              <span className="nav-notification-dot">2</span>
+            <button className={`nav-icon-btn ${showNotifications ? 'nav-icon-btn--pink' : 'nav-icon-btn--yellow'}`} aria-label="Уведомления" onClick={() => { const next = !showNotifications; setShowNotifications(next); setShowFilters(false); if (next) markAllRead(); }}>
+              {unreadCount > 0 && <span className="nav-notification-dot">{unreadCount > 9 ? '9+' : unreadCount}</span>}
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M24.9998 28.3333H33.3332L30.9916 25.9918C30.3566 25.3568 29.9998 24.4955 29.9998 23.5974V18.3333C29.9998 13.9793 27.2171 10.2751 23.3332 8.90236V8.33333C23.3332 6.49238 21.8408 5 19.9998 5C18.1589 5 16.6665 6.49238 16.6665 8.33333V8.90236C12.7825 10.2751 9.99984 13.9793 9.99984 18.3333V23.5974C9.99984 24.4955 9.64308 25.3568 9.00806 25.9918L6.6665 28.3333H14.9998M24.9998 28.3333V30C24.9998 32.7614 22.7613 35 19.9998 35C17.2384 35 14.9998 32.7614 14.9998 30V28.3333M24.9998 28.3333H14.9998" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
             {/* Сообщения */}
             <button className={`nav-icon-btn ${isActive('/messages') ? 'nav-icon-btn--pink active' : 'nav-icon-btn--yellow'}`} aria-label="Сообщения" onClick={() => navigate('/messages')}>
-              <span className="nav-notification-dot">3</span>
               <div className="open-button">
                 <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M30 15.2222C30.0053 17.2754 29.5256 19.3007 28.6 21.1333C27.5024 23.3294 25.8151 25.1765 23.7271 26.4678C21.6391 27.7591 19.2328 28.4435 16.7778 28.4444C14.7246 28.4498 12.6993 27.9701 10.8667 27.0444L2 30L4.95555 21.1333C4.02989 19.3007 3.5502 17.2754 3.55555 15.2222C3.5565 12.7672 4.24095 10.3609 5.53222 8.27289C6.8235 6.18487 8.67061 4.49759 10.8667 3.40004C12.6993 2.47438 14.7246 1.99469 16.7778 2.00004H17.5555C20.7978 2.17892 23.8603 3.54745 26.1564 5.8436C28.4526 8.13974 29.8211 11.2022 30 14.4445V15.2222Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 <span className="nav-btn-text">Сообщения</span>
@@ -93,8 +144,8 @@ export const SiteHeader = () => {
         </div>
         <div className="header-right">
           <div className="header-user">
-            <button className={`nav-icon-btn ${showNotifications ? 'nav-icon-btn--pink' : 'nav-icon-btn--yellow'}`} aria-label="Уведомления" onClick={() => { setShowNotifications(!showNotifications); setShowFilters(false); }}>
-              <span className="nav-notification-dot">2</span>
+            <button className={`nav-icon-btn ${showNotifications ? 'nav-icon-btn--pink' : 'nav-icon-btn--yellow'}`} aria-label="Уведомления" onClick={() => { const next = !showNotifications; setShowNotifications(next); setShowFilters(false); if (next) markAllRead(); }}>
+              {unreadCount > 0 && <span className="nav-notification-dot">{unreadCount > 9 ? '9+' : unreadCount}</span>}
               <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M24.9998 28.3333H33.3332L30.9916 25.9918C30.3566 25.3568 29.9998 24.4955 29.9998 23.5974V18.3333C29.9998 13.9793 27.2171 10.2751 23.3332 8.90236V8.33333C23.3332 6.49238 21.8408 5 19.9998 5C18.1589 5 16.6665 6.49238 16.6665 8.33333V8.90236C12.7825 10.2751 9.99984 13.9793 9.99984 18.3333V23.5974C9.99984 24.4955 9.64308 25.3568 9.00806 25.9918L6.6665 28.3333H14.9998M24.9998 28.3333V30C24.9998 32.7614 22.7613 35 19.9998 35C17.2384 35 14.9998 32.7614 14.9998 30V28.3333M24.9998 28.3333H14.9998" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
             <div className="header-profile-menu-container" ref={profileMenuRef} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 'inherit', cursor: 'pointer' }} onClick={() => setShowProfileMenu(!showProfileMenu)}>
@@ -122,36 +173,131 @@ export const SiteHeader = () => {
         <div className="notification-menu" onClick={() => setShowNotifications(false)}>
           <h2 className="notification-header">Уведомления</h2>
           <div className="notification-list">
-            <div className="chat-profile-line">
-              <div className="chat-profile-avatar"><img src="/assets/photos/man_portret (2).png" alt="" /></div>
-              <div className="chat-profile-info">
-                <div className="chat-profile-name"><span className="chat-profile-name-text">Иван Иванов</span><span className="chat-profile-date">Фев 28, 2026</span></div>
-                <div className="chat-profile-last-message">Оценил ваш профиль!</div>
+            {notifications.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '24px 12px', opacity: 0.5 }}>
+                <p style={{ fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>Нет уведомлений</p>
               </div>
-            </div>
+            ) : (
+              notifications.map((n) => (
+                <div className="chat-profile-line" key={n.id}>
+                  <div className="chat-profile-avatar">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style={{ padding: '6px' }}>
+                      {n.type === 'chat.message' && <path d="M30 15.22C30.01 17.28 29.53 19.3 28.6 21.13C27.5 23.33 25.82 25.18 23.73 26.47C21.64 27.76 19.23 28.44 16.78 28.44C14.72 28.45 12.7 27.97 10.87 27.04L2 30L4.96 21.13C4.03 19.3 3.55 17.28 3.56 15.22C3.56 12.77 4.24 10.36 5.53 8.27C6.82 6.18 8.67 4.5 10.87 3.4C12.7 2.47 14.72 1.99 16.78 2H17.56C20.8 2.18 23.86 3.55 26.16 5.84C28.45 8.14 29.82 11.2 30 14.44V15.22Z" stroke="var(--main-color)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
+                      {n.type === 'match.created' && <path d="M3.25 5.84C0.34 8.64 0.34 13.19 3.25 16L16 28.27L28.75 16C31.66 13.19 31.66 8.64 28.75 5.84C25.83 3.03 21.1 3.03 18.19 5.84L16 7.94L13.81 5.84C10.9 3.03 6.17 3.03 3.25 5.84Z" stroke="var(--supper-accent-color)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" transform="translate(4,6) scale(0.85)" />}
+                      {n.type === 'swipe.created' && <path d="M20 6L22.47 13.53L30 16L22.47 18.47L20 26L17.53 18.47L10 16L17.53 13.53L20 6Z" stroke="var(--accent-color)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="var(--accent-color)" fillOpacity="0.2" />}
+                      {!['chat.message','match.created','swipe.created'].includes(n.type) && <circle cx="20" cy="20" r="12" stroke="var(--dark-color)" strokeWidth="2" />}
+                    </svg>
+                  </div>
+                  <div className="chat-profile-info">
+                    <div className="chat-profile-name">
+                      <span className="chat-profile-name-text">{n.type === 'chat.message' ? 'Сообщение' : n.type === 'match.created' ? 'Коммит' : n.type === 'swipe.created' ? 'Лайк' : 'Уведомление'}</span>
+                      <span className="chat-profile-date">{new Date(n.createdAt).toLocaleDateString('ru-RU', { month: 'short', day: 'numeric' })}</span>
+                    </div>
+                    <div className="chat-profile-last-message">{n.message}</div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
 
       {/* Filter Menu */}
       {showFilters && (
-        <div className="filter-menu">
+        <div className="filter-menu" onClick={(e) => e.stopPropagation()}>
+          <h2 className="notification-header">Фильтры</h2>
           <div className="filters">
+            {/* Возраст от */}
             <div className="filter-item">
-              <div className="filter-item-top"><label>Возраст</label><span className="age-value">40</span></div>
-              <div className="filter-item-bottom"><input type="range" className="custom-range" defaultValue={40} min={18} max={99} /></div>
+              <div className="filter-item-top"><label>Возраст от</label></div>
+              <div className="filter-item-bottom" style={{ position: 'relative', paddingTop: '24px' }}>
+                <span className="age-value" style={{ position: 'absolute', top: 0, left: `${ageFromPct}%`, transform: 'translateX(-50%)', fontWeight: 600, fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>{filterAgeFrom}</span>
+                <input type="range" className="custom-range" value={filterAgeFrom} min={18} max={99} style={{ background: `linear-gradient(to right, var(--accent-color) ${ageFromPct}%, #F2EED9 ${ageFromPct}%)` }} onChange={(e) => { const v = Number(e.target.value); setFilterAgeFrom(v > filterAgeTo ? filterAgeTo : v); }} />
+              </div>
             </div>
+            {/* Возраст до */}
             <div className="filter-item">
-              <div className="filter-item-top"><label>Партнер</label></div>
+              <div className="filter-item-top"><label>Возраст до</label></div>
+              <div className="filter-item-bottom" style={{ position: 'relative', paddingTop: '24px' }}>
+                <span className="age-value" style={{ position: 'absolute', top: 0, left: `${ageToPct}%`, transform: 'translateX(-50%)', fontWeight: 600, fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>{filterAgeTo}</span>
+                <input type="range" className="custom-range" value={filterAgeTo} min={18} max={99} style={{ background: `linear-gradient(to right, var(--accent-color) ${ageToPct}%, #F2EED9 ${ageToPct}%)` }} onChange={(e) => { const v = Number(e.target.value); setFilterAgeTo(v < filterAgeFrom ? filterAgeFrom : v); }} />
+              </div>
+            </div>
+            {/* Тип отношений */}
+            <div className="filter-item">
+              <div className="filter-item-top"><label>Ищу</label></div>
               <div className="filter-item-bottom">
-                <select style={{ width: '100%', padding: '10px 16px', borderRadius: '12px', border: 'none', fontFamily: 'inherit', fontSize: 'var(--fs-24)' }}>
-                  <option value="">Выберите</option>
+                <select className="filter-select" value={filterRelType} onChange={(e) => setFilterRelType(e.target.value)}>
+                  <option value="">Любой</option>
                   <option value="RELATIONSHIP">Партнёра</option>
                   <option value="FRIENDSHIP">Друга</option>
-                  <option value="NETWORKING">Нетворкинг</option>
+                  <option value="UNSPECIFIED">Неопределено</option>
                 </select>
               </div>
             </div>
+            {/* Пол */}
+            <div className="filter-item">
+              <div className="filter-item-top"><label>Пол</label></div>
+              <div className="filter-item-bottom">
+                <select className="filter-select" value={filterGender} onChange={(e) => setFilterGender(e.target.value)}>
+                  <option value="">Любой</option>
+                  <option value="MALE">Мужской</option>
+                  <option value="FEMALE">Женский</option>
+                </select>
+              </div>
+            </div>
+            {/* Город */}
+            <div className="filter-item">
+              <div className="filter-item-top"><label>Город</label></div>
+              <div className="filter-item-bottom">
+                <input type="text" className="filter-select" placeholder="Например: Москва" value={filterCity} onChange={(e) => setFilterCity(e.target.value)} />
+              </div>
+            </div>
+            {/* Знак зодиака */}
+            <div className="filter-item">
+              <div className="filter-item-top"><label>Знак зодиака</label></div>
+              <div className="filter-item-bottom">
+                <select className="filter-select" value={filterSign} onChange={(e) => setFilterSign(e.target.value)}>
+                  <option value="">Любой</option>
+                  <option value="ARIES">Овен</option>
+                  <option value="TAURUS">Телец</option>
+                  <option value="GEMINI">Близнецы</option>
+                  <option value="CANCER">Рак</option>
+                  <option value="LEO">Лев</option>
+                  <option value="VIRGO">Дева</option>
+                  <option value="LIBRA">Весы</option>
+                  <option value="SCORPIO">Скорпион</option>
+                  <option value="SAGITTARIUS">Стрелец</option>
+                  <option value="CAPRICORN">Козерог</option>
+                  <option value="AQUARIUS">Водолей</option>
+                  <option value="PISCES">Рыбы</option>
+                </select>
+              </div>
+            </div>
+            {/* Теги */}
+            <div className="filter-item">
+              <div className="filter-item-top"><label>Теги</label></div>
+              <div className="filter-item-bottom">
+                <div className="interests-container">
+                  {filterTags.map((tag, i) => (
+                    <span className="interest-tag" key={i} onClick={() => setFilterTags((prev) => prev.filter((_, idx) => idx !== i))} style={{ cursor: 'pointer' }} title="Нажмите чтобы удалить">#{tag}</span>
+                  ))}
+                  {showFilterTagInput ? (
+                    <span className="interest-tag" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      #<input type="text" value={filterTagInput} onChange={(e) => setFilterTagInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); const v = filterTagInput.trim(); if (v && !filterTags.includes(v)) setFilterTags((p) => [...p, v]); setFilterTagInput(''); setShowFilterTagInput(false); } if (e.key === 'Escape') setShowFilterTagInput(false); }} onBlur={() => { const v = filterTagInput.trim(); if (v && !filterTags.includes(v)) setFilterTags((p) => [...p, v]); setFilterTagInput(''); setShowFilterTagInput(false); }} autoFocus style={{ border: 'none', background: 'transparent', fontFamily: 'inherit', fontSize: 'inherit', outline: 'none', width: '80px' }} />
+                    </span>
+                  ) : (
+                    <button className="interest-add-btn" aria-label="Добавить тег" onClick={() => setShowFilterTagInput(true)}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1V8M8 8V15M8 8H15M8 8H1" stroke="#FF5777" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/* Кнопка сохранения */}
+            <button className="poster-button" onClick={handleSaveFilters} style={{ marginTop: '8px' }}>
+              {setFiltersMutation.isPending ? 'Сохранение...' : 'Применить'}
+            </button>
           </div>
         </div>
       )}
@@ -161,7 +307,6 @@ export const SiteHeader = () => {
         <div className="btm-btn-container">
           <div className="btn-list">
             <button className={`nav-icon-btn ${isActive('/messages') ? 'nav-icon-btn--pink active' : 'nav-icon-btn--yellow'}`} onClick={() => navigate('/messages')}>
-              <span className="nav-notification-dot">3</span>
               <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M30 15.2222C30.0053 17.2754 29.5256 19.3007 28.6 21.1333C27.5024 23.3294 25.8151 25.1765 23.7271 26.4678C21.6391 27.7591 19.2328 28.4435 16.7778 28.4444C14.7246 28.4498 12.6993 27.9701 10.8667 27.0444L2 30L4.95555 21.1333C4.02989 19.3007 3.5502 17.2754 3.55555 15.2222C3.5565 12.7672 4.24095 10.3609 5.53222 8.27289C6.8235 6.18487 8.67061 4.49759 10.8667 3.40004C12.6993 2.47438 14.7246 1.99469 16.7778 2.00004H17.5555C20.7978 2.17892 23.8603 3.54745 26.1564 5.8436C28.4526 8.13974 29.8211 11.2022 30 14.4445V15.2222Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </button>
             <button className={`nav-icon-btn ${isActive('/commits') ? 'nav-icon-btn--pink active' : 'nav-icon-btn--yellow'}`} onClick={() => navigate('/commits')}>

@@ -1,27 +1,91 @@
-import { useState, useRef, useCallback } from 'react';
-import { useGetMatches } from '@/api/hooks';
+import { useState, useMemo, useCallback } from 'react';
+import { useGetIncomingLikes, useSwipeAction } from '@/api/hooks';
 import { useNavigate } from 'react-router-dom';
-import type { ShortProfileSnake } from '@/api/hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import type { ShortProfileProtoJson } from '@/api/hooks';
+import { ZodiacIcon } from '@/components/zodiac-icon';
 
 const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
 function profileImageUrl(storageKey: string): string {
+  if (!storageKey) return '';
+  if (storageKey.startsWith('http')) return storageKey;
   const path = `profile/${storageKey}`.split('/').map(encodeURIComponent).join('/');
   return `${MINIO_PUBLIC_BASE.replace(/\/$/, '')}/${path}`;
 }
 
+const DISMISSED_KEY = 'commits_dismissed_ids';
+
+function getDismissedIds(): Set<number> {
+  try {
+    const raw = localStorage.getItem(DISMISSED_KEY);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw) as number[]);
+  } catch {
+    return new Set();
+  }
+}
+
+function addDismissedId(userId: number): void {
+  const ids = getDismissedIds();
+  ids.add(userId);
+  localStorage.setItem(DISMISSED_KEY, JSON.stringify([...ids]));
+}
+
 export const CommitsPage = () => {
-  const { data, isLoading } = useGetMatches();
+  const { data, isLoading } = useGetIncomingLikes();
+  const swipeMutation = useSwipeAction();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [dismissedLocal, setDismissedLocal] = useState<Set<number>>(getDismissedIds);
 
-  const profiles = data?.profiles_data || [];
-  const currentProfile = profiles[currentIndex] as ShortProfileSnake | undefined;
+  // Filter out already-dismissed profiles so they never reappear
+  const profiles = useMemo(() => {
+    const all = data?.profilesData || [];
+    return all.filter((p) => !dismissedLocal.has(Number(p.userId)));
+  }, [data, dismissedLocal]);
 
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => prev + 1);
+  const currentProfile = profiles[currentIndex] as ShortProfileProtoJson | undefined;
+
+  const dismissProfile = useCallback((userId: number) => {
+    addDismissedId(userId);
+    setDismissedLocal((prev) => new Set(prev).add(userId));
     setCurrentPhotoIndex(0);
-  }, []);
+    // Invalidate incoming likes cache so next fetch is fresh
+    queryClient.invalidateQueries({ queryKey: ['swipes', 'incoming'] });
+  }, [queryClient]);
+
+  // Like — accept (swipe like back), dismiss from list, go to messages
+  const handleLike = useCallback(async () => {
+    if (!currentProfile) return;
+    const uid = Number(currentProfile.userId);
+    dismissProfile(uid);
+    try {
+      await swipeMutation.mutateAsync({
+        target_user_id: uid,
+        liked: true,
+      });
+    } catch {
+      // ignore
+    }
+    navigate('/messages');
+  }, [currentProfile, dismissProfile, swipeMutation, navigate]);
+
+  // Dislike — dismiss from list, notify backend
+  const handleDislike = useCallback(async () => {
+    if (!currentProfile) return;
+    const uid = Number(currentProfile.userId);
+    dismissProfile(uid);
+    try {
+      await swipeMutation.mutateAsync({
+        target_user_id: uid,
+        liked: false,
+      });
+    } catch {
+      // Ignore swipe errors — profile is already dismissed locally
+    }
+  }, [currentProfile, dismissProfile, swipeMutation]);
 
   const scrollPhotos = (direction: 'left' | 'right') => {
     if (!currentProfile?.images) return;
@@ -49,7 +113,7 @@ export const CommitsPage = () => {
             <path d="M3.25383 5.83802C0.337916 8.64418 0.337916 13.1939 3.25383 16L16.0003 28.2667L28.7466 16C31.6625 13.1939 31.6625 8.64418 28.7466 5.83802C25.8307 3.03186 21.1031 3.03186 18.1872 5.83802L16.0003 7.94272L13.8133 5.83802C10.8974 3.03186 6.16975 3.03186 3.25383 5.83802Z" stroke="var(--supper-accent-color)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <h2 style={{ fontSize: 'var(--fs-32)', marginBottom: '12px' }}>Пока нет коммитов</h2>
-          <p style={{ fontSize: 'var(--fs-18)', opacity: 0.6, marginBottom: '24px' }}>Продолжайте знакомиться — взаимные лайки появятся здесь!</p>
+          <p style={{ fontSize: 'var(--fs-18)', opacity: 0.6, marginBottom: '24px' }}>Продолжайте знакомиться — лайки появятся здесь!</p>
           <button className="poster-button" onClick={() => navigate('/discover')}>Начать знакомства</button>
         </div>
       </section>
@@ -89,13 +153,13 @@ export const CommitsPage = () => {
         </div>
         {/* Action buttons */}
         <div className="buttons-container">
-          <div className="button-like" onClick={() => navigate('/messages')} style={{ cursor: 'pointer' }}>
+          <div className="button-like" onClick={handleLike} style={{ cursor: 'pointer' }}>
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="22" stroke="#4CAF50" strokeWidth="3" />
               <path d="M14 24L22 32L34 16" stroke="#4CAF50" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <div className="button-dislike" onClick={handleNext} style={{ cursor: 'pointer' }}>
+          <div className="button-dislike" onClick={handleDislike} style={{ cursor: 'pointer' }}>
             <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="22" stroke="#FF5777" strokeWidth="3" />
               <path d="M16 16L32 32M32 16L16 32" stroke="#FF5777" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -114,7 +178,7 @@ export const CommitsPage = () => {
             <div className="sec-line">
               <h2 className="city">{currentProfile.city || 'Не указано'}</h2>
               {currentProfile.sign && (
-                <div className="zodiak"><span style={{ fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>{currentProfile.sign}</span></div>
+                <div className="zodiak"><ZodiacIcon sign={currentProfile.sign} style={{ color: 'var(--dark-color)' }} /></div>
               )}
             </div>
             <div className="description"><p>{currentProfile.bio || 'Нет описания'}</p></div>

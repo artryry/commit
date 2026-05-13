@@ -1,6 +1,7 @@
 import { useGetMyProfile, useUpdateProfile, useUploadImages, useDeleteImages, useAttachTags, useDetachTags, type GetProfileResponse } from '@/api/hooks';
 import { useState, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { ZodiacIcon } from '@/components/zodiac-icon';
 
 const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
 function profileImageUrl(storageKey: string): string {
@@ -11,12 +12,12 @@ function profileImageUrl(storageKey: string): string {
 const RELATIONSHIP_OPTIONS = [
   { value: 'RELATIONSHIP', label: 'Партнёра' },
   { value: 'FRIENDSHIP', label: 'Друга' },
-  { value: 'NETWORKING', label: 'Нетворкинг' },
+  { value: 'UNSPECIFIED', label: 'Неопределено' },
 ];
 
 function relationshipLabel(val: number | string): string {
   if (typeof val === 'number') {
-    return ['Не указано', 'Друга', 'Партнёра', 'Нетворкинг'][val] || 'Не указано';
+    return ['Не указано', 'Друга', 'Партнёра', 'Неопределено'][val] || 'Не указано';
   }
   return RELATIONSHIP_OPTIONS.find(o => o.value === val)?.label || String(val);
 }
@@ -189,8 +190,7 @@ export const ProfilePage = () => {
             <h1 className="profile-name">{profile.username}, {profile.age}</h1>
             {profile.sign && (
               <span className="profile-name-decoration">
-                <img src="/assets/main-icons/zodiac-aquarius.png" alt="" />
-                <p className="profile-zodiak-mobile">{profile.sign}</p>
+                <ZodiacIcon sign={profile.sign} style={{ color: 'var(--dark-color)' }} />
               </span>
             )}
           </div>

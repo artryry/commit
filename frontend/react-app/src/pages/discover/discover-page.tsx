@@ -1,6 +1,23 @@
 import { useState, useRef, useCallback } from 'react';
 import { useGetRecommendations, useSwipeAction, useGetCompatibility } from '@/api/hooks';
 import type { ShortProfileProtoJson } from '@/api/hooks';
+import { ZodiacIcon } from '@/components/zodiac-icon';
+
+// ---- MinIO URL builder ----
+const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
+const MINIO_BUCKET = 'profile';
+
+function profileImageUrl(storageKey: string): string {
+  if (!storageKey) return '';
+  // If it's already a full URL, return it
+  if (storageKey.startsWith('http')) return storageKey;
+  
+  const path = `${MINIO_BUCKET}/${storageKey}`
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/');
+  return `${MINIO_PUBLIC_BASE.replace(/\/$/, '')}/${path}`;
+}
 
 /**
  * DiscoverPage — страница знакомств (аналог Acquaintance).
@@ -105,7 +122,7 @@ export const DiscoverPage = () => {
                   key={img.id}
                   style={{ display: i === currentPhotoIndex ? 'block' : 'none' }}
                 >
-                  <img src={img.url} alt={`Фото ${i + 1}`} />
+                  <img src={profileImageUrl(img.url)} alt={`Фото ${i + 1}`} />
                 </div>
               ))
             ) : (
@@ -169,9 +186,7 @@ export const DiscoverPage = () => {
               <h2 className="city">{currentProfile.city || 'Не указано'}</h2>
               {currentProfile.sign && (
                 <div className="zodiak">
-                  <span style={{ fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>
-                    {currentProfile.sign}
-                  </span>
+                  <ZodiacIcon sign={currentProfile.sign} style={{ color: 'var(--dark-color)' }} />
                 </div>
               )}
             </div>

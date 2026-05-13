@@ -1,6 +1,13 @@
 import { useParams } from 'react-router-dom';
 import { useGetProfileById, useGetCompatibility } from '@/api/hooks';
 import { useState, useCallback } from 'react';
+import { ZodiacIcon } from '@/components/zodiac-icon';
+
+const MINIO_PUBLIC_BASE = import.meta.env.VITE_MINIO_URL ?? 'http://localhost:9000';
+function profileImageUrl(storageKey: string): string {
+  const path = `profile/${storageKey}`.split('/').map(encodeURIComponent).join('/');
+  return `${MINIO_PUBLIC_BASE.replace(/\/$/, '')}/${path}`;
+}
 
 /**
  * UserProfilePage — страница просмотра профиля другого пользователя.
@@ -61,7 +68,7 @@ export const UserProfilePage = () => {
           {images.length > 0 ? (
             images.map((img) => (
               <div className="photo-slot" key={img.id}>
-                <img src={img.url} alt="Фото" />
+                <img src={profileImageUrl(img.url)} alt="Фото" />
               </div>
             ))
           ) : (
@@ -83,7 +90,7 @@ export const UserProfilePage = () => {
               <h2 className="city">{profile.city || 'Не указано'}</h2>
               {profile.sign && (
                 <div className="zodiak">
-                  <span style={{ fontSize: 'var(--fs-18)', color: 'var(--dark-color)' }}>{profile.sign}</span>
+                  <ZodiacIcon sign={profile.sign} style={{ color: 'var(--dark-color)' }} />
                 </div>
               )}
             </div>

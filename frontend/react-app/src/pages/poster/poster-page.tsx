@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BackgroundElements } from '@/components/background-elements';
 import { Logo } from '@/components/logo';
@@ -398,12 +398,38 @@ export const PosterPage = () => {
                       )}
                     </div>
                     <div className="input-area">
-                      <label htmlFor="birthday">День рождения (Unix)</label>
-                      <input
-                        type="number"
-                        id="birthday"
-                        placeholder="Например, 946684800"
-                        {...aboutForm.register('birthday', { valueAsNumber: true })}
+                      <label htmlFor="birthday">День рождения</label>
+                      <Controller
+                        name="birthday"
+                        control={aboutForm.control}
+                        render={({ field }) => {
+                          let dateString = '';
+                          if (field.value) {
+                            const d = new Date(field.value * 1000);
+                            const year = d.getUTCFullYear();
+                            const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+                            const day = String(d.getUTCDate()).padStart(2, '0');
+                            dateString = `${year}-${month}-${day}`;
+                          }
+                          return (
+                            <input
+                              type="date"
+                              id="birthday"
+                              value={dateString}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (!val) {
+                                  field.onChange(undefined);
+                                } else {
+                                  field.onChange(Math.floor(new Date(val).getTime() / 1000));
+                                }
+                              }}
+                              onBlur={field.onBlur}
+                              name={field.name}
+                              ref={field.ref}
+                            />
+                          );
+                        }}
                       />
                       {aboutForm.formState.errors.birthday && (
                         <p className="error">{aboutForm.formState.errors.birthday.message}</p>
@@ -608,7 +634,7 @@ export const PosterPage = () => {
                           { value: '', label: 'Выберите' },
                           { value: 'RELATIONSHIP', label: 'Партнёра' },
                           { value: 'FRIENDSHIP', label: 'Друга' },
-                          { value: 'NETWORKING', label: 'Нетворкинг' },
+                          { value: 'UNSPECIFIED', label: 'Неопределенно' },
                         ]}
                         value={lookingForForm.watch('relationship_type')}
                         onChange={(val) => lookingForForm.setValue('relationship_type', val, { shouldValidate: true })}

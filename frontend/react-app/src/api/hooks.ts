@@ -282,9 +282,50 @@ export const useGetCompatibility = () =>
       }),
   });
 
+export interface RecommendationFilters {
+  relationshipType?: string;
+  ageFrom?: string;
+  ageTo?: string;
+  city?: string;
+  sign?: string;
+  tags?: string[];
+  partnerGender?: string;
+}
+
+export const useGetFilters = (enabled = true) =>
+  useQuery<RecommendationFilters>({
+    queryKey: ['recommendations', 'filters'],
+    queryFn: () =>
+      customInstance<RecommendationFilters>({
+        url: '/recommendations/filters',
+        method: 'GET',
+      }),
+    enabled,
+  });
+
+export const useSetFilters = () =>
+  useMutation<RecommendationFilters, Error, RecommendationFilters>({
+    mutationFn: (data) =>
+      customInstance<RecommendationFilters>({
+        url: '/recommendations/filters',
+        method: 'POST',
+        data,
+      }),
+  });
 // ========================
 //  Swipes API hooks
 // ========================
+
+export const useGetIncomingLikes = (enabled = true) =>
+  useQuery<GetRecommendationsResponse>({
+    queryKey: ['swipes', 'incoming'],
+    queryFn: () =>
+      customInstance<GetRecommendationsResponse>({
+        url: '/swipes',
+        method: 'GET',
+      }),
+    enabled,
+  });
 
 export const useSwipeAction = () =>
   useMutation<{ success: boolean }, Error, { target_user_id: number; liked: boolean }>({
@@ -338,13 +379,22 @@ export const useGetChatMessages = (peerUserId: number | null) =>
   });
 
 export const useSendMessage = () =>
-  useMutation<ChatMessageItem, Error, { peerUserId: number; body: string }>({
-    mutationFn: ({ peerUserId, body }) =>
-      customInstance<ChatMessageItem>({
+  useMutation<ChatMessageItem, Error, { peerUserId: number; body?: string; formData?: FormData }>({
+    mutationFn: ({ peerUserId, body, formData }) => {
+      if (formData) {
+        return customInstance<ChatMessageItem>({
+          url: `/chats/${peerUserId}/messages`,
+          method: 'POST',
+          data: formData,
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      }
+      return customInstance<ChatMessageItem>({
         url: `/chats/${peerUserId}/messages`,
         method: 'POST',
         data: { body },
-      }),
+      });
+    },
   });
 
 export const useDeleteChat = () =>
