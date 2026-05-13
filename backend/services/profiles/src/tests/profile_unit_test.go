@@ -76,6 +76,10 @@ func (m *mockImageRepo) CreateImage(ctx context.Context, userID int64, storageKe
 	return &domain.Image{Id: 1, UserId: userID, StorageKey: storageKey, CreatedAt: time.Now()}, nil
 }
 
+func (m *mockImageRepo) ListStorageKeysByImageIDs(ctx context.Context, userID int64, imageIDs []int64) ([]string, error) {
+	return nil, nil
+}
+
 func (m *mockImageRepo) DeleteImages(ctx context.Context, imageIDs []int64, userID int64) error {
 	return nil
 }

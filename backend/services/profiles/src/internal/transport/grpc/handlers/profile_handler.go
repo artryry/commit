@@ -9,6 +9,8 @@ import (
 	"github.com/artryry/commit/backend/services/profiles/src/internal/logger"
 	"github.com/artryry/commit/backend/services/profiles/src/internal/services"
 	pb "github.com/artryry/commit/backend/services/profiles/src/internal/transport/grpc/proto/gen"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type ProfileHandler struct {
@@ -242,9 +244,16 @@ func (h *ProfileHandler) DeleteProfileImages(
 	ctx context.Context,
 	req *pb.DeleteProfileImagesRequest,
 ) (*pb.DeleteProfileImagesResponse, error) {
-	// Current proto does not contain requester id, so owner check can't be enforced here yet.
-	if err := h.imageService.DeleteProfileImages(ctx, req.GetImageIds(), 0); err != nil {
+	if req.GetUserId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
+	}
+	if err := h.imageService.DeleteProfileImages(ctx, req.GetImageIds(), req.GetUserId()); err != nil {
 		return nil, err
+	}
+
+	latest, err := h.profileService.GetProfile(ctx, req.GetUserId())
+	if err == nil {
+		h.emitProfileUpdated(ctx, req.GetUserId(), profileToEventPayload(latest))
 	}
 
 	return &pb.DeleteProfileImagesResponse{

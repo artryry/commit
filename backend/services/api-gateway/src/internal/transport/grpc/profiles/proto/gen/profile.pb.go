@@ -858,6 +858,7 @@ func (x *UpdateProfileResponse) GetProfileData() *FullProfile {
 type DeleteProfileImagesRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ImageIds      []int64                `protobuf:"varint,1,rep,packed,name=image_ids,json=imageIds,proto3" json:"image_ids,omitempty"`
+	UserId        int64                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -897,6 +898,13 @@ func (x *DeleteProfileImagesRequest) GetImageIds() []int64 {
 		return x.ImageIds
 	}
 	return nil
+}
+
+func (x *DeleteProfileImagesRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
 }
 
 type DeleteProfileImagesResponse struct {
@@ -1545,9 +1553,10 @@ const file_profile_proto_rawDesc = "" +
 	"\v_search_forB\x14\n" +
 	"\x12_relationship_type\"S\n" +
 	"\x15UpdateProfileResponse\x12:\n" +
-	"\fprofile_data\x18\x01 \x01(\v2\x17.profile.v1.FullProfileR\vprofileData\"9\n" +
+	"\fprofile_data\x18\x01 \x01(\v2\x17.profile.v1.FullProfileR\vprofileData\"R\n" +
 	"\x1aDeleteProfileImagesRequest\x12\x1b\n" +
-	"\timage_ids\x18\x01 \x03(\x03R\bimageIds\"7\n" +
+	"\timage_ids\x18\x01 \x03(\x03R\bimageIds\x12\x17\n" +
+	"\auser_id\x18\x02 \x01(\x03R\x06userId\"7\n" +
 	"\x1bDeleteProfileImagesResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"J\n" +
 	"\x19UploadProfileImageRequest\x12\x17\n" +

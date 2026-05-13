@@ -237,6 +237,12 @@ func (h *ProfileHandler) UploadImages(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ProfileHandler) DeleteImages(w http.ResponseWriter, r *http.Request) {
+	userID, ok := getUserID(r)
+	if !ok {
+		writeError(w, http.StatusUnauthorized, "missing user id in token")
+		return
+	}
+
 	var reqBody imageIDsRequest
 	if err := common.DecodeJsonBody(r, &reqBody); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid json body")
@@ -249,6 +255,7 @@ func (h *ProfileHandler) DeleteImages(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := h.client.DeleteProfileImages(r.Context(), &profilepb.DeleteProfileImagesRequest{
 		ImageIds: reqBody.ImageIDs,
+		UserId:   userID,
 	})
 	if err != nil {
 		writeError(w, http.StatusBadGateway, err.Error())

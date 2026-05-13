@@ -78,6 +78,21 @@ func getImageExtension(data []byte) (string, error) {
 	}
 }
 
-func (s *ImageService) DeleteProfileImages(ctx context.Context, imageId []int64, userId int64) error {
-	return s.imageRepository.DeleteImages(ctx, imageId, userId)
+func (s *ImageService) DeleteProfileImages(ctx context.Context, imageIds []int64, userId int64) error {
+	if userId == 0 {
+		return fmt.Errorf("user id required for delete images")
+	}
+	if len(imageIds) == 0 {
+		return nil
+	}
+	keys, err := s.imageRepository.ListStorageKeysByImageIDs(ctx, userId, imageIds)
+	if err != nil {
+		return err
+	}
+	for _, key := range keys {
+		if err := s.imageStorage.Delete(ctx, key); err != nil {
+			return fmt.Errorf("storage delete %q: %w", key, err)
+		}
+	}
+	return s.imageRepository.DeleteImages(ctx, imageIds, userId)
 }

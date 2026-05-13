@@ -43,6 +43,31 @@ func (r *ImageRepository) CreateImage(
 	return &image, nil
 }
 
+func (r *ImageRepository) ListStorageKeysByImageIDs(
+	ctx context.Context,
+	userID int64,
+	imageIDs []int64,
+) ([]string, error) {
+	if len(imageIDs) == 0 {
+		return nil, nil
+	}
+	rows, err := r.db.Query(ctx, listImageStorageKeysQuery, imageIDs, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var keys []string
+	for rows.Next() {
+		var key string
+		if err := rows.Scan(&key); err != nil {
+			return nil, err
+		}
+		keys = append(keys, key)
+	}
+	return keys, rows.Err()
+}
+
 func (r *ImageRepository) DeleteImages(
 	ctx context.Context,
 	imageId []int64,
