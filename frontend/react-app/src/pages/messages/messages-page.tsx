@@ -32,7 +32,24 @@ export const MessagesPage = () => {
   const { data: chatData, refetch: refetchMessages } = useGetChatMessages(selectedChat?.peer_user_id ?? null);
   const sendMessageMutation = useSendMessage();
   const deleteChatMutation = useDeleteChat();
-  const userId = useAuthStore((s) => s.userId);
+  const storedUserId = useAuthStore((s) => s.userId);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const setUserId = useAuthStore((s) => s.setUserId);
+
+  // Fallback: extract userId from JWT if not yet stored (for sessions before the fix)
+  const userId = (() => {
+    if (storedUserId) return storedUserId;
+    if (!accessToken) return null;
+    try {
+      const payload = accessToken.split('.')[1];
+      const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+      const uid = typeof decoded.sub === 'number' ? decoded.sub : Number(decoded.sub) || null;
+      if (uid) setUserId(uid);
+      return uid;
+    } catch {
+      return null;
+    }
+  })();
 
   // Chat WebSocket
   const { sendWsMessage } = useChatWs(selectedChat?.peer_user_id ?? null);

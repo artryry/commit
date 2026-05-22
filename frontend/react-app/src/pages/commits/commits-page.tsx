@@ -154,16 +154,18 @@ export const CommitsPage = () => {
         {/* Action buttons */}
         <div className="buttons-container">
           <div className="button-like" onClick={handleLike} style={{ cursor: 'pointer' }}>
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            {/* <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="22" stroke="#4CAF50" strokeWidth="3" />
               <path d="M14 24L22 32L34 16" stroke="#4CAF50" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            </svg> */}
+            <img src="assets/main-icons/aprove.png" alt="Лайк" />
           </div>
           <div className="button-dislike" onClick={handleDislike} style={{ cursor: 'pointer' }}>
-            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+            {/* <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
               <circle cx="24" cy="24" r="22" stroke="#FF5777" strokeWidth="3" />
               <path d="M16 16L32 32M32 16L16 32" stroke="#FF5777" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+            </svg> */}
+            <img src="assets/main-icons/disslike.png" alt="Dislike" />
           </div>
         </div>
       </section>

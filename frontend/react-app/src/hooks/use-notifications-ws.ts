@@ -53,59 +53,59 @@ export function useNotificationsWs() {
       wsRef.current = null;
     }
 
-    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const host = window.location.host;
-    const url = `${protocol}//${host}/api/v1/notifications/ws?token=${encodeURIComponent(accessToken)}`;
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.host;
+      const url = `${protocol}//${host}/api/v1/notifications/ws?token=${encodeURIComponent(accessToken)}`;
 
-    const ws = new WebSocket(url);
-    wsRef.current = ws;
+      const ws = new WebSocket(url);
+      wsRef.current = ws;
 
-    ws.onopen = () => {
-      console.log('[NotificationsWS] connected');
-    };
+      ws.onopen = () => {
+        console.log('[NotificationsWS] connected');
+      };
 
-    ws.onmessage = (event) => {
-      try {
-        const data: NotificationEvent = JSON.parse(event.data);
+      ws.onmessage = (event) => {
+        try {
+          const data: NotificationEvent = JSON.parse(event.data);
 
-        // Push into notification store for UI display
-        addNotification({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-          type: data.type,
-          message: notificationLabel(data.type, data.message),
-          senderId: data.sender_id,
-          createdAt: new Date().toISOString(),
-        });
+          // Push into notification store for UI display
+          addNotification({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            type: data.type,
+            message: notificationLabel(data.type, data.message),
+            senderId: data.sender_id,
+            createdAt: new Date().toISOString(),
+          });
 
-        // Invalidate relevant query caches
-        switch (data.type) {
-          case 'chat.message':
-            queryClient.invalidateQueries({ queryKey: ['chats'] });
-            if (data.sender_id) {
-              queryClient.invalidateQueries({ queryKey: ['chats', data.sender_id] });
-            }
-            break;
+          // Invalidate relevant query caches
+          switch (data.type) {
+            case 'chat.message':
+              queryClient.invalidateQueries({ queryKey: ['chats'] });
+              if (data.sender_id) {
+                queryClient.invalidateQueries({ queryKey: ['chats', data.sender_id] });
+              }
+              break;
 
-          case 'match.created':
-            queryClient.invalidateQueries({ queryKey: ['matches'] });
-            queryClient.invalidateQueries({ queryKey: ['chats'] });
-            break;
+            case 'match.created':
+              queryClient.invalidateQueries({ queryKey: ['matches'] });
+              queryClient.invalidateQueries({ queryKey: ['chats'] });
+              break;
 
-          case 'swipe.created':
-            queryClient.invalidateQueries({ queryKey: ['swipes'] });
-            break;
+            case 'swipe.created':
+              queryClient.invalidateQueries({ queryKey: ['swipes'] });
+              break;
 
-          case 'chat.deleted':
-            queryClient.invalidateQueries({ queryKey: ['chats'] });
-            break;
+            case 'chat.deleted':
+              queryClient.invalidateQueries({ queryKey: ['chats'] });
+              break;
 
-          default:
-            break;
+            default:
+              break;
+          }
+        } catch {
+          // Ignore malformed messages
         }
-      } catch {
-        // Ignore malformed messages
-      }
-    };
+      };
 
     ws.onclose = (e) => {
       console.log('[NotificationsWS] disconnected', e.code);

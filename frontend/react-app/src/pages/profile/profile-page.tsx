@@ -12,7 +12,7 @@ function profileImageUrl(storageKey: string): string {
 const RELATIONSHIP_OPTIONS = [
   { value: 'RELATIONSHIP', label: 'Партнёра' },
   { value: 'FRIENDSHIP', label: 'Друга' },
-  { value: 'UNSPECIFIED', label: 'Неопределено' },
+  { value: 'UNSPECIFIED', label: 'Любой' },
 ];
 
 function relationshipLabel(val: number | string): string {
@@ -182,7 +182,8 @@ export const ProfilePage = () => {
           <div className="profile-avatar">
             <img src={avatarSrc} alt="Аватар" className="avatar-img" />
             <button className="btn-edit avatar-edit" aria-label="Редактировать аватар" onClick={() => avatarInputRef.current?.click()}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z" stroke="#3C344B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              {/* <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M13.23 2.232L16.77 5.768M14.73 0.732C15.71 -0.244 17.29 -0.244 18.27 0.732C19.24 1.709 19.24 3.291 18.27 4.268L4.5 18.035H1V14.464L14.73 0.732Z" stroke="#3C344B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg> */}
+              <img src="assets/main-icons/edit.png" alt="редактировать фото" />
             </button>
             <input ref={avatarInputRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handleAvatarUpload} />
           </div>

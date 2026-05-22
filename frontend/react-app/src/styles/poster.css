@@ -460,18 +460,31 @@ main {
     row-gap: 40px;
 }
 
-.message-area {
+.poster .message-area,
+.poster-yourself .message-area,
+.poster-success .message-area,
+.poster-registration .message-area,
+.poster-login .message-area,
+.poster-tags .message-area,
+.poster-photo-add .message-area,
+.poster-looking-for .message-area {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
     height: fit-content;
 }
 
-.message-area h1 {
+.poster .message-area h1,
+.poster-yourself .message-area h1,
+.poster-success .message-area h1,
+.poster-looking-for .message-area h1 {
     width: 100%;
 }
 
-.message-area p {
+.poster .message-area p,
+.poster-yourself .message-area p,
+.poster-success .message-area p,
+.poster-looking-for .message-area p {
     font-size: var(--fs-18);
     line-height: var(--lh-110);
     opacity: 60%;

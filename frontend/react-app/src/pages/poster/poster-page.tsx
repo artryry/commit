@@ -19,6 +19,17 @@ import {
 } from '@/lib/validation';
 import '@/styles/poster.css';
 
+/** Decode the JWT payload and return the `sub` (user id) as a number. */
+function getUserIdFromToken(accessToken: string): number | null {
+  try {
+    const payload = accessToken.split('.')[1];
+    const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+    return typeof decoded.sub === 'number' ? decoded.sub : Number(decoded.sub) || null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Шаги Poster flow:
  * 0 = Landing (Вход / Регистрация)
@@ -59,6 +70,7 @@ export const PosterPage = () => {
 
   // Auth store
   const setTokens = useAuthStore((s) => s.setTokens);
+  const setUserId = useAuthStore((s) => s.setUserId);
   const setHasProfile = useAuthStore((s) => s.setHasProfile);
 
   // API mutations
@@ -98,11 +110,13 @@ export const PosterPage = () => {
         password: data.password,
       });
       setTokens(res.access_token, res.refresh_token);
+      const uid = getUserIdFromToken(res.access_token);
+      if (uid) setUserId(uid);
       navigate('/discover');
     } catch (e: any) {
       setError(e.response?.data?.detail || 'Ошибка входа. Проверьте данные.');
     }
-  }, [loginMutation, navigate, setTokens]);
+  }, [loginMutation, navigate, setTokens, setUserId]);
 
   /**
    * handleRegister — НЕ вызывает API.
@@ -145,6 +159,8 @@ export const PosterPage = () => {
         password: regData.password,
       });
       setTokens(authRes.access_token, authRes.refresh_token);
+      const uid = getUserIdFromToken(authRes.access_token);
+      if (uid) setUserId(uid);
 
       // 2) Загружаем аватарку — POST /profiles/images
       let avatarImageId: number | undefined;
@@ -183,7 +199,7 @@ export const PosterPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-  }, [registerForm, aboutForm, lookingForForm, tags, selectedFiles, registerMutation, createProfileMutation, attachTagsMutation, uploadImagesMutation, setTokens, setHasProfile, navigate]);
+  }, [registerForm, aboutForm, lookingForForm, tags, selectedFiles, registerMutation, createProfileMutation, attachTagsMutation, uploadImagesMutation, setTokens, setUserId, setHasProfile, navigate]);
 
   const handleAddTag = useCallback(() => {
     const val = tagInput.trim();
